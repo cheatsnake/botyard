@@ -3,9 +3,9 @@ package chat
 import "botyard/pkg/ulid"
 
 type File struct {
-	Id        string
-	Content   []byte
-	Extension string
+	Id       string `json:"id"`
+	Path     string `json:"path"`
+	MimeType string `json:"mimeType"`
 }
 
 type FileStore interface {
@@ -15,10 +15,10 @@ type FileStore interface {
 	DeleteFile(id string) error
 }
 
-func newFile(content []byte, ext string) *File {
+func NewFile(path, mime string) *File {
 	return &File{
-		Id:        ulid.New(),
-		Content:   content,
-		Extension: ext,
+		Id:       ulid.New(),
+		Path:     path,
+		MimeType: mime,
 	}
 }

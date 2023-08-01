@@ -125,10 +125,10 @@ func (s *Storage) GetMessagesByChat(chatId string, page, limit int) (int, []*cha
 			msgs[i] = *msg
 		}
 
-		return len(s.messages), chatMsgs, nil
+		return len(chatMsgs), chatMsgs, nil
 	}
 
-	return len(s.messages), extlib.SlicePaginate(chatMsgs, page, limit), nil
+	return len(chatMsgs), extlib.SlicePaginate(chatMsgs, page, limit), nil
 }
 
 func (s *Storage) DeleteMessagesByChat(chatId string) error {

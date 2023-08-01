@@ -5,6 +5,8 @@ import (
 	"botyard/internal/storage/memory"
 	"fmt"
 	"log"
+	"os"
+	"path"
 	"runtime"
 	"time"
 
@@ -12,13 +14,16 @@ import (
 )
 
 func main() {
+	initDirsForFiles()
+
 	app := fiber.New(fiber.Config{
 		ErrorHandler: http.ErrHandler,
+		BodyLimit:    25 * 1024 * 1024,
 	})
-
 	storage := memory.New()
 	server := http.New(app, storage)
 	server.InitRoutes("/api")
+	server.App.Static("/", path.Join(".", "store"))
 
 	go printMemoryUsage()
 
@@ -39,5 +44,17 @@ func printMemoryUsage() {
 			m.NumGC,
 		)
 		time.Sleep(3 * time.Second)
+	}
+}
+
+func initDirsForFiles() {
+	fileDirName := "store"
+	dirs := []string{"images", "videos", "audios", "files"}
+
+	for _, dir := range dirs {
+		err := os.MkdirAll(path.Join(".", fileDirName, dir), 0755)
+		if err != nil {
+			panic(fmt.Sprintf("Error creating directory: %s", err.Error()))
+		}
 	}
 }

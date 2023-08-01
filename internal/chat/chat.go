@@ -42,17 +42,6 @@ func (c *Chat) SendMessage(senderId, body string, fileIds []string) error {
 	return nil
 }
 
-func (c *Chat) LoadFile(content []byte, ext string) (string, error) {
-	file := newFile(content, ext)
-
-	err := (c.store).AddFile(file)
-	if err != nil {
-		return "", err
-	}
-
-	return file.Id, nil
-}
-
 func (c *Chat) GetMessages(page, limit int) (MessagesPage, error) {
 	total, msgs, err := (c.store).GetMessagesByChat(c.Id, page, limit)
 	if err != nil {
