@@ -30,12 +30,6 @@ type MessagesPage struct {
 	Messages []messageWithoutChatId `json:"messages"`
 }
 
-type MessageStore interface {
-	AddMessage(msg *Message) error
-	GetMessagesByChat(chatId string, page, limit int) (int, []*Message, error)
-	DeleteMessagesByChat(chatId string) error
-}
-
 func newMessage(chatId, senderId, body string, fileIds []string) *Message {
 	return &Message{
 		Id:        ulid.New(),

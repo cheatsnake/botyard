@@ -8,13 +8,6 @@ type File struct {
 	MimeType string `json:"mimeType"`
 }
 
-type FileStore interface {
-	AddFile(file *File) error
-	GetFile(id string) (*File, error)
-	GetFiles(ids []string) ([]*File, error)
-	DeleteFile(id string) error
-}
-
 func NewFile(path, mime string) *File {
 	return &File{
 		Id:       ulid.New(),

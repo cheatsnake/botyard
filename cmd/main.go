@@ -20,10 +20,11 @@ func main() {
 		ErrorHandler: http.ErrHandler,
 		BodyLimit:    25 * 1024 * 1024,
 	})
+
 	storage := memory.New()
 	server := http.New(app, storage)
-	server.InitRoutes("/api")
 	server.App.Static("/", path.Join(".", "store"))
+	server.InitRoutes("/api")
 
 	go printMemoryUsage()
 

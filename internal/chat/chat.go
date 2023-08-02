@@ -10,15 +10,28 @@ import (
 type Chat struct {
 	Id        string   `json:"id"`
 	MemberIds []string `json:"memberIds"`
-	store     Store
+	store     store
 }
 
-type Store interface {
-	MessageStore
-	FileStore
+type store interface {
+	messageStore
+	fileStore
 }
 
-func New(memberIds []string, s Store) *Chat {
+type messageStore interface {
+	AddMessage(msg *Message) error
+	GetMessagesByChat(chatId string, page, limit int) (int, []*Message, error)
+	DeleteMessagesByChat(chatId string) error
+}
+
+type fileStore interface {
+	AddFile(file *File) error
+	GetFile(id string) (*File, error)
+	GetFiles(ids []string) ([]*File, error)
+	DeleteFile(id string) error
+}
+
+func New(memberIds []string, s store) *Chat {
 	return &Chat{
 		Id:        ulid.New(),
 		MemberIds: memberIds,

@@ -1,32 +1,17 @@
 package http
 
 import (
-	"botyard/internal/bot"
-	"botyard/internal/chat"
-	"botyard/internal/storage/memory"
-	"botyard/internal/user"
+	"botyard/internal/storage"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type Server struct {
 	App     *fiber.App
-	Storage Storage
+	Storage storage.Storage
 }
 
-type Storage interface {
-	AddBot(bot *bot.Bot) error
-	GetBot(id string) (*bot.Bot, error)
-	AddUser(user *user.User) error
-	GetUser(id string) (*user.User, error)
-	AddChat(chat *chat.Chat) error
-	GetChat(id string) (*chat.Chat, error)
-	FindChat(userId, botId string) (*chat.Chat, error)
-	chat.MessageStore
-	chat.FileStore
-} 
-
-func New(app *fiber.App, store *memory.Storage) *Server {
+func New(app *fiber.App, store storage.Storage) *Server {
 	return &Server{
 		App:     app,
 		Storage: store,
