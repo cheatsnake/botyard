@@ -4,6 +4,7 @@ import (
 	"botyard/internal/chat"
 	"botyard/pkg/extlib"
 	"botyard/pkg/ulid"
+	"errors"
 	"fmt"
 	"mime/multipart"
 	"path"
@@ -11,13 +12,35 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const (
-	maxImageSize   = 2 * 1024 * 1024  // 2 MB
-	maxAudioSize   = 5 * 1024 * 1024  // 5 MB
-	maxVideoSize   = 25 * 1024 * 1024 // 25 MB
-	maxFileSize    = 10 * 1024 * 1024 // 10 MB
-	maxFilesAmount = 10
-)
+const filesFolder = "stock"
+const maxFilesAmount = 10
+const fileFieldName = "file"
+
+var maxFileSizes = map[string]int64{
+	"images": 2 * 1024 * 1024,  // 2 MB
+	"audios": 5 * 1024 * 1024,  // 5 MB
+	"videos": 25 * 1024 * 1024, // 25 MB
+	"files":  10 * 1024 * 1024, // 10 MB
+}
+
+var knownContentTypes = map[string]string{
+	"image/gif":     "images",
+	"image/jpeg":    "images",
+	"image/png":     "images",
+	"image/svg+xml": "images",
+	"image/webp":    "images",
+
+	"video/mp4":       "videos",
+	"video/webm":      "videos",
+	"video/ogg":       "videos",
+	"video/quicktime": "videos",
+	"video/x-flv":     "videos",
+
+	"audio/mpeg": "audios",
+	"audio/ogg":  "audios",
+	"audio/wav":  "audios",
+	"audio/aac":  "audios",
+}
 
 type chatBody struct {
 	chat.Chat
@@ -91,70 +114,20 @@ func (s *Server) loadFiles(c *fiber.Ctx) error {
 		return newErr(err, fiber.StatusBadRequest)
 	}
 
-	// TODO add checks for file extensions
-	images := form.File["image"]
-	videos := form.File["video"]
-	audios := form.File["audio"]
-	files := form.File["file"]
+	files := form.File[fileFieldName]
 
-	totalFiles := len(images) + len(videos) + len(audios) + len(files)
-	if totalFiles > maxFilesAmount {
+	if len(files) > maxFilesAmount {
 		return newErr(
 			fmt.Errorf("too many files, max allowed amount is %d", maxFilesAmount),
-			fiber.StatusRequestEntityTooLarge,
+			fiber.StatusBadRequest,
 		)
 	}
 
-	result := make([]*chat.File, 0, totalFiles)
+	result := make([]*chat.File, 0, len(files))
 
-	// TODO goroutines for parallel upload
-	for _, file := range images {
-		filePath, contentType, err := fileSaver(c, file, "images", maxImageSize)
-		if err != nil {
-			return newErr(err, fiber.StatusBadRequest)
-		}
-
-		f := chat.NewFile(filePath, contentType)
-		err = s.Storage.AddFile(f)
-		if err != nil {
-			return newErr(err, fiber.StatusBadRequest)
-		}
-
-		result = append(result, f)
-	}
-
-	for _, file := range videos {
-		filePath, contentType, err := fileSaver(c, file, "videos", maxVideoSize)
-		if err != nil {
-			return newErr(err, fiber.StatusBadRequest)
-		}
-
-		f := chat.NewFile(filePath, contentType)
-		err = s.Storage.AddFile(f)
-		if err != nil {
-			return newErr(err, fiber.StatusBadRequest)
-		}
-
-		result = append(result, f)
-	}
-
-	for _, file := range audios {
-		filePath, contentType, err := fileSaver(c, file, "audios", maxAudioSize)
-		if err != nil {
-			return newErr(err, fiber.StatusBadRequest)
-		}
-
-		f := chat.NewFile(filePath, contentType)
-		err = s.Storage.AddFile(f)
-		if err != nil {
-			return newErr(err, fiber.StatusBadRequest)
-		}
-
-		result = append(result, f)
-	}
-
+	// TODO parallel upload
 	for _, file := range files {
-		filePath, contentType, err := fileSaver(c, file, "files", maxFileSize)
+		filePath, contentType, err := fileSaver(c, file)
 		if err != nil {
 			return newErr(err, fiber.StatusBadRequest)
 		}
@@ -187,23 +160,31 @@ func (s *Server) clearChat(c *fiber.Ctx) error {
 	return c.JSON(response{Message: "chat cleared"})
 }
 
-func fileSaver(c *fiber.Ctx, file *multipart.FileHeader, fileType string, maxSize int) (string, string, error) {
-	var filePath, contentType string
+func fileSaver(c *fiber.Ctx, file *multipart.FileHeader) (string, string, error) {
+	contentType := file.Header["Content-Type"][0]
+	ext, err := extlib.ExtensionFromContentType(contentType)
+	if err != nil {
+		return "", "", err
+	}
 
-	if file.Size > maxImageSize {
-		return filePath, contentType, fmt.Errorf(
-			"max allowed size for %s is %d bytes, but got %d",
-			fileType, maxSize, file.Size,
+	fileType, ok := knownContentTypes[contentType]
+	if !ok {
+		fileType = "files"
+	}
+
+	maxFileSize, ok := maxFileSizes[fileType]
+	if !ok {
+		return "", "", errors.New("failed to recognize the file type")
+	}
+
+	if file.Size > maxFileSize {
+		return "", "", fmt.Errorf(
+			"max allowed size for %s are %d bytes, but got %d",
+			fileType, maxFileSize, file.Size,
 		)
 	}
 
-	contentType = file.Header["Content-Type"][0]
-	ext, err := extlib.ExtensionFromContentType(contentType)
-	if err != nil {
-		return filePath, contentType, err
-	}
-
-	filePath = path.Join(".", "store", fileType, ulid.New()+ext)
+	filePath := path.Join(".", filesFolder, fileType, ulid.New()+ext)
 	if err := c.SaveFile(file, filePath); err != nil {
 		return filePath, contentType, err
 	}

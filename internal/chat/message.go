@@ -14,20 +14,20 @@ type Message struct {
 	Timestamp time.Time `json:"timestamp"`
 }
 
-type messageWithoutChatId struct {
-	Id        string    `json:"id"`
-	SenderId  string    `json:"senderId"`
-	Body      string    `json:"body"`
-	FileIds   []string  `json:"fileIds,omitempty"`
-	Timestamp time.Time `json:"timestamp"`
-}
-
 type MessagesPage struct {
 	ChatId   string                 `json:"chatId"`
 	Total    int                    `json:"total"`
 	Page     int                    `json:"page"`
 	Limit    int                    `json:"limit"`
 	Messages []messageWithoutChatId `json:"messages"`
+}
+
+type messageWithoutChatId struct {
+	Id        string    `json:"id"`
+	SenderId  string    `json:"senderId"`
+	Body      string    `json:"body"`
+	FileIds   []string  `json:"fileIds,omitempty"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
 func newMessage(chatId, senderId, body string, fileIds []string) *Message {

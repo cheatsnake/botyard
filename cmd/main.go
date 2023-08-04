@@ -13,6 +13,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+const filesFolder = "stock"
+
 func main() {
 	initDirsForFiles()
 
@@ -23,7 +25,7 @@ func main() {
 
 	storage := memory.New()
 	server := http.New(app, storage)
-	server.App.Static("/", path.Join(".", "store"))
+	server.App.Static("/"+filesFolder, path.Join(".", filesFolder))
 	server.InitRoutes("/api")
 
 	go printMemoryUsage()
@@ -49,11 +51,10 @@ func printMemoryUsage() {
 }
 
 func initDirsForFiles() {
-	fileDirName := "store"
 	dirs := []string{"images", "videos", "audios", "files"}
 
 	for _, dir := range dirs {
-		err := os.MkdirAll(path.Join(".", fileDirName, dir), 0755)
+		err := os.MkdirAll(path.Join(".", filesFolder, dir), 0755)
 		if err != nil {
 			panic(fmt.Sprintf("Error creating directory: %s", err.Error()))
 		}
