@@ -1,7 +1,8 @@
-package http
+package handlers
 
 import (
 	"botyard/internal/chat"
+	"botyard/internal/storage"
 	"botyard/pkg/extlib"
 	"botyard/pkg/ulid"
 	"errors"
@@ -42,6 +43,16 @@ var knownContentTypes = map[string]string{
 	"audio/aac":  "audios",
 }
 
+type Chat struct {
+	store storage.Storage
+}
+
+func NewChat(store storage.Storage) *Chat {
+	return &Chat{
+		store: store,
+	}
+}
+
 type chatBody struct {
 	chat.Chat
 	Id struct{} `json:"-"`
@@ -53,15 +64,15 @@ type messageBody struct {
 	Timestamp struct{} `json:"-"`
 }
 
-func (s *Server) createChat(c *fiber.Ctx) error {
+func (s *Chat) CreateChat(c *fiber.Ctx) error {
 	b := new(chatBody)
 
 	if err := c.BodyParser(b); err != nil {
 		return newErr(err, fiber.StatusBadRequest)
 	}
 
-	chat := chat.New(b.MemberIds, s.Storage)
-	err := s.Storage.AddChat(chat)
+	chat := chat.New(b.MemberIds, s.store)
+	err := s.store.AddChat(chat)
 	if err != nil {
 		return newErr(err, fiber.StatusBadRequest)
 	}
@@ -69,14 +80,14 @@ func (s *Server) createChat(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(chat)
 }
 
-func (s *Server) sendMessage(c *fiber.Ctx) error {
+func (s *Chat) SendMessage(c *fiber.Ctx) error {
 	b := new(messageBody)
 
 	if err := c.BodyParser(b); err != nil {
 		return newErr(err, fiber.StatusBadRequest)
 	}
 
-	chat, err := s.Storage.GetChat(b.ChatId)
+	chat, err := s.store.GetChat(b.ChatId)
 	if err != nil {
 		return newErr(err, fiber.StatusNotFound)
 	}
@@ -89,12 +100,12 @@ func (s *Server) sendMessage(c *fiber.Ctx) error {
 	return c.JSON(response{Message: "message sended"})
 }
 
-func (s *Server) getMessages(c *fiber.Ctx) error {
+func (s *Chat) GetMessages(c *fiber.Ctx) error {
 	chatId := c.Params("id", "")
 	page := c.QueryInt("page", 1)
 	limit := c.QueryInt("limit", 20)
 
-	chat, err := s.Storage.GetChat(chatId)
+	chat, err := s.store.GetChat(chatId)
 	if err != nil {
 		return newErr(err, fiber.StatusNotFound)
 	}
@@ -107,7 +118,7 @@ func (s *Server) getMessages(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 
-func (s *Server) loadFiles(c *fiber.Ctx) error {
+func (s *Chat) LoadFiles(c *fiber.Ctx) error {
 
 	form, err := c.MultipartForm()
 	if err != nil {
@@ -133,7 +144,7 @@ func (s *Server) loadFiles(c *fiber.Ctx) error {
 		}
 
 		f := chat.NewFile(filePath, contentType)
-		err = s.Storage.AddFile(f)
+		err = s.store.AddFile(f)
 		if err != nil {
 			return newErr(err, fiber.StatusBadRequest)
 		}
@@ -144,10 +155,10 @@ func (s *Server) loadFiles(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 
-func (s *Server) clearChat(c *fiber.Ctx) error {
+func (s *Chat) ClearChat(c *fiber.Ctx) error {
 	chatId := c.Params("id", "")
 
-	chat, err := s.Storage.GetChat(chatId)
+	chat, err := s.store.GetChat(chatId)
 	if err != nil {
 		return newErr(err, fiber.StatusNotFound)
 	}

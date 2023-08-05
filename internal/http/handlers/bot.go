@@ -1,17 +1,28 @@
-package http
+package handlers
 
 import (
 	"botyard/internal/bot"
+	"botyard/internal/storage"
 
 	"github.com/gofiber/fiber/v2"
 )
+
+type Bot struct {
+	store storage.Storage
+}
+
+func NewBot(store storage.Storage) *Bot {
+	return &Bot{
+		store: store,
+	}
+}
 
 type botBody struct {
 	bot.Bot
 	Id struct{} `json:"-"`
 }
 
-func (s *Server) createBot(c *fiber.Ctx) error {
+func (s *Bot) CreateBot(c *fiber.Ctx) error {
 	b := new(botBody)
 
 	if err := c.BodyParser(b); err != nil {
@@ -31,15 +42,15 @@ func (s *Server) createBot(c *fiber.Ctx) error {
 		}
 	}
 
-	s.Storage.AddBot(bot)
+	s.store.AddBot(bot)
 
 	return c.Status(fiber.StatusCreated).JSON(bot)
 }
 
-func (s *Server) getBotCommands(c *fiber.Ctx) error {
+func (s *Bot) GetBotCommands(c *fiber.Ctx) error {
 	botId := c.Params("id")
 
-	bot, err := s.Storage.GetBot(botId)
+	bot, err := s.store.GetBot(botId)
 	if err != nil {
 		return newErr(err, fiber.StatusNotFound)
 	}
