@@ -26,6 +26,11 @@ func New() string {
 		ulid.MustNew(u.timestamp, u.entropy).String())
 }
 
+func Verify(s string) error {
+	_, err := ulid.Parse(s)
+	return err
+}
+
 func initGenerator() *generator {
 	once.Do(func() {
 		instance = &generator{
