@@ -1,6 +1,9 @@
 package bot
 
-import "testing"
+import (
+	"botyard/pkg/ulid"
+	"testing"
+)
 
 func TestBot(t *testing.T) {
 	testName := "test"
@@ -20,7 +23,7 @@ func TestBot(t *testing.T) {
 	})
 
 	t.Run("check id", func(t *testing.T) {
-		expect := 26
+		expect := ulid.Length
 		if len(bot.Id) != expect {
 			t.Errorf("%#v got: %d, expect: %d", bot, len(bot.Id), expect)
 		}
