@@ -142,4 +142,17 @@ func TestBot(t *testing.T) {
 			t.Errorf("%#v got: %s, expect: %s", bot, err.Error(), expect)
 		}
 	})
+
+	t.Run("get all commands", func(t *testing.T) {
+		for _, cmd := range testCommands {
+			bot.AddCommand(cmd.Alias, cmd.Description)
+		}
+
+		expect := len(testCommands)
+		result := len(bot.GetCommands())
+
+		if result != expect {
+			t.Errorf("%#v got: %d, expect: %d", bot, result, expect)
+		}
+	})
 }
