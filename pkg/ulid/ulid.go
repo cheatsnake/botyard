@@ -9,6 +9,8 @@ import (
 	"github.com/oklog/ulid/v2"
 )
 
+const Length = 26
+
 var (
 	once     sync.Once
 	instance *generator
