@@ -76,7 +76,7 @@ func (s *Chat) CreateChat(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
-	chat := chat.New([]string{userId, b.BotId}, s.store)
+	chat := chat.New(userId, b.BotId, s.store)
 	err = s.store.AddChat(chat)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())

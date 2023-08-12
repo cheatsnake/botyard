@@ -3,14 +3,13 @@ package chat
 import (
 	"botyard/internal/tools/ulid"
 	"errors"
-
-	"golang.org/x/exp/slices"
 )
 
 type Chat struct {
-	Id        string   `json:"id"`
-	MemberIds []string `json:"memberIds"`
-	store     store
+	Id     string `json:"id"`
+	UserId string `json:"userId"`
+	BotId  string `json:"botId"`
+	store  store
 }
 
 type store interface {
@@ -31,16 +30,17 @@ type fileStore interface {
 	DeleteFile(id string) error
 }
 
-func New(memberIds []string, s store) *Chat {
+func New(userId, botId string, s store) *Chat {
 	return &Chat{
-		Id:        ulid.New(),
-		MemberIds: memberIds,
-		store:     s,
+		Id:     ulid.New(),
+		UserId: userId,
+		BotId:  botId,
+		store:  s,
 	}
 }
 
 func (c *Chat) SendMessage(senderId, body string, fileIds []string) error {
-	isMemeber := slices.Contains(c.MemberIds, senderId)
+	isMemeber := senderId == c.UserId || senderId == c.BotId
 	if !isMemeber {
 		return errors.New(errSenderNotMember)
 	}

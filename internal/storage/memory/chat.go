@@ -3,8 +3,6 @@ package memory
 import (
 	"botyard/internal/chat"
 	"errors"
-
-	"golang.org/x/exp/slices"
 )
 
 func (s *Storage) AddChat(chat *chat.Chat) error {
@@ -27,7 +25,7 @@ func (s *Storage) GetChat(id string) (*chat.Chat, error) {
 
 func (s *Storage) FindChat(userId, botId string) (*chat.Chat, error) {
 	for _, chat := range s.chats {
-		if slices.Contains(chat.MemberIds, userId) && slices.Contains(chat.MemberIds, botId) {
+		if chat.UserId == userId && chat.BotId == botId {
 			return chat, nil
 		}
 	}

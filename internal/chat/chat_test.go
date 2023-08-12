@@ -1,19 +1,19 @@
 package chat
 
 import (
+	"botyard/internal/bot"
 	"botyard/internal/tools/ulid"
 	"botyard/internal/user"
 	"testing"
-
-	"golang.org/x/exp/slices"
 )
 
 func TestChat(t *testing.T) {
 	testUser, _ := user.New("user")
+	testBot := bot.New("bot")
 	testStore := new(mockStore)
 
 	t.Run("check chat id", func(t *testing.T) {
-		testChat := New([]string{testUser.Id}, testStore)
+		testChat := New(testUser.Id, testBot.Id, testStore)
 		expect := ulid.Length
 		got := len(testChat.Id)
 
@@ -22,10 +22,20 @@ func TestChat(t *testing.T) {
 		}
 	})
 
-	t.Run("check member ids", func(t *testing.T) {
-		testChat := New([]string{testUser.Id}, testStore)
+	t.Run("check user id", func(t *testing.T) {
+		testChat := New(testUser.Id, testBot.Id, testStore)
 		expect := true
-		got := slices.Contains(testChat.MemberIds, testUser.Id)
+		got := testChat.UserId == testUser.Id
+
+		if got != expect {
+			t.Errorf("%#v got: %v, expect: %v", testChat, got, expect)
+		}
+	})
+
+	t.Run("check bot id", func(t *testing.T) {
+		testChat := New(testUser.Id, testBot.Id, testStore)
+		expect := true
+		got := testChat.BotId == testBot.Id
 
 		if got != expect {
 			t.Errorf("%#v got: %v, expect: %v", testChat, got, expect)
@@ -33,7 +43,7 @@ func TestChat(t *testing.T) {
 	})
 
 	t.Run("send message", func(t *testing.T) {
-		testChat := New([]string{testUser.Id}, testStore)
+		testChat := New(testUser.Id, testBot.Id, testStore)
 		got := testChat.SendMessage(testUser.Id, "hello", nil)
 
 		if got != nil {
@@ -42,7 +52,7 @@ func TestChat(t *testing.T) {
 	})
 
 	t.Run("send message by not allowed member", func(t *testing.T) {
-		testChat := New([]string{testUser.Id}, testStore)
+		testChat := New(testUser.Id, testBot.Id, testStore)
 		expect := errSenderNotMember
 		got := testChat.SendMessage(ulid.New(), "hello", nil).Error()
 
@@ -52,7 +62,7 @@ func TestChat(t *testing.T) {
 	})
 
 	t.Run("get messages", func(t *testing.T) {
-		testChat := New([]string{testUser.Id}, testStore)
+		testChat := New(testUser.Id, testBot.Id, testStore)
 		_, got := testChat.GetMessages(1, 1)
 
 		if got != nil {
@@ -61,7 +71,7 @@ func TestChat(t *testing.T) {
 	})
 
 	t.Run("clear chat", func(t *testing.T) {
-		testChat := New([]string{testUser.Id}, testStore)
+		testChat := New(testUser.Id, testBot.Id, testStore)
 		got := testChat.Clear()
 
 		if got != nil {
