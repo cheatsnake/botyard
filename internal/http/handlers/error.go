@@ -21,10 +21,3 @@ func ErrHandler(c *fiber.Ctx, err error) error {
 	c.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	return c.Status(code).JSON(response{Message: err.Error()})
 }
-
-func newErr(err error, code int) *fiber.Error {
-	return &fiber.Error{
-		Code:    code,
-		Message: err.Error(),
-	}
-}

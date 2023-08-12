@@ -53,48 +53,53 @@ func NewChat(store storage.Storage) *Chat {
 	}
 }
 
-type chatBody struct {
-	chat.Chat
-	Id struct{} `json:"-"`
+type createChatBody struct {
+	BotId string `json:"botId"`
 }
 
-type messageBody struct {
+type sendMessageBody struct {
 	chat.Message
 	Id        struct{} `json:"-"`
 	Timestamp struct{} `json:"-"`
 }
 
 func (s *Chat) CreateChat(c *fiber.Ctx) error {
-	b := new(chatBody)
+	userId := fmt.Sprintf("%v", c.Locals("userId"))
+	b := new(createChatBody)
 
 	if err := c.BodyParser(b); err != nil {
-		return newErr(err, fiber.StatusBadRequest)
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	chat := chat.New(b.MemberIds, s.store)
-	err := s.store.AddChat(chat)
+	_, err := s.store.GetBot(b.BotId)
 	if err != nil {
-		return newErr(err, fiber.StatusBadRequest)
+		return fiber.NewError(fiber.StatusNotFound, err.Error())
+	}
+
+	chat := chat.New([]string{userId, b.BotId}, s.store)
+	err = s.store.AddChat(chat)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(chat)
 }
 
 func (s *Chat) SendMessage(c *fiber.Ctx) error {
-	b := new(messageBody)
+	b := new(sendMessageBody)
 
 	if err := c.BodyParser(b); err != nil {
-		return newErr(err, fiber.StatusBadRequest)
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	chat, err := s.store.GetChat(b.ChatId)
 	if err != nil {
-		return newErr(err, fiber.StatusNotFound)
+		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
 	err = chat.SendMessage(b.SenderId, b.Body, b.FileIds)
 	if err != nil {
-		return newErr(err, fiber.StatusBadRequest)
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(response{Message: "message sended"})
@@ -107,12 +112,12 @@ func (s *Chat) GetMessages(c *fiber.Ctx) error {
 
 	chat, err := s.store.GetChat(chatId)
 	if err != nil {
-		return newErr(err, fiber.StatusNotFound)
+		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
 	result, err := chat.GetMessages(page, limit)
 	if err != nil {
-		return newErr(err, fiber.StatusBadRequest)
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(result)
@@ -122,15 +127,15 @@ func (s *Chat) LoadFiles(c *fiber.Ctx) error {
 
 	form, err := c.MultipartForm()
 	if err != nil {
-		return newErr(err, fiber.StatusBadRequest)
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	files := form.File[fileFieldName]
 
 	if len(files) > maxFilesAmount {
-		return newErr(
-			fmt.Errorf("too many files, max allowed amount is %d", maxFilesAmount),
+		return fiber.NewError(
 			fiber.StatusBadRequest,
+			fmt.Sprintf("too many files, max allowed amount is %d", maxFilesAmount),
 		)
 	}
 
@@ -140,13 +145,13 @@ func (s *Chat) LoadFiles(c *fiber.Ctx) error {
 	for _, file := range files {
 		filePath, contentType, err := fileSaver(c, file)
 		if err != nil {
-			return newErr(err, fiber.StatusBadRequest)
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 
 		f := chat.NewFile(filePath, contentType)
 		err = s.store.AddFile(f)
 		if err != nil {
-			return newErr(err, fiber.StatusBadRequest)
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 
 		result = append(result, f)
@@ -160,12 +165,12 @@ func (s *Chat) ClearChat(c *fiber.Ctx) error {
 
 	chat, err := s.store.GetChat(chatId)
 	if err != nil {
-		return newErr(err, fiber.StatusNotFound)
+		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
 	err = chat.Clear()
 	if err != nil {
-		return newErr(err, fiber.StatusBadRequest)
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(response{Message: "chat cleared"})

@@ -26,7 +26,7 @@ func (s *Bot) CreateBot(c *fiber.Ctx) error {
 	b := new(botBody)
 
 	if err := c.BodyParser(b); err != nil {
-		return newErr(err, fiber.StatusBadRequest)
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	bot := bot.New(b.Name)
@@ -47,12 +47,22 @@ func (s *Bot) CreateBot(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(bot)
 }
 
+func (s *Bot) EditBot(c *fiber.Ctx) error {
+	b := new(botBody)
+
+	if err := c.BodyParser(b); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return c.Next()
+}
+
 func (s *Bot) GetBotCommands(c *fiber.Ctx) error {
 	botId := c.Params("id")
 
 	bot, err := s.store.GetBot(botId)
 	if err != nil {
-		return newErr(err, fiber.StatusNotFound)
+		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
 	return c.JSON(bot.GetCommands())

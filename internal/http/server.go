@@ -2,6 +2,7 @@ package http
 
 import (
 	"botyard/internal/http/handlers"
+	"botyard/internal/http/middlewares"
 	"botyard/internal/storage"
 
 	"github.com/gofiber/fiber/v2"
@@ -25,18 +26,26 @@ func New(store storage.Storage) *Server {
 }
 
 func (s *Server) InitRoutes(prefix string) {
+	api := s.App.Group(prefix)
+	middlwr := middlewares.New(s.store)
+
+	// Bot's handlers -----------------------------------
 	bot := handlers.NewBot(s.store)
+	api.Post("/bot", middlwr.Admin, bot.CreateBot)
+	api.Get("/bot/:id", middlwr.Auth, bot.GetBotCommands)
+	// --------------------------------------------------
+
+	// User's handlers ---------------
 	user := handlers.NewUser(s.store)
+	api.Post("/user", user.CreateUser)
+	// -------------------------------
+
+	// Chat's handlers --------------------------------------
 	chat := handlers.NewChat(s.store)
-
-	s.App.Post(prefix+"/bot", bot.CreateBot)
-	s.App.Get(prefix+"/bot/:id", bot.GetBotCommands)
-
-	s.App.Post(prefix+"/user", user.CreateUser)
-
-	s.App.Post(prefix+"/chat", chat.CreateChat)
-	s.App.Post(prefix+"/chat/message", chat.SendMessage)
-	s.App.Post(prefix+"/chat/files", chat.LoadFiles)
-	s.App.Get(prefix+"/chat/:id", chat.GetMessages)
-	s.App.Delete(prefix+"/chat/:id", chat.ClearChat)
+	api.Post("/chat", middlwr.Auth, chat.CreateChat)
+	api.Post("/chat/message", middlwr.Auth, chat.SendMessage)
+	api.Post("/chat/files", middlwr.Auth, chat.LoadFiles)
+	api.Get("/chat/:id", middlwr.Auth, chat.GetMessages)
+	api.Delete("/chat/:id", middlwr.Auth, chat.ClearChat)
+	// ------------------------------------------------------
 }
