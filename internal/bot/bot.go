@@ -1,7 +1,7 @@
 package bot
 
 import (
-	"botyard/pkg/ulid"
+	"botyard/internal/tools/ulid"
 	"errors"
 	"sync"
 )

@@ -1,7 +1,7 @@
 package chat
 
 import (
-	"botyard/pkg/ulid"
+	"botyard/internal/tools/ulid"
 	"errors"
 
 	"golang.org/x/exp/slices"

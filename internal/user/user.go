@@ -1,7 +1,7 @@
 package user
 
 import (
-	"botyard/pkg/ulid"
+	"botyard/internal/tools/ulid"
 	"errors"
 )
 

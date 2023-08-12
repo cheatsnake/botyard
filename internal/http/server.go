@@ -26,13 +26,14 @@ func New(store storage.Storage) *Server {
 
 func (s *Server) InitRoutes(prefix string) {
 	bot := handlers.NewBot(s.store)
+	user := handlers.NewUser(s.store)
+	chat := handlers.NewChat(s.store)
+
 	s.App.Post(prefix+"/bot", bot.CreateBot)
 	s.App.Get(prefix+"/bot/:id", bot.GetBotCommands)
 
-	user := handlers.NewUser(s.store)
 	s.App.Post(prefix+"/user", user.CreateUser)
 
-	chat := handlers.NewChat(s.store)
 	s.App.Post(prefix+"/chat", chat.CreateChat)
 	s.App.Post(prefix+"/chat/message", chat.SendMessage)
 	s.App.Post(prefix+"/chat/files", chat.LoadFiles)

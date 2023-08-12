@@ -1,6 +1,6 @@
 package chat
 
-import "botyard/pkg/ulid"
+import "botyard/internal/tools/ulid"
 
 type File struct {
 	Id       string `json:"id"`
