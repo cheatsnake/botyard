@@ -7,8 +7,8 @@ import (
 )
 
 type Bot struct {
-	Id          string     `json:"id"`
-	Name        string     `json:"name"`
+	Id          string     `json:"id,omitempty"`
+	Name        string     `json:"name,omitempty"`
 	Description string     `json:"description,omitempty"`
 	Avatar      string     `json:"avatar,omitempty"`
 	Commands    []Command  `json:"commands,omitempty"`
