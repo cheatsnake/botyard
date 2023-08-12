@@ -8,6 +8,7 @@ import (
 
 type Storage interface {
 	AddBot(bot *bot.Bot) error
+	EditBot(bot *bot.Bot) error
 	GetBot(id string) (*bot.Bot, error)
 
 	AddUser(user *user.User) error

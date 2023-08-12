@@ -70,7 +70,7 @@ func TestBot(t *testing.T) {
 
 	t.Run("find commands", func(t *testing.T) {
 		for _, expect := range testCommands {
-			cmd, err := bot.Command(expect.Alias)
+			cmd, err := bot.GetCommand(expect.Alias)
 			if err != nil {
 				t.Errorf("%#v got: %s, expect: %v", bot, err.Error(), nil)
 			}
@@ -89,7 +89,7 @@ func TestBot(t *testing.T) {
 		expect := testCommands[0]
 		bot.AddCommand(expect.Alias, expect.Description)
 
-		cmd, err := bot.Command(expect.Alias)
+		cmd, err := bot.GetCommand(expect.Alias)
 		if err != nil {
 			t.Errorf("%#v got: %s, expect: %v", bot, err.Error(), nil)
 		}
@@ -122,7 +122,7 @@ func TestBot(t *testing.T) {
 		testCommand := testCommands[0]
 		expect := Command{}
 
-		cmd, err := bot.Command(testCommand.Alias)
+		cmd, err := bot.GetCommand(testCommand.Alias)
 		if err.Error() != errCmdNotFound {
 			t.Errorf("%#v got: %s, expect: %s", bot, err.Error(), errCmdNotFound)
 		}

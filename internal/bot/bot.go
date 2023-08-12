@@ -64,7 +64,7 @@ func (b *Bot) AddCommand(alias, descr string) {
 	b.Commands = append(b.Commands, newCmd)
 }
 
-func (b *Bot) Command(alias string) (Command, error) {
+func (b *Bot) GetCommand(alias string) (Command, error) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 

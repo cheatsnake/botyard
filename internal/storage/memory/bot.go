@@ -27,3 +27,7 @@ func (s *Storage) GetBot(id string) (*bot.Bot, error) {
 
 	return nil, errors.New("bot not found")
 }
+
+func (s *Storage) EditBot(bot *bot.Bot) error {
+	return nil
+}

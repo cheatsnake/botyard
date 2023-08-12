@@ -31,8 +31,11 @@ func (s *Server) InitRoutes(prefix string) {
 
 	// Bot's handlers -----------------------------------
 	bot := handlers.NewBot(s.store)
-	api.Post("/bot", middlwr.Admin, bot.CreateBot)
 	api.Get("/bot/:id", middlwr.Auth, bot.GetBotCommands)
+	api.Post("/bot", middlwr.Admin, bot.CreateBot)
+	api.Post("/bot/commands/:id", middlwr.Admin, bot.AddBotCommands)
+	api.Put("/bot/:id", middlwr.Admin, bot.EditBot)
+	api.Delete("/bot/command/:id", middlwr.Admin, bot.RemoveBotCommand)
 	// --------------------------------------------------
 
 	// User's handlers ---------------
@@ -42,10 +45,10 @@ func (s *Server) InitRoutes(prefix string) {
 
 	// Chat's handlers --------------------------------------
 	chat := handlers.NewChat(s.store)
+	api.Get("/chat/:id", middlwr.Auth, chat.GetMessages)
 	api.Post("/chat", middlwr.Auth, chat.CreateChat)
 	api.Post("/chat/message", middlwr.Auth, chat.SendMessage)
 	api.Post("/chat/files", middlwr.Auth, chat.LoadFiles)
-	api.Get("/chat/:id", middlwr.Auth, chat.GetMessages)
 	api.Delete("/chat/:id", middlwr.Auth, chat.ClearChat)
 	// ------------------------------------------------------
 }
