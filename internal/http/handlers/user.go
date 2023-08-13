@@ -18,13 +18,11 @@ func NewUser(store storage.Storage) *User {
 	}
 }
 
-type userBody struct {
-	user.User
-	Id struct{} `json:"-"`
-}
-
 func (s *User) CreateUser(c *fiber.Ctx) error {
-	b := new(userBody)
+	b := new(struct {
+		user.User
+		Id struct{} `json:"-"`
+	})
 
 	if err := c.BodyParser(b); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())

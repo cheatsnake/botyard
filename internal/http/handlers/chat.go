@@ -53,19 +53,11 @@ func NewChat(store storage.Storage) *Chat {
 	}
 }
 
-type createChatBody struct {
-	BotId string `json:"botId"`
-}
-
-type sendMessageBody struct {
-	chat.Message
-	Id        struct{} `json:"-"`
-	Timestamp struct{} `json:"-"`
-}
-
 func (s *Chat) CreateChat(c *fiber.Ctx) error {
 	userId := fmt.Sprintf("%v", c.Locals("userId"))
-	b := new(createChatBody)
+	b := new(struct {
+		BotId string `json:"botId"`
+	})
 
 	if err := c.BodyParser(b); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
@@ -86,7 +78,11 @@ func (s *Chat) CreateChat(c *fiber.Ctx) error {
 }
 
 func (s *Chat) SendMessage(c *fiber.Ctx) error {
-	b := new(sendMessageBody)
+	b := new(struct {
+		chat.Message
+		Id        struct{} `json:"-"`
+		Timestamp struct{} `json:"-"`
+	})
 
 	if err := c.BodyParser(b); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())

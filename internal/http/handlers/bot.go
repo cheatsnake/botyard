@@ -17,19 +17,11 @@ func NewBot(store storage.Storage) *Bot {
 	}
 }
 
-type createBotBody struct {
-	bot.Bot
-	Id struct{} `json:"-"`
-}
-
-type editBotBody struct {
-	bot.Bot
-	Commands struct{} `json:"-"`
-	Id       struct{} `json:"-"`
-}
-
 func (b *Bot) CreateBot(c *fiber.Ctx) error {
-	body := new(createBotBody)
+	body := new(struct {
+		bot.Bot
+		Id struct{} `json:"-"`
+	})
 
 	if err := c.BodyParser(body); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
@@ -62,7 +54,12 @@ func (b *Bot) EditBot(c *fiber.Ctx) error {
 		return fiberErr
 	}
 
-	body := new(editBotBody)
+	body := new(struct {
+		bot.Bot
+		Commands struct{} `json:"-"`
+		Id       struct{} `json:"-"`
+	})
+
 	if err := c.BodyParser(body); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
