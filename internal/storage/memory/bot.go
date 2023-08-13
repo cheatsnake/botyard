@@ -1,7 +1,7 @@
 package memory
 
 import (
-	"botyard/internal/bot"
+	"botyard/internal/entities/bot"
 	"errors"
 )
 

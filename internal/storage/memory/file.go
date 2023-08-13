@@ -1,14 +1,14 @@
 package memory
 
 import (
-	"botyard/internal/chat"
+	"botyard/internal/entities/file"
 	"botyard/pkg/extlib"
 	"errors"
 
 	"golang.org/x/exp/slices"
 )
 
-func (s *Storage) AddFile(file *chat.File) error {
+func (s *Storage) AddFile(file *file.File) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -16,7 +16,7 @@ func (s *Storage) AddFile(file *chat.File) error {
 	return nil
 }
 
-func (s *Storage) GetFile(id string) (*chat.File, error) {
+func (s *Storage) GetFile(id string) (*file.File, error) {
 	for _, file := range s.files {
 		if file.Id == id {
 			return file, nil
@@ -26,8 +26,8 @@ func (s *Storage) GetFile(id string) (*chat.File, error) {
 	return nil, errors.New("file not found")
 }
 
-func (s *Storage) GetFiles(ids []string) ([]*chat.File, error) {
-	files := make([]*chat.File, 0, len(ids))
+func (s *Storage) GetFiles(ids []string) ([]*file.File, error) {
+	files := make([]*file.File, 0, len(ids))
 
 	for _, file := range s.files {
 		if slices.Contains(ids, file.Id) {
@@ -42,7 +42,7 @@ func (s *Storage) DeleteFile(id string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	idx := slices.IndexFunc(s.files, func(f *chat.File) bool {
+	idx := slices.IndexFunc(s.files, func(f *file.File) bool {
 		return f.Id == id
 	})
 

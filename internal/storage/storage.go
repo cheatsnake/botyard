@@ -1,9 +1,11 @@
 package storage
 
 import (
-	"botyard/internal/bot"
-	"botyard/internal/chat"
-	"botyard/internal/user"
+	"botyard/internal/entities/bot"
+	"botyard/internal/entities/chat"
+	"botyard/internal/entities/file"
+	"botyard/internal/entities/message"
+	"botyard/internal/entities/user"
 )
 
 type Storage interface {
@@ -18,12 +20,12 @@ type Storage interface {
 	GetChat(id string) (*chat.Chat, error)
 	FindChat(userId, botId string) (*chat.Chat, error)
 
-	AddMessage(msg *chat.Message) error
-	GetMessagesByChat(chatId string, page, limit int) (int, []*chat.Message, error)
+	AddMessage(msg *message.Message) error
+	GetMessagesByChat(chatId string, page, limit int) (int, []*message.Message, error)
 	DeleteMessagesByChat(chatId string) error
 
-	AddFile(file *chat.File) error
-	GetFile(id string) (*chat.File, error)
-	GetFiles(ids []string) ([]*chat.File, error)
+	AddFile(file *file.File) error
+	GetFile(id string) (*file.File, error)
+	GetFiles(ids []string) ([]*file.File, error)
 	DeleteFile(id string) error
 }

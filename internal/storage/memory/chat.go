@@ -1,7 +1,7 @@
 package memory
 
 import (
-	"botyard/internal/chat"
+	"botyard/internal/entities/chat"
 	"errors"
 )
 

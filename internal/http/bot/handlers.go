@@ -1,23 +1,29 @@
-package handlers
+package bot
 
 import (
-	"botyard/internal/bot"
+	"botyard/internal/entities/bot"
 	"botyard/internal/storage"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type Bot struct {
-	store storage.Storage
+type handlers struct {
+	service *service
 }
 
-func NewBot(store storage.Storage) *Bot {
-	return &Bot{
-		store: store,
+type response struct {
+	Message string `json:"message"`
+}
+
+func Handlers(s storage.Storage) *handlers {
+	return &handlers{
+		service: &service{
+			store: s,
+		},
 	}
 }
 
-func (b *Bot) CreateBot(c *fiber.Ctx) error {
+func (h *handlers) CreateBot(c *fiber.Ctx) error {
 	body := new(struct {
 		bot.Bot
 		Id struct{} `json:"-"`
@@ -43,13 +49,13 @@ func (b *Bot) CreateBot(c *fiber.Ctx) error {
 		}
 	}
 
-	b.store.AddBot(newBot)
+	h.service.store.AddBot(newBot)
 
 	return c.Status(fiber.StatusCreated).JSON(newBot)
 }
 
-func (b *Bot) EditBot(c *fiber.Ctx) error {
-	newBot, fiberErr := b.findBot(c)
+func (h *handlers) EditBot(c *fiber.Ctx) error {
+	newBot, fiberErr := h.findBot(c)
 	if fiberErr != nil {
 		return fiberErr
 	}
@@ -76,7 +82,7 @@ func (b *Bot) EditBot(c *fiber.Ctx) error {
 		newBot.SetAvatar(body.Avatar)
 	}
 
-	err := b.store.EditBot(newBot)
+	err := h.service.store.EditBot(newBot)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
@@ -84,8 +90,8 @@ func (b *Bot) EditBot(c *fiber.Ctx) error {
 	return c.JSON(response{Message: "bot updated"})
 }
 
-func (b *Bot) AddBotCommands(c *fiber.Ctx) error {
-	newBot, fiberErr := b.findBot(c)
+func (h *handlers) AddBotCommands(c *fiber.Ctx) error {
+	newBot, fiberErr := h.findBot(c)
 	if fiberErr != nil {
 		return fiberErr
 	}
@@ -99,7 +105,7 @@ func (b *Bot) AddBotCommands(c *fiber.Ctx) error {
 		newBot.AddCommand(cmd.Alias, cmd.Description)
 	}
 
-	err := b.store.EditBot(newBot)
+	err := h.service.store.EditBot(newBot)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
@@ -107,8 +113,8 @@ func (b *Bot) AddBotCommands(c *fiber.Ctx) error {
 	return c.JSON(response{Message: "new commands added"})
 }
 
-func (b *Bot) RemoveBotCommand(c *fiber.Ctx) error {
-	newBot, fiberErr := b.findBot(c)
+func (h *handlers) RemoveBotCommand(c *fiber.Ctx) error {
+	newBot, fiberErr := h.findBot(c)
 	if fiberErr != nil {
 		return fiberErr
 	}
@@ -120,7 +126,7 @@ func (b *Bot) RemoveBotCommand(c *fiber.Ctx) error {
 
 	newBot.RemoveCommand(body.Alias)
 
-	err := b.store.EditBot(newBot)
+	err := h.service.store.EditBot(newBot)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
@@ -128,8 +134,8 @@ func (b *Bot) RemoveBotCommand(c *fiber.Ctx) error {
 	return c.JSON(response{Message: "command removed"})
 }
 
-func (b *Bot) GetBotCommands(c *fiber.Ctx) error {
-	newBot, fiberErr := b.findBot(c)
+func (h *handlers) GetBotCommands(c *fiber.Ctx) error {
+	newBot, fiberErr := h.findBot(c)
 	if fiberErr != nil {
 		return fiberErr
 	}
@@ -137,13 +143,13 @@ func (b *Bot) GetBotCommands(c *fiber.Ctx) error {
 	return c.JSON(newBot.GetCommands())
 }
 
-func (b *Bot) findBot(c *fiber.Ctx) (*bot.Bot, *fiber.Error) {
+func (h *handlers) findBot(c *fiber.Ctx) (*bot.Bot, *fiber.Error) {
 	botId := c.Params("id", "")
 	if botId == "" {
 		return nil, fiber.NewError(fiber.StatusBadRequest, "id is required")
 	}
 
-	foundBot, err := b.store.GetBot(botId)
+	foundBot, err := h.service.store.GetBot(botId)
 	if err != nil {
 		return nil, fiber.NewError(fiber.StatusNotFound, err.Error())
 	}

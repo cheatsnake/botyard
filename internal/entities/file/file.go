@@ -1,4 +1,4 @@
-package chat
+package file
 
 import "botyard/internal/tools/ulid"
 
@@ -8,7 +8,7 @@ type File struct {
 	MimeType string `json:"mimeType"`
 }
 
-func NewFile(path, mime string) *File {
+func New(path, mime string) *File {
 	return &File{
 		Id:       ulid.New(),
 		Path:     path,

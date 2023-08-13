@@ -1,11 +1,13 @@
-// Package memory represents a build-in in-memory database for development
-// and testing purposes. Don't use it in production!
+// Package memory represents a build-in in-memory database
+// for development and testing purposes. Don't use it in production!
 package memory
 
 import (
-	"botyard/internal/bot"
-	"botyard/internal/chat"
-	"botyard/internal/user"
+	"botyard/internal/entities/bot"
+	"botyard/internal/entities/chat"
+	"botyard/internal/entities/file"
+	"botyard/internal/entities/message"
+	"botyard/internal/entities/user"
 	"sync"
 )
 
@@ -13,8 +15,8 @@ type Storage struct {
 	bots     []*bot.Bot
 	users    []*user.User
 	chats    []*chat.Chat
-	messages []*chat.Message
-	files    []*chat.File
+	messages []*message.Message
+	files    []*file.File
 	mu       sync.Mutex
 }
 
@@ -23,7 +25,7 @@ func New() *Storage {
 		bots:     make([]*bot.Bot, 0, 10),
 		users:    make([]*user.User, 0, 10),
 		chats:    make([]*chat.Chat, 0, 10),
-		messages: make([]*chat.Message, 0, 10),
-		files:    make([]*chat.File, 0, 10),
+		messages: make([]*message.Message, 0, 10),
+		files:    make([]*file.File, 0, 10),
 	}
 }
