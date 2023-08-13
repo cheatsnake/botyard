@@ -27,29 +27,29 @@ func (b *Bot) CreateBot(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	botCopy := bot.New(body.Name)
+	newBot := bot.New(body.Name)
 
 	if body.Description != "" {
-		botCopy.SetDescription(body.Description)
+		newBot.SetDescription(body.Description)
 	}
 
 	if body.Avatar != "" {
-		botCopy.SetAvatar(body.Avatar)
+		newBot.SetAvatar(body.Avatar)
 	}
 
 	if len(body.Commands) != 0 {
 		for _, cmd := range body.Commands {
-			botCopy.AddCommand(cmd.Alias, cmd.Description)
+			newBot.AddCommand(cmd.Alias, cmd.Description)
 		}
 	}
 
-	b.store.AddBot(botCopy)
+	b.store.AddBot(newBot)
 
-	return c.Status(fiber.StatusCreated).JSON(botCopy)
+	return c.Status(fiber.StatusCreated).JSON(newBot)
 }
 
 func (b *Bot) EditBot(c *fiber.Ctx) error {
-	botCopy, fiberErr := b.findBot(c)
+	newBot, fiberErr := b.findBot(c)
 	if fiberErr != nil {
 		return fiberErr
 	}
@@ -65,18 +65,18 @@ func (b *Bot) EditBot(c *fiber.Ctx) error {
 	}
 
 	if body.Name != "" {
-		botCopy.SetName(body.Name)
+		newBot.SetName(body.Name)
 	}
 
 	if body.Description != "" {
-		botCopy.SetDescription(body.Description)
+		newBot.SetDescription(body.Description)
 	}
 
 	if body.Avatar != "" {
-		botCopy.SetAvatar(body.Avatar)
+		newBot.SetAvatar(body.Avatar)
 	}
 
-	err := b.store.EditBot(botCopy)
+	err := b.store.EditBot(newBot)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
@@ -85,7 +85,7 @@ func (b *Bot) EditBot(c *fiber.Ctx) error {
 }
 
 func (b *Bot) AddBotCommands(c *fiber.Ctx) error {
-	botCopy, fiberErr := b.findBot(c)
+	newBot, fiberErr := b.findBot(c)
 	if fiberErr != nil {
 		return fiberErr
 	}
@@ -96,10 +96,10 @@ func (b *Bot) AddBotCommands(c *fiber.Ctx) error {
 	}
 
 	for _, cmd := range body.Commands {
-		botCopy.AddCommand(cmd.Alias, cmd.Description)
+		newBot.AddCommand(cmd.Alias, cmd.Description)
 	}
 
-	err := b.store.EditBot(botCopy)
+	err := b.store.EditBot(newBot)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
@@ -108,7 +108,7 @@ func (b *Bot) AddBotCommands(c *fiber.Ctx) error {
 }
 
 func (b *Bot) RemoveBotCommand(c *fiber.Ctx) error {
-	botCopy, fiberErr := b.findBot(c)
+	newBot, fiberErr := b.findBot(c)
 	if fiberErr != nil {
 		return fiberErr
 	}
@@ -118,9 +118,9 @@ func (b *Bot) RemoveBotCommand(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	botCopy.RemoveCommand(body.Alias)
+	newBot.RemoveCommand(body.Alias)
 
-	err := b.store.EditBot(botCopy)
+	err := b.store.EditBot(newBot)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
@@ -129,12 +129,12 @@ func (b *Bot) RemoveBotCommand(c *fiber.Ctx) error {
 }
 
 func (b *Bot) GetBotCommands(c *fiber.Ctx) error {
-	botCopy, fiberErr := b.findBot(c)
+	newBot, fiberErr := b.findBot(c)
 	if fiberErr != nil {
 		return fiberErr
 	}
 
-	return c.JSON(botCopy.GetCommands())
+	return c.JSON(newBot.GetCommands())
 }
 
 func (b *Bot) findBot(c *fiber.Ctx) (*bot.Bot, *fiber.Error) {
@@ -143,10 +143,10 @@ func (b *Bot) findBot(c *fiber.Ctx) (*bot.Bot, *fiber.Error) {
 		return nil, fiber.NewError(fiber.StatusBadRequest, "id is required")
 	}
 
-	botCopy, err := b.store.GetBot(botId)
+	foundBot, err := b.store.GetBot(botId)
 	if err != nil {
 		return nil, fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
-	return botCopy, nil
+	return foundBot, nil
 }

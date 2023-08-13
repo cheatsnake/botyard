@@ -18,32 +18,32 @@ func NewUser(store storage.Storage) *User {
 	}
 }
 
-func (s *User) CreateUser(c *fiber.Ctx) error {
-	b := new(struct {
+func (u *User) CreateUser(c *fiber.Ctx) error {
+	body := new(struct {
 		user.User
 		Id struct{} `json:"-"`
 	})
 
-	if err := c.BodyParser(b); err != nil {
+	if err := c.BodyParser(body); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	user, err := user.New(b.Nickname)
+	newUser, err := user.New(body.Nickname)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	err = s.store.AddUser(user)
+	err = u.store.AddUser(newUser)
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	cookie := &fiber.Cookie{
 		Name:    "userId",
-		Value:   user.Id,
+		Value:   newUser.Id,
 		Expires: time.Now().Add(24 * time.Hour),
 	}
 
 	c.Cookie(cookie)
-	return c.Status(fiber.StatusCreated).JSON(user)
+	return c.Status(fiber.StatusCreated).JSON(newUser)
 }
