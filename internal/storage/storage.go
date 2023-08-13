@@ -19,6 +19,7 @@ type Storage interface {
 	AddChat(chat *chat.Chat) error
 	GetChat(id string) (*chat.Chat, error)
 	FindChat(userId, botId string) (*chat.Chat, error)
+	DeleteChat(id string) error
 
 	AddMessage(msg *message.Message) error
 	GetMessagesByChat(chatId string, page, limit int) (int, []*message.Message, error)

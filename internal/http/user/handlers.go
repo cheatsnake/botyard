@@ -1,43 +1,32 @@
 package user
 
 import (
-	"botyard/internal/entities/user"
-	"botyard/internal/storage"
+	"botyard/internal/http/helpers"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type handlers struct {
-	service *service
+	service *Service
 }
 
-func Handlers(s storage.Storage) *handlers {
+func Handlers(s *Service) *handlers {
 	return &handlers{
-		service: &service{
-			store: s,
-		},
+		service: s,
 	}
 }
 
-func (h *handlers) CreateUser(c *fiber.Ctx) error {
-	body := new(struct {
-		user.User
-		Id struct{} `json:"-"`
-	})
+func (h *handlers) Create(c *fiber.Ctx) error {
+	body := new(createBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
 	}
 
-	newUser, err := user.New(body.Nickname)
+	newUser, err := h.service.Create(body)
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	err = h.service.store.AddUser(newUser)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return err
 	}
 
 	cookie := &fiber.Cookie{

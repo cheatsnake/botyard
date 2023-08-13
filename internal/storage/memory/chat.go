@@ -2,6 +2,7 @@ package memory
 
 import (
 	"botyard/internal/entities/chat"
+	"botyard/pkg/extlib"
 	"errors"
 )
 
@@ -31,4 +32,15 @@ func (s *Storage) FindChat(userId, botId string) (*chat.Chat, error) {
 	}
 
 	return nil, errors.New("chat not found")
+}
+
+func (s *Storage) DeleteChat(id string) error {
+	for i, chat := range s.chats {
+		if chat.Id == id {
+			s.chats = extlib.SliceRemoveElement(s.chats, i)
+			return nil
+		}
+	}
+
+	return errors.New("chat not found")
 }

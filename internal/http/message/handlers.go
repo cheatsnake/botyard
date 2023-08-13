@@ -1,15 +1,11 @@
 package message
 
-import "botyard/internal/storage"
-
 type handlers struct {
-	service *service
+	service *Service
 }
 
-func Handlers(s storage.Storage) *handlers {
+func Handlers(s *Service) *handlers {
 	return &handlers{
-		service: &service{
-			store: s,
-		},
+		service: s,
 	}
 }

@@ -2,7 +2,7 @@ package file
 
 import (
 	"botyard/internal/entities/file"
-	"botyard/internal/storage"
+	"botyard/internal/http/helpers"
 	"botyard/internal/tools/ulid"
 	"botyard/pkg/extlib"
 	"errors"
@@ -14,14 +14,12 @@ import (
 )
 
 type handlers struct {
-	service *service
+	service *Service
 }
 
-func Handlers(s storage.Storage) *handlers {
+func Handlers(s *Service) *handlers {
 	return &handlers{
-		service: &service{
-			store: s,
-		},
+		service: s,
 	}
 }
 
@@ -29,13 +27,13 @@ func (h *handlers) LoadFiles(c *fiber.Ctx) error {
 
 	form, err := c.MultipartForm()
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
 	}
 
 	files := form.File[fileFieldName]
 
 	if len(files) > maxFilesAmount {
-		return fiber.NewError(
+		return helpers.NewHttpError(
 			fiber.StatusBadRequest,
 			fmt.Sprintf("too many files, max allowed amount is %d", maxFilesAmount),
 		)
@@ -47,13 +45,13 @@ func (h *handlers) LoadFiles(c *fiber.Ctx) error {
 	for _, f := range files {
 		filePath, contentType, err := fileSaver(c, f)
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+			return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
 		}
 
 		newFile := file.New(filePath, contentType)
 		err = h.service.store.AddFile(newFile)
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+			return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
 		}
 
 		result = append(result, newFile)

@@ -1,158 +1,103 @@
 package bot
 
 import (
-	"botyard/internal/entities/bot"
-	"botyard/internal/storage"
+	"botyard/internal/http/helpers"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type handlers struct {
-	service *service
+	service *Service
 }
 
-type response struct {
-	Message string `json:"message"`
-}
-
-func Handlers(s storage.Storage) *handlers {
+func Handlers(s *Service) *handlers {
 	return &handlers{
-		service: &service{
-			store: s,
-		},
+		service: s,
 	}
 }
 
-func (h *handlers) CreateBot(c *fiber.Ctx) error {
-	body := new(struct {
-		bot.Bot
-		Id struct{} `json:"-"`
-	})
-
+func (h *handlers) Create(c *fiber.Ctx) error {
+	body := new(createBody)
 	if err := c.BodyParser(body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
 	}
 
-	newBot := bot.New(body.Name)
-
-	if body.Description != "" {
-		newBot.SetDescription(body.Description)
+	newBot, err := h.service.Create(body)
+	if err != nil {
+		return err
 	}
-
-	if body.Avatar != "" {
-		newBot.SetAvatar(body.Avatar)
-	}
-
-	if len(body.Commands) != 0 {
-		for _, cmd := range body.Commands {
-			newBot.AddCommand(cmd.Alias, cmd.Description)
-		}
-	}
-
-	h.service.store.AddBot(newBot)
 
 	return c.Status(fiber.StatusCreated).JSON(newBot)
 }
 
-func (h *handlers) EditBot(c *fiber.Ctx) error {
-	newBot, fiberErr := h.findBot(c)
-	if fiberErr != nil {
-		return fiberErr
-	}
-
-	body := new(struct {
-		bot.Bot
-		Commands struct{} `json:"-"`
-		Id       struct{} `json:"-"`
-	})
-
-	if err := c.BodyParser(body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	if body.Name != "" {
-		newBot.SetName(body.Name)
-	}
-
-	if body.Description != "" {
-		newBot.SetDescription(body.Description)
-	}
-
-	if body.Avatar != "" {
-		newBot.SetAvatar(body.Avatar)
-	}
-
-	err := h.service.store.EditBot(newBot)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	return c.JSON(response{Message: "bot updated"})
-}
-
-func (h *handlers) AddBotCommands(c *fiber.Ctx) error {
-	newBot, fiberErr := h.findBot(c)
-	if fiberErr != nil {
-		return fiberErr
-	}
-
-	body := new(struct{ Commands []bot.Command })
-	if err := c.BodyParser(body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	for _, cmd := range body.Commands {
-		newBot.AddCommand(cmd.Alias, cmd.Description)
-	}
-
-	err := h.service.store.EditBot(newBot)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	return c.JSON(response{Message: "new commands added"})
-}
-
-func (h *handlers) RemoveBotCommand(c *fiber.Ctx) error {
-	newBot, fiberErr := h.findBot(c)
-	if fiberErr != nil {
-		return fiberErr
-	}
-
-	body := new(struct{ Alias string })
-	if err := c.BodyParser(body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	newBot.RemoveCommand(body.Alias)
-
-	err := h.service.store.EditBot(newBot)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	return c.JSON(response{Message: "command removed"})
-}
-
-func (h *handlers) GetBotCommands(c *fiber.Ctx) error {
-	newBot, fiberErr := h.findBot(c)
-	if fiberErr != nil {
-		return fiberErr
-	}
-
-	return c.JSON(newBot.GetCommands())
-}
-
-func (h *handlers) findBot(c *fiber.Ctx) (*bot.Bot, *fiber.Error) {
+func (h *handlers) Edit(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 	if botId == "" {
-		return nil, fiber.NewError(fiber.StatusBadRequest, "id is required")
+		return helpers.NewHttpError(fiber.StatusBadRequest, "id is required")
 	}
 
-	foundBot, err := h.service.store.GetBot(botId)
+	body := new(editBody)
+
+	if err := c.BodyParser(body); err != nil {
+		return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
+	}
+
+	editedBot, err := h.service.Edit(botId, body)
 	if err != nil {
-		return nil, fiber.NewError(fiber.StatusNotFound, err.Error())
+		return err
 	}
 
-	return foundBot, nil
+	return c.JSON(editedBot)
+}
+
+func (h *handlers) AddCommands(c *fiber.Ctx) error {
+	botId := c.Params("id", "")
+	if botId == "" {
+		return helpers.NewHttpError(fiber.StatusBadRequest, "id is required")
+	}
+
+	body := new(commandsBody)
+	if err := c.BodyParser(body); err != nil {
+		return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
+	}
+
+	err := h.service.AddCommands(botId, body)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(helpers.JsonMessage("commands added"))
+}
+
+func (h *handlers) RemoveCommand(c *fiber.Ctx) error {
+	botId := c.Params("id", "")
+	if botId == "" {
+		return helpers.NewHttpError(fiber.StatusBadRequest, "id is required")
+	}
+
+	body := new(commandBody)
+	if err := c.BodyParser(body); err != nil {
+		return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
+	}
+
+	err := h.service.RemoveCommand(botId, body)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(helpers.JsonMessage("command removed"))
+}
+
+func (h *handlers) GetCommands(c *fiber.Ctx) error {
+	botId := c.Params("id", "")
+	if botId == "" {
+		return helpers.NewHttpError(fiber.StatusBadRequest, "id is required")
+	}
+
+	commands, err := h.service.GetCommands(botId)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(commands)
 }

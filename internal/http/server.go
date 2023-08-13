@@ -3,6 +3,9 @@ package http
 import (
 	"botyard/internal/http/bot"
 	"botyard/internal/http/chat"
+	"botyard/internal/http/file"
+	"botyard/internal/http/helpers"
+	"botyard/internal/http/message"
 	"botyard/internal/http/middlewares"
 	"botyard/internal/http/user"
 	"botyard/internal/storage"
@@ -11,58 +14,60 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-const bodySizeLimit = 25 * 1024 * 1024 // 25 MB
-
-type Server struct {
+type server struct {
 	App   *fiber.App
 	store storage.Storage
 }
 
-func New(store storage.Storage) *Server {
-	return &Server{
+func New(store storage.Storage) *server {
+	return &server{
 		App: fiber.New(fiber.Config{
 			ErrorHandler: errHandler,
-			BodyLimit:    bodySizeLimit,
+			BodyLimit:    25 * 1024 * 1024, // 25 MB
 		}),
 		store: store,
 	}
 }
 
-func (s *Server) InitRoutes(prefix string) {
+func (s *server) InitRoutes(prefix string) {
 	api := s.App.Group(prefix)
 	middlwr := middlewares.New(s.store)
+	botServ := bot.NewService(s.store)
+	userServ := user.NewService(s.store)
+	fileServ := file.NewService(s.store)
+	msgServ := message.NewService(s.store, fileServ)
+	chatServ := chat.NewService(s.store, botServ, msgServ)
 
-	// Bot's handlers -----------------------------------
-	bot := bot.Handlers(s.store)
-	api.Get("/bot/:id", middlwr.Auth, bot.GetBotCommands)
-	api.Post("/bot", middlwr.Admin, bot.CreateBot)
-	api.Post("/bot/commands/:id", middlwr.Admin, bot.AddBotCommands)
-	api.Put("/bot/:id", middlwr.Admin, bot.EditBot)
-	api.Delete("/bot/command/:id", middlwr.Admin, bot.RemoveBotCommand)
-	// --------------------------------------------------
+	bot := bot.Handlers(botServ)
+	api.Get("/bot/:id", middlwr.Auth, bot.GetCommands)
+	api.Post("/bot", middlwr.Admin, bot.Create)
+	api.Post("/bot/commands/:id", middlwr.Admin, bot.AddCommands)
+	api.Put("/bot/:id", middlwr.Admin, bot.Edit)
+	api.Delete("/bot/command/:id", middlwr.Admin, bot.RemoveCommand)
 
-	// User's handlers ---------------
-	user := user.Handlers(s.store)
-	api.Post("/user", user.CreateUser)
-	// -------------------------------
+	user := user.Handlers(userServ)
+	api.Post("/user", user.Create)
 
-	// Chat's handlers --------------------------------------
-	chat := chat.Handlers(s.store)
-	api.Get("/chat/:id", middlwr.Auth, chat.GetMessages)
-	api.Post("/chat", middlwr.Auth, chat.CreateChat)
-	api.Post("/chat/message", middlwr.Auth, chat.SendMessage)
-	api.Delete("/chat/:id", middlwr.Auth, chat.ClearChat)
-	// ------------------------------------------------------
+	chat := chat.Handlers(chatServ)
+	api.Post("/chat", middlwr.Auth, chat.Create)
+	api.Delete("/chat/:id", middlwr.Auth, chat.Delete)
+
+	file := file.Handlers(fileServ)
+	api.Post("/files", middlwr.Auth, file.LoadFiles)
+
+	// message := message.Handlers(s.store)
+	// api.Get("/messages", middlwr.Auth, message.GetMessages)
+	// api.Post("/message", middlwr.Auth, message.SendMessage)
 }
 
 func errHandler(c *fiber.Ctx, err error) error {
 	code := fiber.StatusInternalServerError
 
-	var e *fiber.Error
+	var e *helpers.HttpError
 	if errors.As(err, &e) {
 		code = e.Code
 	}
 
 	c.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
-	return c.Status(code).JSON(struct{ Message string }{Message: err.Error()})
+	return c.Status(code).JSON(helpers.JsonMessage(err.Error()))
 }

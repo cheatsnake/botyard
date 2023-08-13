@@ -1,7 +1,18 @@
 package message
 
-import "botyard/internal/storage"
+import (
+	"botyard/internal/http/file"
+	"botyard/internal/storage"
+)
 
-type service struct {
+type Service struct {
+	file  *file.Service
 	store storage.Storage
+}
+
+func NewService(s storage.Storage, fs *file.Service) *Service {
+	return &Service{
+		file:  fs,
+		store: s,
+	}
 }
