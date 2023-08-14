@@ -2,6 +2,7 @@ package bot
 
 import (
 	"botyard/internal/http/helpers"
+	"botyard/pkg/extlib"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,7 +20,7 @@ func Handlers(s *Service) *handlers {
 func (h *handlers) Create(c *fiber.Ctx) error {
 	body := new(createBody)
 	if err := c.BodyParser(body); err != nil {
-		return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
+		return extlib.ErrorBadRequest(err.Error())
 	}
 
 	newBot, err := h.service.Create(body)
@@ -33,13 +34,13 @@ func (h *handlers) Create(c *fiber.Ctx) error {
 func (h *handlers) Edit(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 	if botId == "" {
-		return helpers.NewHttpError(fiber.StatusBadRequest, "id is required")
+		return extlib.ErrorBadRequest("id is required")
 	}
 
 	body := new(editBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
+		return extlib.ErrorBadRequest(err.Error())
 	}
 
 	editedBot, err := h.service.Edit(botId, body)
@@ -53,12 +54,12 @@ func (h *handlers) Edit(c *fiber.Ctx) error {
 func (h *handlers) AddCommands(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 	if botId == "" {
-		return helpers.NewHttpError(fiber.StatusBadRequest, "id is required")
+		return extlib.ErrorBadRequest("id is required")
 	}
 
 	body := new(commandsBody)
 	if err := c.BodyParser(body); err != nil {
-		return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
+		return extlib.ErrorBadRequest(err.Error())
 	}
 
 	err := h.service.AddCommands(botId, body)
@@ -72,12 +73,12 @@ func (h *handlers) AddCommands(c *fiber.Ctx) error {
 func (h *handlers) RemoveCommand(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 	if botId == "" {
-		return helpers.NewHttpError(fiber.StatusBadRequest, "id is required")
+		return extlib.ErrorBadRequest("id is required")
 	}
 
 	body := new(commandBody)
 	if err := c.BodyParser(body); err != nil {
-		return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
+		return extlib.StatusBadRequest(err.Error())
 	}
 
 	err := h.service.RemoveCommand(botId, body)
@@ -91,7 +92,7 @@ func (h *handlers) RemoveCommand(c *fiber.Ctx) error {
 func (h *handlers) GetCommands(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 	if botId == "" {
-		return helpers.NewHttpError(fiber.StatusBadRequest, "id is required")
+		return extlib.ErrorBadRequest("id is required")
 	}
 
 	commands, err := h.service.GetCommands(botId)

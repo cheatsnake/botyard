@@ -2,9 +2,8 @@ package bot
 
 import (
 	"botyard/internal/entities/bot"
-	"botyard/internal/http/helpers"
 	"botyard/internal/storage"
-	"net/http"
+	"botyard/pkg/extlib"
 )
 
 type Service struct {
@@ -34,7 +33,7 @@ func (s *Service) Create(body *createBody) (*bot.Bot, error) {
 
 	err := s.store.AddBot(newBot)
 	if err != nil {
-		return nil, helpers.NewHttpError(http.StatusBadRequest, err.Error())
+		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
 	return newBot, nil
@@ -43,7 +42,7 @@ func (s *Service) Create(body *createBody) (*bot.Bot, error) {
 func (s *Service) FindById(id string) (*bot.Bot, error) {
 	foundBot, err := s.store.GetBot(id)
 	if err != nil {
-		return nil, helpers.NewHttpError(http.StatusNotFound, err.Error())
+		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
 	return foundBot, nil
@@ -69,7 +68,7 @@ func (s *Service) Edit(id string, body *editBody) (*bot.Bot, error) {
 
 	err = s.store.EditBot(foundBot)
 	if err != nil {
-		return nil, helpers.NewHttpError(http.StatusBadRequest, err.Error())
+		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
 	return foundBot, nil
@@ -87,7 +86,7 @@ func (s *Service) AddCommands(id string, body *commandsBody) error {
 
 	err = s.store.EditBot(foundBot)
 	if err != nil {
-		return helpers.NewHttpError(http.StatusBadRequest, err.Error())
+		return extlib.ErrorBadRequest(err.Error())
 	}
 
 	return nil
@@ -101,12 +100,12 @@ func (s *Service) RemoveCommand(id string, body *commandBody) error {
 
 	err = newBot.RemoveCommand(body.Alias)
 	if err != nil {
-		return helpers.NewHttpError(http.StatusNotFound, err.Error())
+		return extlib.ErrorNotFound(err.Error())
 	}
 
 	err = s.store.EditBot(newBot)
 	if err != nil {
-		return helpers.NewHttpError(http.StatusBadRequest, err.Error())
+		return extlib.ErrorNotFound(err.Error())
 	}
 
 	return nil

@@ -2,6 +2,7 @@ package chat
 
 import (
 	"botyard/internal/http/helpers"
+	"botyard/pkg/extlib"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,7 +23,7 @@ func (h *handlers) Create(c *fiber.Ctx) error {
 	b := new(createBody)
 
 	if err := c.BodyParser(b); err != nil {
-		return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
+		return extlib.ErrorBadRequest(err.Error())
 	}
 
 	chat, err := h.service.Create(userId, b.BotId)
@@ -36,7 +37,7 @@ func (h *handlers) Create(c *fiber.Ctx) error {
 func (h *handlers) Delete(c *fiber.Ctx) error {
 	id := c.Params("id", "")
 	if id == "" {
-		return helpers.NewHttpError(fiber.StatusBadRequest, "id is required")
+		return extlib.ErrorBadRequest("id is required")
 	}
 
 	err := h.service.Delete(id)

@@ -3,10 +3,9 @@ package chat
 import (
 	"botyard/internal/entities/chat"
 	"botyard/internal/http/bot"
-	"botyard/internal/http/helpers"
 	"botyard/internal/http/message"
 	"botyard/internal/storage"
-	"net/http"
+	"botyard/pkg/extlib"
 )
 
 type Service struct {
@@ -32,7 +31,7 @@ func (s *Service) Create(userId, botId string) (*chat.Chat, error) {
 	chat := chat.New(userId, botId)
 	err = s.store.AddChat(chat)
 	if err != nil {
-		return nil, helpers.NewHttpError(http.StatusBadRequest, err.Error())
+		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
 	return chat, nil
@@ -41,7 +40,7 @@ func (s *Service) Create(userId, botId string) (*chat.Chat, error) {
 func (s *Service) Delete(id string) error {
 	err := s.store.DeleteChat(id)
 	if err != nil {
-		return helpers.NewHttpError(http.StatusNotFound, err.Error())
+		return extlib.ErrorBadRequest(err.Error())
 	}
 
 	return nil

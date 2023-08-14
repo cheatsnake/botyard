@@ -1,7 +1,7 @@
 package user
 
 import (
-	"botyard/internal/http/helpers"
+	"botyard/pkg/extlib"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,7 +21,7 @@ func (h *handlers) Create(c *fiber.Ctx) error {
 	body := new(createBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return helpers.NewHttpError(fiber.StatusBadRequest, err.Error())
+		return extlib.ErrorBadRequest(err.Error())
 	}
 
 	newUser, err := h.service.Create(body)

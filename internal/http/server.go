@@ -9,6 +9,7 @@ import (
 	"botyard/internal/http/middlewares"
 	"botyard/internal/http/user"
 	"botyard/internal/storage"
+	"botyard/pkg/extlib"
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
@@ -63,7 +64,7 @@ func (s *server) InitRoutes(prefix string) {
 func errHandler(c *fiber.Ctx, err error) error {
 	code := fiber.StatusInternalServerError
 
-	var e *helpers.HttpError
+	var e *extlib.ExtendedError
 	if errors.As(err, &e) {
 		code = e.Code
 	}
