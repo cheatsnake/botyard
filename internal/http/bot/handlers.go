@@ -78,7 +78,7 @@ func (h *handlers) RemoveCommand(c *fiber.Ctx) error {
 
 	body := new(commandBody)
 	if err := c.BodyParser(body); err != nil {
-		return extlib.StatusBadRequest(err.Error())
+		return extlib.ErrorBadRequest(err.Error())
 	}
 
 	err := h.service.RemoveCommand(botId, body)
