@@ -1,24 +1,25 @@
-package user
+package handlers
 
 import (
+	"botyard/internal/services"
 	"botyard/pkg/extlib"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type handlers struct {
-	service *Service
+type UserHandlers struct {
+	service *services.UserService
 }
 
-func Handlers(s *Service) *handlers {
-	return &handlers{
+func NewUserHandlers(s *services.UserService) *UserHandlers {
+	return &UserHandlers{
 		service: s,
 	}
 }
 
-func (h *handlers) Create(c *fiber.Ctx) error {
-	body := new(createBody)
+func (h *UserHandlers) Create(c *fiber.Ctx) error {
+	body := new(services.UserCreateBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return extlib.ErrorBadRequest(err.Error())

@@ -1,7 +1,8 @@
-package file
+package handlers
 
 import (
 	"botyard/internal/entities/file"
+	"botyard/internal/services"
 	"botyard/internal/tools/ulid"
 	"botyard/pkg/extlib"
 	"errors"
@@ -12,17 +13,47 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type handlers struct {
-	service *Service
+const filesFolder = "stock"
+const maxFilesAmount = 10
+const fileFieldName = "file"
+
+var maxFileSizes = map[string]int64{
+	"images": 2 * 1024 * 1024,  // 2 MB
+	"audios": 5 * 1024 * 1024,  // 5 MB
+	"videos": 25 * 1024 * 1024, // 25 MB
+	"files":  10 * 1024 * 1024, // 10 MB
 }
 
-func Handlers(s *Service) *handlers {
-	return &handlers{
+var knownContentTypes = map[string]string{
+	"image/gif":     "images",
+	"image/jpeg":    "images",
+	"image/png":     "images",
+	"image/svg+xml": "images",
+	"image/webp":    "images",
+
+	"video/mp4":       "videos",
+	"video/webm":      "videos",
+	"video/ogg":       "videos",
+	"video/quicktime": "videos",
+	"video/x-flv":     "videos",
+
+	"audio/mpeg": "audios",
+	"audio/ogg":  "audios",
+	"audio/wav":  "audios",
+	"audio/aac":  "audios",
+}
+
+type FileHandlers struct {
+	service *services.FileService
+}
+
+func NewFileHandlers(s *services.FileService) *FileHandlers {
+	return &FileHandlers{
 		service: s,
 	}
 }
 
-func (h *handlers) LoadFiles(c *fiber.Ctx) error {
+func (h *FileHandlers) LoadFiles(c *fiber.Ctx) error {
 
 	form, err := c.MultipartForm()
 	if err != nil {
@@ -47,7 +78,7 @@ func (h *handlers) LoadFiles(c *fiber.Ctx) error {
 		}
 
 		newFile := file.New(filePath, contentType)
-		err = h.service.store.AddFile(newFile)
+		err = h.service.AddFile(newFile)
 		if err != nil {
 			return extlib.ErrorBadRequest(err.Error())
 		}

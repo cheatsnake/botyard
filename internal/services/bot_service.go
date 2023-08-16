@@ -1,4 +1,4 @@
-package bot
+package services
 
 import (
 	"botyard/internal/entities/bot"
@@ -6,17 +6,36 @@ import (
 	"botyard/pkg/extlib"
 )
 
-type Service struct {
-	store storage.Storage
+type BotService struct {
+	store storage.BotStore
 }
 
-func NewService(s storage.Storage) *Service {
-	return &Service{
+type BotCreateBody struct {
+	bot.Bot
+	Id struct{} `json:"-"`
+}
+
+type BotEditBody struct {
+	bot.Bot
+	Commands struct{} `json:"-"`
+	Id       struct{} `json:"-"`
+}
+
+type BotCommandsBody struct {
+	Commands []bot.Command
+}
+
+type BotCommandBody struct {
+	Alias string
+}
+
+func NewBotService(s storage.BotStore) *BotService {
+	return &BotService{
 		store: s,
 	}
 }
 
-func (s *Service) Create(body *createBody) (*bot.Bot, error) {
+func (s *BotService) Create(body *BotCreateBody) (*bot.Bot, error) {
 	newBot := bot.New(body.Name)
 
 	if body.Description != "" {
@@ -39,7 +58,7 @@ func (s *Service) Create(body *createBody) (*bot.Bot, error) {
 	return newBot, nil
 }
 
-func (s *Service) FindById(id string) (*bot.Bot, error) {
+func (s *BotService) FindById(id string) (*bot.Bot, error) {
 	foundBot, err := s.store.GetBot(id)
 	if err != nil {
 		return nil, extlib.ErrorBadRequest(err.Error())
@@ -48,7 +67,7 @@ func (s *Service) FindById(id string) (*bot.Bot, error) {
 	return foundBot, nil
 }
 
-func (s *Service) Edit(id string, body *editBody) (*bot.Bot, error) {
+func (s *BotService) Edit(id string, body *BotEditBody) (*bot.Bot, error) {
 	foundBot, err := s.FindById(id)
 	if err != nil {
 		return nil, err
@@ -74,7 +93,7 @@ func (s *Service) Edit(id string, body *editBody) (*bot.Bot, error) {
 	return foundBot, nil
 }
 
-func (s *Service) AddCommands(id string, body *commandsBody) error {
+func (s *BotService) AddCommands(id string, body *BotCommandsBody) error {
 	foundBot, err := s.FindById(id)
 	if err != nil {
 		return err
@@ -92,7 +111,7 @@ func (s *Service) AddCommands(id string, body *commandsBody) error {
 	return nil
 }
 
-func (s *Service) RemoveCommand(id string, body *commandBody) error {
+func (s *BotService) RemoveCommand(id string, body *BotCommandBody) error {
 	newBot, err := s.FindById(id)
 	if err != nil {
 		return err
@@ -111,7 +130,7 @@ func (s *Service) RemoveCommand(id string, body *commandBody) error {
 	return nil
 }
 
-func (s *Service) GetCommands(id string) ([]bot.Command, error) {
+func (s *BotService) GetCommands(id string) ([]bot.Command, error) {
 	foundBot, err := s.FindById(id)
 	if err != nil {
 		return nil, err

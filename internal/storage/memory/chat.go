@@ -24,14 +24,16 @@ func (s *Storage) GetChat(id string) (*chat.Chat, error) {
 	return nil, errors.New("chat not found")
 }
 
-func (s *Storage) FindChat(userId, botId string) (*chat.Chat, error) {
+func (s *Storage) GetChats(userId, botId string) ([]*chat.Chat, error) {
+	var chats []*chat.Chat
+
 	for _, chat := range s.chats {
 		if chat.UserId == userId && chat.BotId == botId {
-			return chat, nil
+			chats = append(chats, chat)
 		}
 	}
 
-	return nil, errors.New("chat not found")
+	return chats, nil
 }
 
 func (s *Storage) DeleteChat(id string) error {

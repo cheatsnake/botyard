@@ -1,32 +1,33 @@
-package chat
+package handlers
 
 import (
 	"botyard/internal/http/helpers"
+	"botyard/internal/services"
 	"botyard/pkg/extlib"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type handlers struct {
-	service *Service
+type ChatHandlers struct {
+	service *services.ChatService
 }
 
-func Handlers(s *Service) *handlers {
-	return &handlers{
+func NewChatHandlers(s *services.ChatService) *ChatHandlers {
+	return &ChatHandlers{
 		service: s,
 	}
 }
 
-func (h *handlers) Create(c *fiber.Ctx) error {
+func (h *ChatHandlers) Create(c *fiber.Ctx) error {
 	userId := fmt.Sprintf("%v", c.Locals("userId"))
-	b := new(createBody)
+	body := new(services.ChatCreateBody)
 
-	if err := c.BodyParser(b); err != nil {
+	if err := c.BodyParser(body); err != nil {
 		return extlib.ErrorBadRequest(err.Error())
 	}
 
-	chat, err := h.service.Create(userId, b.BotId)
+	chat, err := h.service.Create(userId, body)
 	if err != nil {
 		return err
 	}
@@ -34,7 +35,7 @@ func (h *handlers) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(chat)
 }
 
-func (h *handlers) Delete(c *fiber.Ctx) error {
+func (h *ChatHandlers) Delete(c *fiber.Ctx) error {
 	id := c.Params("id", "")
 	if id == "" {
 		return extlib.ErrorBadRequest("id is required")
