@@ -18,9 +18,8 @@ type CreateMessageBody struct {
 	Timestamp struct{} `json:"-"`
 }
 
-type MessageWithFiles struct {
+type PreparedMessage struct {
 	Id        string       `json:"id"`
-	ChatId    string       `json:"chatId"`
 	SenderId  string       `json:"senderId"`
 	Body      string       `json:"body"`
 	Files     []*file.File `json:"files,omitempty"`
@@ -28,10 +27,11 @@ type MessageWithFiles struct {
 }
 
 type MessagesPage struct {
-	Messages []*MessageWithFiles `json:"messages"`
-	Total    int                 `json:"total"`
-	Page     int                 `json:"page"`
-	Limit    int                 `json:"limit"`
+	ChatId   string             `json:"chatId"`
+	Messages []*PreparedMessage `json:"messages"`
+	Total    int                `json:"total"`
+	Page     int                `json:"page"`
+	Limit    int                `json:"limit"`
 }
 
 func NewMessageService(s storage.MessageStore, fs *FileService) *MessageService {
@@ -57,7 +57,7 @@ func (ms *MessageService) GetMessagesByChat(chatId string, page, limit int) (*Me
 		return nil, err
 	}
 
-	msgsWithFiles := make([]*MessageWithFiles, len(msgs))
+	msgsWithFiles := make([]*PreparedMessage, len(msgs))
 
 	for i, msg := range msgs {
 		var files []*file.File
@@ -69,9 +69,8 @@ func (ms *MessageService) GetMessagesByChat(chatId string, page, limit int) (*Me
 			}
 		}
 
-		msgsWithFiles[i] = &MessageWithFiles{
+		msgsWithFiles[i] = &PreparedMessage{
 			Id:        msg.Id,
-			ChatId:    msg.ChatId,
 			SenderId:  msg.SenderId,
 			Body:      msg.Body,
 			Files:     files,
@@ -80,6 +79,7 @@ func (ms *MessageService) GetMessagesByChat(chatId string, page, limit int) (*Me
 	}
 
 	return &MessagesPage{
+		ChatId:   chatId,
 		Messages: msgsWithFiles,
 		Total:    total,
 		Page:     page,
