@@ -29,9 +29,9 @@ func (s *Storage) GetFile(id string) (*file.File, error) {
 func (s *Storage) GetFiles(ids []string) ([]*file.File, error) {
 	files := make([]*file.File, 0, len(ids))
 
-	for _, file := range s.files {
-		if slices.Contains(ids, file.Id) {
-			files = append(files, file)
+	for _, f := range s.files {
+		if slices.Contains(ids, f.Id) {
+			files = append(files, f)
 		}
 	}
 

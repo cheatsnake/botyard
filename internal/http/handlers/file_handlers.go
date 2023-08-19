@@ -53,7 +53,7 @@ func NewFileHandlers(s *services.FileService) *FileHandlers {
 	}
 }
 
-func (h *FileHandlers) LoadFiles(c *fiber.Ctx) error {
+func (h *FileHandlers) LoadMany(c *fiber.Ctx) error {
 
 	form, err := c.MultipartForm()
 	if err != nil {

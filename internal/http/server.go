@@ -29,31 +29,33 @@ func New(store storage.Storage) *Server {
 
 func (s *Server) InitRoutes(prefix string) {
 	api := s.App.Group(prefix)
-	middlwr := middlewares.New(s.store)
 
-	bot := handlers.NewBotHandlers(services.NewBotService(s.store))
-	api.Get("/bot/:id", middlwr.Auth, bot.GetCommands)
-	api.Post("/bot", middlwr.Admin, bot.Create)
-	api.Post("/bot/commands/:id", middlwr.Admin, bot.AddCommands)
-	api.Put("/bot/:id", middlwr.Admin, bot.Edit)
-	api.Delete("/bot/command/:id", middlwr.Admin, bot.RemoveCommand)
+	botService := services.NewBotService(s.store)
+	bot := handlers.NewBotHandlers(botService)
+	api.Get("/bot/:id", middlewares.Auth, bot.GetCommands)
+	api.Post("/bot", middlewares.Admin, bot.Create)
+	api.Post("/bot/commands/:id", middlewares.Admin, bot.AddCommands)
+	api.Put("/bot/:id", middlewares.Admin, bot.Edit)
+	api.Delete("/bot/command/:id", middlewares.Admin, bot.RemoveCommand)
 
-	user := handlers.NewUserHandlers(services.NewUserService(s.store))
+	userService := services.NewUserService(s.store)
+	user := handlers.NewUserHandlers(userService)
 	api.Post("/user", user.Create)
 
 	fileService := services.NewFileService(s.store)
 	file := handlers.NewFileHandlers(fileService)
-	api.Post("/files", middlwr.Auth, file.LoadFiles)
+	api.Post("/files", middlewares.Auth, file.LoadMany)
 
 	messageService := services.NewMessageService(s.store, fileService)
-	// message := handlers.NewMessageHandlers(messageService)
-	// api.Get("/messages", middlwr.Auth, message.GetMessages)
-	// api.Post("/message", middlwr.Auth, message.SendMessage)
+	message := handlers.NewMessageHandlers(messageService)
+	api.Get("/messages/:chatId", middlewares.Auth, message.GetByChat)
+	api.Post("/message", middlewares.Auth, message.Send)
 
-	chat := handlers.NewChatHandlers(services.NewChatService(s.store, messageService))
-	// api.Get("/chats", middlwr.Auth, chat.GetChats)
-	api.Post("/chat", middlwr.Auth, chat.Create)
-	api.Delete("/chat/:id", middlwr.Auth, chat.Delete)
+	chatService := services.NewChatService(s.store, messageService)
+	chat := handlers.NewChatHandlers(chatService)
+	api.Get("/chats/:botId", middlewares.Auth, chat.GetMany)
+	api.Post("/chat", middlewares.Auth, chat.Create)
+	api.Delete("/chat/:id", middlewares.Auth, chat.Delete)
 }
 
 func errHandler(c *fiber.Ctx, err error) error {

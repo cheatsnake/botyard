@@ -34,7 +34,7 @@ func main() {
 func initEnv() {
 	err := godotenv.Load()
 	if err != nil {
-		panic(fmt.Sprintf("Error loading .env file: %s", err.Error()))
+		panic(fmt.Sprintf("Error parsing .env file: %s", err.Error()))
 	}
 }
 

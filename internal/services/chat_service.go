@@ -11,10 +11,6 @@ type ChatService struct {
 	store storage.ChatStore
 }
 
-type ChatCreateBody struct {
-	BotId string `json:"botId"`
-}
-
 func NewChatService(s storage.ChatStore, ms *MessageService) *ChatService {
 	return &ChatService{
 		msg:   ms,
@@ -22,14 +18,23 @@ func NewChatService(s storage.ChatStore, ms *MessageService) *ChatService {
 	}
 }
 
-func (s *ChatService) Create(userId string, body *ChatCreateBody) (*chat.Chat, error) {
-	chat := chat.New(userId, body.BotId)
+func (s *ChatService) Create(userId string, botId string) (*chat.Chat, error) {
+	chat := chat.New(userId, botId)
 	err := s.store.AddChat(chat)
 	if err != nil {
 		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
 	return chat, nil
+}
+
+func (s *ChatService) GetByBot(userId string, botId string) ([]*chat.Chat, error) {
+	chats, err := s.store.GetChats(userId, botId)
+	if err != nil {
+		return nil, extlib.ErrorBadRequest(err.Error())
+	}
+
+	return chats, nil
 }
 
 func (s *ChatService) Delete(id string) error {

@@ -21,18 +21,32 @@ func NewChatHandlers(s *services.ChatService) *ChatHandlers {
 
 func (h *ChatHandlers) Create(c *fiber.Ctx) error {
 	userId := fmt.Sprintf("%v", c.Locals("userId"))
-	body := new(services.ChatCreateBody)
+	body := new(struct {
+		BotId string `json:"botId"`
+	})
 
 	if err := c.BodyParser(body); err != nil {
 		return extlib.ErrorBadRequest(err.Error())
 	}
 
-	chat, err := h.service.Create(userId, body)
+	chat, err := h.service.Create(userId, body.BotId)
 	if err != nil {
 		return err
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(chat)
+}
+
+func (h *ChatHandlers) GetMany(c *fiber.Ctx) error {
+	userId := fmt.Sprintf("%v", c.Locals("userId"))
+	botId := c.Params("botId", "")
+
+	chats, err := h.service.GetByBot(userId, botId)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(chats)
 }
 
 func (h *ChatHandlers) Delete(c *fiber.Ctx) error {
