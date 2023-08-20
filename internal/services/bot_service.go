@@ -15,6 +15,10 @@ type BotCreateBody struct {
 	Id struct{} `json:"-"`
 }
 
+type BotCreateResult struct {
+	Key string `json:"key"`
+}
+
 type BotEditBody struct {
 	bot.Bot
 	Commands struct{} `json:"-"`
@@ -22,7 +26,7 @@ type BotEditBody struct {
 }
 
 type BotCommandsBody struct {
-	Commands []bot.Command
+	Commands []bot.Command `json:"commands"`
 }
 
 type BotCommandBody struct {
@@ -35,7 +39,7 @@ func NewBotService(s storage.BotStore) *BotService {
 	}
 }
 
-func (s *BotService) Create(body *BotCreateBody) (*bot.Bot, error) {
+func (s *BotService) Create(body *BotCreateBody) (*BotCreateResult, error) {
 	newBot := bot.New(body.Name)
 
 	if body.Description != "" {
@@ -55,7 +59,14 @@ func (s *BotService) Create(body *BotCreateBody) (*bot.Bot, error) {
 		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
-	return newBot, nil
+	key, err := s.GenerateBotKey(newBot.Id)
+	if err != nil {
+		return nil, extlib.ErrorBadRequest(err.Error())
+	}
+
+	return &BotCreateResult{
+		Key: newBot.Id + ":" + key,
+	}, nil
 }
 
 func (s *BotService) FindById(id string) (*bot.Bot, error) {
@@ -137,4 +148,39 @@ func (s *BotService) GetCommands(id string) ([]bot.Command, error) {
 	}
 
 	return foundBot.GetCommands(), nil
+}
+
+func (s *BotService) GenerateBotKey(id string) (string, error) {
+	key, err := extlib.RandomHexString(16)
+	if err != nil {
+		return "", extlib.ErrorBadRequest("bot's key generation failed: " + err.Error())
+	}
+
+	err = s.store.SaveBotKeyData(&bot.BotKeyData{
+		BotId: id,
+		Key:   key,
+	})
+
+	if err != nil {
+		return "", extlib.ErrorBadRequest(err.Error())
+	}
+
+	return key, nil
+}
+
+func (s *BotService) VerifyBotKey(id, key string) error {
+	bkd, err := s.store.GetBotKeyData(id)
+	if err != nil {
+		return nil
+	}
+
+	if bkd == nil {
+		return extlib.ErrorNotFound("bot's key data not found")
+	}
+
+	if bkd.Key != key {
+		return extlib.ErrorForbidden("invalid bot's key")
+	}
+
+	return nil
 }

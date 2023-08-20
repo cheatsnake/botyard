@@ -4,6 +4,7 @@ import (
 	"botyard/internal/http/helpers"
 	"botyard/internal/services"
 	"botyard/pkg/extlib"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -24,16 +25,16 @@ func (h *BotHandlers) Create(c *fiber.Ctx) error {
 		return extlib.ErrorBadRequest(err.Error())
 	}
 
-	newBot, err := h.service.Create(body)
+	result, err := h.service.Create(body)
 	if err != nil {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(newBot)
+	return c.Status(fiber.StatusCreated).JSON(result)
 }
 
 func (h *BotHandlers) Edit(c *fiber.Ctx) error {
-	botId := c.Params("id", "")
+	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
 		return extlib.ErrorBadRequest("id is required")
 	}
@@ -53,7 +54,7 @@ func (h *BotHandlers) Edit(c *fiber.Ctx) error {
 }
 
 func (h *BotHandlers) AddCommands(c *fiber.Ctx) error {
-	botId := c.Params("id", "")
+	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
 		return extlib.ErrorBadRequest("id is required")
 	}
@@ -72,7 +73,7 @@ func (h *BotHandlers) AddCommands(c *fiber.Ctx) error {
 }
 
 func (h *BotHandlers) RemoveCommand(c *fiber.Ctx) error {
-	botId := c.Params("id", "")
+	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
 		return extlib.ErrorBadRequest("id is required")
 	}

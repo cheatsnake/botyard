@@ -13,6 +13,8 @@ type BotStore interface {
 	EditBot(bot *bot.Bot) error
 	GetBot(id string) (*bot.Bot, error)
 	DeleteBot(id string) error
+	GetBotKeyData(id string) (*bot.BotKeyData, error)
+	SaveBotKeyData(bkd *bot.BotKeyData) error
 }
 
 type UserStore interface {

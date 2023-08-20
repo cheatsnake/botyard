@@ -43,3 +43,28 @@ func (s *Storage) DeleteBot(id string) error {
 
 	return errors.New("bot not found")
 }
+
+func (s *Storage) GetBotKeyData(id string) (*bot.BotKeyData, error) {
+	for _, bkd := range s.botKeysData {
+		if bkd.BotId == id {
+			return bkd, nil
+		}
+	}
+
+	return nil, nil
+}
+
+func (s *Storage) SaveBotKeyData(newBkd *bot.BotKeyData) error {
+	bkd, err := s.GetBotKeyData(newBkd.BotId)
+	if err != nil {
+		return err
+	}
+
+	if bkd != nil {
+		bkd.Key = newBkd.Key
+		return nil
+	}
+
+	s.botKeysData = append(s.botKeysData, newBkd)
+	return nil
+}

@@ -21,6 +21,11 @@ type Command struct {
 	Description string `json:"description"`
 }
 
+type BotKeyData struct {
+	BotId string
+	Key   string
+}
+
 func New(name string) *Bot {
 	return &Bot{
 		Id:   ulid.New(),

@@ -31,12 +31,15 @@ func (s *Server) InitRoutes(prefix string) {
 	api := s.App.Group(prefix)
 
 	botService := services.NewBotService(s.store)
+	botMiddlewares := middlewares.NewBotMiddlewares(botService)
 	bot := handlers.NewBotHandlers(botService)
-	api.Get("/bot/:id", middlewares.Auth, bot.GetCommands)
-	api.Post("/bot", middlewares.Admin, bot.Create)
-	api.Post("/bot/commands/:id", middlewares.Admin, bot.AddCommands)
-	api.Put("/bot/:id", middlewares.Admin, bot.Edit)
-	api.Delete("/bot/command/:id", middlewares.Admin, bot.RemoveCommand)
+	api.Post("/bot", middlewares.AdminAuth, bot.Create)
+	api.Put("/bot", botMiddlewares.Auth, bot.Edit)
+	api.Delete("/bot", botMiddlewares.Auth, bot.RemoveCommand)
+
+	api.Get("/bot/commands/:id", middlewares.UserAuth, bot.GetCommands)
+	api.Post("/bot/commands", botMiddlewares.Auth, bot.AddCommands)
+	api.Delete("/bot/command", botMiddlewares.Auth, bot.RemoveCommand)
 
 	userService := services.NewUserService(s.store)
 	user := handlers.NewUserHandlers(userService)
@@ -44,18 +47,18 @@ func (s *Server) InitRoutes(prefix string) {
 
 	fileService := services.NewFileService(s.store)
 	file := handlers.NewFileHandlers(fileService)
-	api.Post("/files", middlewares.Auth, file.LoadMany)
+	api.Post("/files", middlewares.UserAuth, file.LoadMany)
 
 	messageService := services.NewMessageService(s.store, fileService)
 	message := handlers.NewMessageHandlers(messageService)
-	api.Get("/messages/:chatId", middlewares.Auth, message.GetByChat)
-	api.Post("/message", middlewares.Auth, message.Send)
+	api.Get("/messages/:chatId", middlewares.UserAuth, message.GetByChat)
+	api.Post("/message", middlewares.UserAuth, message.Send)
 
 	chatService := services.NewChatService(s.store, messageService)
 	chat := handlers.NewChatHandlers(chatService)
-	api.Get("/chats/:botId", middlewares.Auth, chat.GetMany)
-	api.Post("/chat", middlewares.Auth, chat.Create)
-	api.Delete("/chat/:id", middlewares.Auth, chat.Delete)
+	api.Get("/chats/:botId", middlewares.UserAuth, chat.GetMany)
+	api.Post("/chat", middlewares.UserAuth, chat.Create)
+	api.Delete("/chat/:id", middlewares.UserAuth, chat.Delete)
 }
 
 func errHandler(c *fiber.Ctx, err error) error {
