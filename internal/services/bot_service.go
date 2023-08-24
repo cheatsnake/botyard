@@ -3,6 +3,7 @@ package services
 import (
 	"botyard/internal/entities/bot"
 	"botyard/internal/storage"
+	"botyard/internal/tools/ulid"
 	"botyard/pkg/extlib"
 )
 
@@ -151,9 +152,9 @@ func (s *BotService) GetCommands(id string) ([]bot.Command, error) {
 }
 
 func (s *BotService) GenerateBotKey(id string) (string, error) {
-	key, err := extlib.RandomHexString(16)
+	key, err := extlib.RandomToken(ulid.Length)
 	if err != nil {
-		return "", extlib.ErrorBadRequest("bot's key generation failed: " + err.Error())
+		return "", extlib.ErrorBadRequest("bot key generation failed: " + err.Error())
 	}
 
 	err = s.store.SaveBotKeyData(&bot.BotKeyData{
@@ -174,12 +175,8 @@ func (s *BotService) VerifyBotKey(id, key string) error {
 		return nil
 	}
 
-	if bkd == nil {
-		return extlib.ErrorNotFound("bot's key data not found")
-	}
-
-	if bkd.Key != key {
-		return extlib.ErrorForbidden("invalid bot's key")
+	if bkd == nil || bkd.Key != key {
+		return extlib.ErrorForbidden("invalid bot key")
 	}
 
 	return nil
