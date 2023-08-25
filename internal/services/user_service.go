@@ -15,7 +15,7 @@ type UserCreateBody struct {
 	Id struct{} `json:"-"`
 }
 
-func NewUserService(s storage.Storage) *UserService {
+func NewUserService(s storage.UserStore) *UserService {
 	return &UserService{
 		store: s,
 	}
