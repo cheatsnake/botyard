@@ -13,7 +13,11 @@ func TestNew(t *testing.T) {
 	testFileIds := []string{ulid.New(), ulid.New()}
 
 	t.Run("check id", func(t *testing.T) {
-		testMsg := New(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		if err != nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
+		}
+
 		got := ulid.Verify(testMsg.Id)
 		if got != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, nil)
@@ -21,7 +25,11 @@ func TestNew(t *testing.T) {
 	})
 
 	t.Run("check chat id", func(t *testing.T) {
-		testMsg := New(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		if err != nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
+		}
+
 		expect := testChatId
 		got := testMsg.ChatId
 		if got != expect {
@@ -35,7 +43,11 @@ func TestNew(t *testing.T) {
 	})
 
 	t.Run("check sender id", func(t *testing.T) {
-		testMsg := New(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		if err != nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
+		}
+
 		expect := testSenderId
 		got := testMsg.SenderId
 		if got != expect {
@@ -49,7 +61,11 @@ func TestNew(t *testing.T) {
 	})
 
 	t.Run("check body", func(t *testing.T) {
-		testMsg := New(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		if err != nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
+		}
+
 		expect := testBody
 		got := testMsg.Body
 		if got != expect {
@@ -58,7 +74,10 @@ func TestNew(t *testing.T) {
 	})
 
 	t.Run("check file ids", func(t *testing.T) {
-		testMsg := New(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		if err != nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
+		}
 
 		for i, fileId := range testFileIds {
 			expect := fileId
@@ -78,7 +97,11 @@ func TestNew(t *testing.T) {
 
 	t.Run("check timestamp", func(t *testing.T) {
 		testTimestamp := time.Now()
-		testMsg := New(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		if err != nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
+		}
+
 		got := testTimestamp.Before(testMsg.Timestamp)
 
 		if !got {

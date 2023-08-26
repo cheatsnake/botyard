@@ -14,7 +14,27 @@ type Message struct {
 	Timestamp time.Time `json:"timestamp"`
 }
 
-func New(chatId, senderId, body string, fileIds []string) *Message {
+func New(chatId, senderId, body string, fileIds []string) (*Message, error) {
+	err := ulid.Verify(chatId)
+	if err != nil {
+		return nil, err
+	}
+
+	err = ulid.Verify(senderId)
+	if err != nil {
+		return nil, err
+	}
+
+	err = validateBody(body)
+	if err != nil {
+		return nil, err
+	}
+
+	err = validateFileIds(fileIds)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Message{
 		Id:        ulid.New(),
 		ChatId:    chatId,
@@ -22,5 +42,5 @@ func New(chatId, senderId, body string, fileIds []string) *Message {
 		Body:      body,
 		FileIds:   fileIds,
 		Timestamp: time.Now(),
-	}
+	}, nil
 }
