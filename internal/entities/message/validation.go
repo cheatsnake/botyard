@@ -5,6 +5,10 @@ import (
 )
 
 func validateBody(body string) error {
+	if len(body) < 1 {
+		return errors.New(errBodyIsEmpty)
+	}
+
 	if len(body) > maxBodyLen {
 		return errors.New(errBodyTooLong)
 	}

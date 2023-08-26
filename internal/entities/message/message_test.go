@@ -33,6 +33,19 @@ func TestNew(t *testing.T) {
 		}
 	})
 
+	t.Run("check empty body", func(t *testing.T) {
+		expect := errBodyIsEmpty
+		testMsg, err := New(testChatId, testSenderId, "", testFileIds)
+		if err == nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, nil, expect)
+		}
+
+		got := err.Error()
+		if got != expect {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
+		}
+	})
+
 	t.Run("check too long body", func(t *testing.T) {
 		bodies := []string{strings.Repeat("a", maxBodyLen+1), strings.Repeat("B", maxBodyLen*2)}
 		for _, b := range bodies {
