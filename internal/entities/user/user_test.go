@@ -15,7 +15,7 @@ func TestNew(t *testing.T) {
 		for _, n := range correctNicknames {
 			user, err := New(n)
 			if err != nil {
-				t.Errorf("%#v got: %s, expect: %v", user, err.Error(), nil)
+				t.Errorf("%#v\ngot: %s,\nexpect: %v\n", user, err.Error(), nil)
 			}
 		}
 	})
@@ -25,7 +25,7 @@ func TestNew(t *testing.T) {
 		for _, n := range incorrectNicknames {
 			user, err := New(n)
 			if err.Error() != expect {
-				t.Errorf("%#v got: %s, expect: %v", user, err.Error(), expect)
+				t.Errorf("%#v\ngot: %s,\nexpect: %v\n", user, err.Error(), expect)
 			}
 		}
 	})
@@ -35,7 +35,7 @@ func TestNew(t *testing.T) {
 		for _, n := range tooShortNicknames {
 			user, err := New(n)
 			if err.Error() != expect {
-				t.Errorf("%#v got: %s, expect: %s", user, err.Error(), expect)
+				t.Errorf("%#v\ngot: %s,\nexpect: %s\n", user, err.Error(), expect)
 			}
 		}
 	})
@@ -45,7 +45,7 @@ func TestNew(t *testing.T) {
 		for _, n := range tooLongNicknames {
 			user, err := New(n)
 			if err.Error() != expect {
-				t.Errorf("%#v got: %s, expect: %s", user, err.Error(), expect)
+				t.Errorf("%#v\ngot: %s,\nexpect: %s\n", user, err.Error(), expect)
 			}
 		}
 	})

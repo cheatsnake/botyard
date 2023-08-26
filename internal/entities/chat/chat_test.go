@@ -17,7 +17,7 @@ func TestChat(t *testing.T) {
 		got := len(testChat.Id)
 
 		if got != expect {
-			t.Errorf("%#v got: %d, expect: %d", testChat, got, expect)
+			t.Errorf("%#v\ngot: %d,\nexpect: %d\n", testChat, got, expect)
 		}
 	})
 

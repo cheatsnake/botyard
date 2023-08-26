@@ -18,14 +18,14 @@ func TestBot(t *testing.T) {
 	t.Run("check name", func(t *testing.T) {
 		expect := testName
 		if bot.Name != expect {
-			t.Errorf("%#v got: %s, expect: %s", bot, bot.Name, expect)
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", bot, bot.Name, expect)
 		}
 	})
 
 	t.Run("check id", func(t *testing.T) {
 		expect := ulid.Length
 		if len(bot.Id) != expect {
-			t.Errorf("%#v got: %d, expect: %d", bot, len(bot.Id), expect)
+			t.Errorf("%#v\ngot: %d,\nexpect: %d\n", bot, len(bot.Id), expect)
 		}
 	})
 
@@ -34,7 +34,7 @@ func TestBot(t *testing.T) {
 		bot.SetName(expect)
 
 		if bot.Name != expect {
-			t.Errorf("%#v got: %s, expect: %s", bot, bot.Name, expect)
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", bot, bot.Name, expect)
 		}
 	})
 
@@ -43,7 +43,7 @@ func TestBot(t *testing.T) {
 		bot.SetDescription(expect)
 
 		if bot.Description != expect {
-			t.Errorf("%#v got: %s, expect: %s", bot, bot.Description, expect)
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", bot, bot.Description, expect)
 		}
 	})
 
@@ -52,7 +52,7 @@ func TestBot(t *testing.T) {
 		bot.SetAvatar(expect)
 
 		if bot.Avatar != expect {
-			t.Errorf("%#v got: %s, expect: %s", bot, bot.Avatar, expect)
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", bot, bot.Avatar, expect)
 		}
 	})
 
@@ -64,7 +64,7 @@ func TestBot(t *testing.T) {
 		expect := len(testCommands)
 
 		if len(bot.Commands) != expect {
-			t.Errorf("%#v got: %d, expect: %d", bot, len(bot.Commands), expect)
+			t.Errorf("%#v\ngot: %d,\nexpect: %d\n", bot, len(bot.Commands), expect)
 		}
 	})
 
@@ -72,15 +72,15 @@ func TestBot(t *testing.T) {
 		for _, expect := range testCommands {
 			cmd, err := bot.GetCommand(expect.Alias)
 			if err != nil {
-				t.Errorf("%#v got: %s, expect: %v", bot, err.Error(), nil)
+				t.Errorf("%#v\ngot: %s,\nexpect: %v\n", bot, err.Error(), nil)
 			}
 
 			if cmd.Alias != expect.Alias {
-				t.Errorf("%#v got: %s, expect: %s", bot, cmd.Alias, expect.Alias)
+				t.Errorf("%#v\ngot: %s,\nexpect: %s\n", bot, cmd.Alias, expect.Alias)
 			}
 
 			if cmd.Description != expect.Description {
-				t.Errorf("%#v got: %s, expect: %s", bot, cmd.Description, expect.Description)
+				t.Errorf("%#v\ngot: %s,\nexpect: %s\n", bot, cmd.Description, expect.Description)
 			}
 		}
 	})
@@ -91,15 +91,15 @@ func TestBot(t *testing.T) {
 
 		cmd, err := bot.GetCommand(expect.Alias)
 		if err != nil {
-			t.Errorf("%#v got: %s, expect: %v", bot, err.Error(), nil)
+			t.Errorf("%#v\ngot: %s,\nexpect: %v\n", bot, err.Error(), nil)
 		}
 
 		if cmd.Alias != expect.Alias {
-			t.Errorf("%#v got: %s, expect: %s", bot, cmd.Alias, expect.Alias)
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", bot, cmd.Alias, expect.Alias)
 		}
 
 		if cmd.Description != expect.Description {
-			t.Errorf("%#v got: %s, expect: %s", bot, cmd.Description, expect.Description)
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", bot, cmd.Description, expect.Description)
 		}
 	})
 
@@ -107,14 +107,14 @@ func TestBot(t *testing.T) {
 		for _, cmd := range testCommands {
 			err := bot.RemoveCommand(cmd.Alias)
 			if err != nil {
-				t.Errorf("%#v got: %s, expect: %v", bot, err.Error(), nil)
+				t.Errorf("%#v\ngot: %s,\nexpect: %v\n", bot, err.Error(), nil)
 			}
 		}
 
 		expect := 0
 
 		if len(bot.Commands) != expect {
-			t.Errorf("%#v got: %d, expect: %d", bot, len(bot.Commands), expect)
+			t.Errorf("%#v\ngot: %d,\nexpect: %d\n", bot, len(bot.Commands), expect)
 		}
 	})
 
@@ -124,15 +124,15 @@ func TestBot(t *testing.T) {
 
 		cmd, err := bot.GetCommand(testCommand.Alias)
 		if err.Error() != errCmdNotFound {
-			t.Errorf("%#v got: %s, expect: %s", bot, err.Error(), errCmdNotFound)
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", bot, err.Error(), errCmdNotFound)
 		}
 
 		if cmd.Alias != expect.Alias {
-			t.Errorf("%#v got: %s, expect: %s", bot, cmd.Alias, expect.Alias)
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", bot, cmd.Alias, expect.Alias)
 		}
 
 		if cmd.Description != expect.Description {
-			t.Errorf("%#v got: %s, expect: %s", bot, cmd.Description, expect.Description)
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", bot, cmd.Description, expect.Description)
 		}
 	})
 
@@ -142,7 +142,7 @@ func TestBot(t *testing.T) {
 		expect := errCmdNotFound
 
 		if err.Error() != expect {
-			t.Errorf("%#v got: %s, expect: %s", bot, err.Error(), expect)
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", bot, err.Error(), expect)
 		}
 	})
 
@@ -155,7 +155,7 @@ func TestBot(t *testing.T) {
 		result := len(bot.GetCommands())
 
 		if result != expect {
-			t.Errorf("%#v got: %d, expect: %d", bot, result, expect)
+			t.Errorf("%#v\ngot: %d,\nexpect: %d\n", bot, result, expect)
 		}
 	})
 }

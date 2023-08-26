@@ -22,7 +22,7 @@ func TestNew(t *testing.T) {
 		expect := testPath
 		got := testFile.Path
 		if got != expect {
-			t.Errorf("%#v got: %s, expect: %s", testFile, got, expect)
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", testFile, got, expect)
 		}
 	})
 
@@ -31,7 +31,7 @@ func TestNew(t *testing.T) {
 		expect := testMimeType
 		got := testFile.MimeType
 		if got != expect {
-			t.Errorf("%#v got: %s, expect: %s", testFile, got, expect)
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", testFile, got, expect)
 		}
 	})
 
