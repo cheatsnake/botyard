@@ -2,7 +2,6 @@ package user
 
 import (
 	"botyard/internal/tools/ulid"
-	"errors"
 )
 
 type User struct {
@@ -10,17 +9,14 @@ type User struct {
 	Nickname string `json:"nickname"`
 }
 
-func New(name string) (*User, error) {
-	if len(name) < minNicknameLen {
-		return nil, errors.New(errNicknameTooShort)
-	}
-
-	if len(name) > maxNicknameLen {
-		return nil, errors.New(errNicknameTooLong)
+func New(nick string) (*User, error) {
+	err := validateNickname(nick)
+	if err != nil {
+		return nil, err
 	}
 
 	return &User{
 		Id:       ulid.New(),
-		Nickname: name,
+		Nickname: nick,
 	}, nil
 }

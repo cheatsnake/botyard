@@ -6,7 +6,8 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	correctNicknames := []string{"Tom", "Rob Pike", strings.Repeat("x", maxNicknameLen)}
+	correctNicknames := []string{"Tom", "Rob_Pike", "-_-", strings.Repeat("x", maxNicknameLen)}
+	incorrectNicknames := []string{"Rob Pike", "No%name", "ma$ter"}
 	tooShortNicknames := []string{"", "x", "Xx"}
 	tooLongNicknames := []string{strings.Repeat("x", maxNicknameLen+1), strings.Repeat("X", maxNicknameLen*2)}
 
@@ -15,6 +16,16 @@ func TestNew(t *testing.T) {
 			user, err := New(n)
 			if err != nil {
 				t.Errorf("%#v got: %s, expect: %v", user, err.Error(), nil)
+			}
+		}
+	})
+
+	t.Run("check incorrect nicknames", func(t *testing.T) {
+		expect := errNicknameSymbols
+		for _, n := range incorrectNicknames {
+			user, err := New(n)
+			if err.Error() != expect {
+				t.Errorf("%#v got: %s, expect: %v", user, err.Error(), expect)
 			}
 		}
 	})
