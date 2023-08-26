@@ -2,6 +2,7 @@ package ulid
 
 import (
 	"crypto/rand"
+	"fmt"
 	"strings"
 	"sync"
 	"time"
@@ -9,7 +10,7 @@ import (
 	"github.com/oklog/ulid/v2"
 )
 
-const Length = 26
+const Length = ulid.EncodedSize
 
 var (
 	once     sync.Once
@@ -30,7 +31,10 @@ func New() string {
 
 func Verify(s string) error {
 	_, err := ulid.Parse(s)
-	return err
+	if err != nil {
+		return fmt.Errorf("id %s is not allowed, must satisfy the ulid format", s)
+	}
+	return nil
 }
 
 func initGenerator() *generator {
