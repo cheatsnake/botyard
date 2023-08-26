@@ -2,6 +2,7 @@ package message
 
 import (
 	"botyard/internal/tools/ulid"
+	"strings"
 	"testing"
 	"time"
 )
@@ -17,11 +18,6 @@ func TestNew(t *testing.T) {
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
-
-		got := ulid.Verify(testMsg.Id)
-		if got != nil {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, nil)
-		}
 	})
 
 	t.Run("check chat id", func(t *testing.T) {
@@ -35,10 +31,32 @@ func TestNew(t *testing.T) {
 		if got != expect {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
 		}
+	})
 
-		got2 := ulid.Verify(testMsg.ChatId)
-		if got2 != nil {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got2, nil)
+	t.Run("check too long body", func(t *testing.T) {
+		bodies := []string{strings.Repeat("a", maxBodyLen+1), strings.Repeat("B", maxBodyLen*2)}
+		for _, b := range bodies {
+			testMsg, err := New(testChatId, testSenderId, b, testFileIds)
+			expect := errBodyTooLong
+			got := err.Error()
+			if got != expect {
+				t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
+			}
+		}
+	})
+
+	t.Run("check too many files", func(t *testing.T) {
+		fileIds := [][]string{
+			strings.Split(strings.Repeat("a", maxFiles+1), ""),
+			strings.Split(strings.Repeat("a", maxFiles*2), ""),
+		}
+		for _, fi := range fileIds {
+			testMsg, err := New(testChatId, testSenderId, testBody, fi)
+			expect := errTooManyFiles
+			got := err.Error()
+			if got != expect {
+				t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
+			}
 		}
 	})
 
@@ -52,11 +70,6 @@ func TestNew(t *testing.T) {
 		got := testMsg.SenderId
 		if got != expect {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
-		}
-
-		got2 := ulid.Verify(testMsg.SenderId)
-		if got2 != nil {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got2, nil)
 		}
 	})
 
@@ -86,13 +99,6 @@ func TestNew(t *testing.T) {
 				t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
 			}
 		}
-
-		for i := range testMsg.FileIds {
-			got := ulid.Verify(testMsg.FileIds[i])
-			if got != nil {
-				t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, nil)
-			}
-		}
 	})
 
 	t.Run("check timestamp", func(t *testing.T) {
@@ -102,10 +108,11 @@ func TestNew(t *testing.T) {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
 
+		expect := true
 		got := testTimestamp.Before(testMsg.Timestamp)
 
 		if !got {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, true)
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
 		}
 	})
 }

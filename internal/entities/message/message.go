@@ -15,17 +15,7 @@ type Message struct {
 }
 
 func New(chatId, senderId, body string, fileIds []string) (*Message, error) {
-	err := ulid.Verify(chatId)
-	if err != nil {
-		return nil, err
-	}
-
-	err = ulid.Verify(senderId)
-	if err != nil {
-		return nil, err
-	}
-
-	err = validateBody(body)
+	err := validateBody(body)
 	if err != nil {
 		return nil, err
 	}

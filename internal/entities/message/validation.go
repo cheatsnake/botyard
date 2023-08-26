@@ -1,16 +1,20 @@
 package message
 
-import "botyard/internal/tools/ulid"
+import (
+	"errors"
+)
 
 func validateBody(body string) error {
+	if len(body) > maxBodyLen {
+		return errors.New(errBodyTooLong)
+	}
+
 	return nil
 }
 
 func validateFileIds(fileIds []string) error {
-	for _, fi := range fileIds {
-		if err := ulid.Verify(fi); err != nil {
-			return err
-		}
+	if len(fileIds) > maxFiles {
+		return errors.New(errTooManyFiles)
 	}
 
 	return nil
