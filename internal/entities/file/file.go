@@ -8,10 +8,15 @@ type File struct {
 	MimeType string `json:"mimeType"`
 }
 
-func New(path, mime string) *File {
+func New(path, mime string) (*File, error) {
+	err := validateMimeType(mime)
+	if err != nil {
+		return nil, err
+	}
+
 	return &File{
 		Id:       ulid.New(),
 		Path:     path,
 		MimeType: mime,
-	}
+	}, nil
 }

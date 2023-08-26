@@ -1,24 +1,19 @@
 package file
 
 import (
-	"botyard/internal/tools/ulid"
 	"testing"
 )
 
 func TestNew(t *testing.T) {
 	testPath := "/test/file"
-	testMimeType := "application/test"
-
-	t.Run("check id", func(t *testing.T) {
-		testFile := New(testPath, testMimeType)
-		got := ulid.Verify(testFile.Id)
-		if got != nil {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFile, got, nil)
-		}
-	})
+	testMimeType := "text/plain"
 
 	t.Run("check path", func(t *testing.T) {
-		testFile := New(testPath, testMimeType)
+		testFile, err := New(testPath, testMimeType)
+		if err != nil {
+			t.Errorf("%#v\ngot: %s,\nexpect: %v\n", testFile, err.Error(), nil)
+		}
+
 		expect := testPath
 		got := testFile.Path
 		if got != expect {
@@ -26,12 +21,28 @@ func TestNew(t *testing.T) {
 		}
 	})
 
-	t.Run("check mime type", func(t *testing.T) {
-		testFile := New(testPath, testMimeType)
+	t.Run("check valid mime type", func(t *testing.T) {
+		testFile, err := New(testPath, testMimeType)
+		if err != nil {
+			t.Errorf("%#v\ngot: %s,\nexpect: %v\n", testFile, err.Error(), nil)
+		}
+
 		expect := testMimeType
 		got := testFile.MimeType
 		if got != expect {
 			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", testFile, got, expect)
+		}
+	})
+
+	t.Run("check invalid mime type", func(t *testing.T) {
+		expect := errInvalidMimeType
+		testFile, err := New(testPath, "test")
+		if err == nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFile, nil, expect)
+		}
+
+		if err.Error() != expect {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFile, err.Error(), expect)
 		}
 	})
 
