@@ -2,7 +2,6 @@ package user
 
 import (
 	"errors"
-	"regexp"
 )
 
 func validateNickname(nick string) error {
@@ -14,8 +13,7 @@ func validateNickname(nick string) error {
 		return errors.New(errNicknameTooLong)
 	}
 
-	re, _ := regexp.Compile(regexNickname)
-	if !re.MatchString(nick) {
+	if !regexNickname.MatchString(nick) {
 		return errors.New(errNicknameSymbols)
 	}
 

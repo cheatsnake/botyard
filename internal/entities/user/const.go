@@ -1,13 +1,17 @@
 package user
 
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+)
 
 const (
 	minNicknameLen = 3
 	maxNicknameLen = 32
 )
-const (
-	regexNickname = `^[A-Za-z0-9_-]+$`
+
+var (
+	regexNickname = regexp.MustCompile(`^[A-Za-z0-9_-]+$`)
 )
 
 var (
