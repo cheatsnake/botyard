@@ -104,3 +104,20 @@ func (h *BotHandlers) GetCommands(c *fiber.Ctx) error {
 
 	return c.JSON(commands)
 }
+
+func (h *BotHandlers) RefreshBotKey(c *fiber.Ctx) error {
+	body := new(struct {
+		BotId string `json:"botId"`
+	})
+
+	if err := c.BodyParser(body); err != nil {
+		return extlib.ErrorBadRequest(err.Error())
+	}
+
+	botKeyRes, err := h.service.GenerateBotKey(body.BotId)
+	if err != nil {
+		return extlib.ErrorBadRequest(err.Error())
+	}
+
+	return c.JSON(botKeyRes)
+}

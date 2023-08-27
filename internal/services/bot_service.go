@@ -16,7 +16,7 @@ type BotCreateBody struct {
 	Id struct{} `json:"-"`
 }
 
-type BotCreateResult struct {
+type BotKeyResult struct {
 	Key string `json:"key"`
 }
 
@@ -40,7 +40,7 @@ func NewBotService(s storage.BotStore) *BotService {
 	}
 }
 
-func (s *BotService) Create(body *BotCreateBody) (*BotCreateResult, error) {
+func (s *BotService) Create(body *BotCreateBody) (*BotKeyResult, error) {
 	newBot, err := bot.New(body.Name)
 	if err != nil {
 		return nil, extlib.ErrorBadRequest(err.Error())
@@ -63,14 +63,12 @@ func (s *BotService) Create(body *BotCreateBody) (*BotCreateResult, error) {
 		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
-	key, err := s.GenerateBotKey(newBot.Id)
+	botKeyRes, err := s.GenerateBotKey(newBot.Id)
 	if err != nil {
 		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
-	return &BotCreateResult{
-		Key: newBot.Id + ":" + key,
-	}, nil
+	return botKeyRes, nil
 }
 
 func (s *BotService) FindById(id string) (*bot.Bot, error) {
@@ -154,10 +152,10 @@ func (s *BotService) GetCommands(id string) ([]bot.Command, error) {
 	return foundBot.GetCommands(), nil
 }
 
-func (s *BotService) GenerateBotKey(id string) (string, error) {
+func (s *BotService) GenerateBotKey(id string) (*BotKeyResult, error) {
 	key, err := extlib.RandomToken(ulid.Length)
 	if err != nil {
-		return "", extlib.ErrorBadRequest("bot key generation failed: " + err.Error())
+		return nil, extlib.ErrorBadRequest("bot key generation failed: " + err.Error())
 	}
 
 	err = s.store.SaveBotKeyData(&bot.BotKeyData{
@@ -166,10 +164,13 @@ func (s *BotService) GenerateBotKey(id string) (string, error) {
 	})
 
 	if err != nil {
-		return "", extlib.ErrorBadRequest(err.Error())
+		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
-	return key, nil
+	botKey := id + ":" + key
+	return &BotKeyResult{
+		Key: botKey,
+	}, nil
 }
 
 func (s *BotService) VerifyBotKey(id, key string) error {

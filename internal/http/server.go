@@ -34,6 +34,7 @@ func (s *Server) InitRoutes(prefix string) {
 	botMiddlewares := middlewares.NewBotMiddlewares(botService)
 	bot := handlers.NewBotHandlers(botService)
 	api.Post("/bot", middlewares.AdminAuth, bot.Create)
+	api.Put("/bot/key", middlewares.AdminAuth, bot.RefreshBotKey)
 	api.Put("/bot", botMiddlewares.Auth, bot.Edit)
 	api.Delete("/bot", botMiddlewares.Auth, bot.RemoveCommand)
 
