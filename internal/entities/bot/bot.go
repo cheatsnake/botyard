@@ -2,6 +2,7 @@ package bot
 
 import (
 	"botyard/internal/tools/ulid"
+	"botyard/pkg/extlib"
 	"errors"
 	"sync"
 )
@@ -26,47 +27,76 @@ type BotKeyData struct {
 	Key   string
 }
 
-func New(name string) *Bot {
+func New(name string) (*Bot, error) {
+	err := validateName(name)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Bot{
 		Id:   ulid.New(),
 		Name: name,
-	}
+	}, nil
 }
 
-func (b *Bot) SetName(name string) {
+func (b *Bot) SetName(name string) error {
 	b.mu.Lock()
 	defer b.mu.Unlock()
+
+	err := validateName(name)
+	if err != nil {
+		return err
+	}
 
 	b.Name = name
+	return nil
 }
 
-func (b *Bot) SetDescription(descr string) {
+func (b *Bot) SetDescription(descr string) error {
 	b.mu.Lock()
 	defer b.mu.Unlock()
+
+	err := validateDescription(descr)
+	if err != nil {
+		return err
+	}
 
 	b.Description = descr
+	return nil
 }
 
-func (b *Bot) SetAvatar(avatar string) {
+func (b *Bot) SetAvatar(avatar string) error {
 	b.mu.Lock()
 	defer b.mu.Unlock()
+
+	err := extlib.ValidateURL(avatar)
+	if err != nil {
+		return err
+	}
 
 	b.Avatar = avatar
+	return nil
 }
 
-func (b *Bot) AddCommand(alias, descr string) {
+func (b *Bot) AddCommand(alias, descr string) error {
 	b.mu.Lock()
 	defer b.mu.Unlock()
+
+	err := validateCmd(alias, descr)
+	if err != nil {
+		return err
+	}
 
 	for _, cmd := range b.Commands {
 		if cmd.Alias == alias {
 			cmd.Description = descr
-			return
+			return nil
 		}
 	}
 
 	newCmd := Command{Alias: alias, Description: descr}
 	b.Commands = append(b.Commands, newCmd)
+	return nil
 }
 
 func (b *Bot) GetCommand(alias string) (Command, error) {

@@ -41,7 +41,10 @@ func NewBotService(s storage.BotStore) *BotService {
 }
 
 func (s *BotService) Create(body *BotCreateBody) (*BotCreateResult, error) {
-	newBot := bot.New(body.Name)
+	newBot, err := bot.New(body.Name)
+	if err != nil {
+		return nil, extlib.ErrorBadRequest(err.Error())
+	}
 
 	if body.Description != "" {
 		newBot.SetDescription(body.Description)
@@ -55,7 +58,7 @@ func (s *BotService) Create(body *BotCreateBody) (*BotCreateResult, error) {
 		newBot.AddCommand(cmd.Alias, cmd.Description)
 	}
 
-	err := s.store.AddBot(newBot)
+	err = s.store.AddBot(newBot)
 	if err != nil {
 		return nil, extlib.ErrorBadRequest(err.Error())
 	}
