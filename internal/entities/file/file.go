@@ -1,6 +1,9 @@
 package file
 
-import "botyard/internal/tools/ulid"
+import (
+	"botyard/internal/tools/ulid"
+	"errors"
+)
 
 type File struct {
 	Id       string `json:"id"`
@@ -9,6 +12,10 @@ type File struct {
 }
 
 func New(path, mime string) (*File, error) {
+	if len(path) == 0 {
+		return nil, errors.New(errPathIsEmpty)
+	}
+
 	err := validateMimeType(mime)
 	if err != nil {
 		return nil, err

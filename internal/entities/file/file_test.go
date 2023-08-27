@@ -21,7 +21,20 @@ func TestNew(t *testing.T) {
 		}
 	})
 
-	t.Run("check valid mime type", func(t *testing.T) {
+	t.Run("check empty path", func(t *testing.T) {
+		expect := errPathIsEmpty
+		testFile, err := New("", testMimeType)
+		if err == nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFile, nil, expect)
+		}
+
+		got := err.Error()
+		if got != expect {
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", testFile, got, expect)
+		}
+	})
+
+	t.Run("check mime type", func(t *testing.T) {
 		testFile, err := New(testPath, testMimeType)
 		if err != nil {
 			t.Errorf("%#v\ngot: %s,\nexpect: %v\n", testFile, err.Error(), nil)
