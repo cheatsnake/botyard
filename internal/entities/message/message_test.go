@@ -18,6 +18,10 @@ func TestNew(t *testing.T) {
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
+
+		if len(testMsg.Id) == 0 {
+			t.Errorf("%#v\ngot: %d,\nexpect: %d\n", testMsg, len(testMsg.Id), ulid.Length)
+		}
 	})
 
 	t.Run("check chat id", func(t *testing.T) {
@@ -28,6 +32,58 @@ func TestNew(t *testing.T) {
 
 		expect := testChatId
 		got := testMsg.ChatId
+		if got != expect {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
+		}
+	})
+
+	t.Run("check empty chat id", func(t *testing.T) {
+		expect := errChatIdIsEmpty
+		testMsg, err := New("", testSenderId, testBody, testFileIds)
+		if err == nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, nil, expect)
+		}
+
+		got := err.Error()
+		if got != expect {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
+		}
+	})
+
+	t.Run("check sender id", func(t *testing.T) {
+		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		if err != nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
+		}
+
+		expect := testSenderId
+		got := testMsg.SenderId
+		if got != expect {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
+		}
+	})
+
+	t.Run("check empty sender id", func(t *testing.T) {
+		expect := errSenderIdIsEmpty
+		testMsg, err := New(testChatId, "", testBody, testFileIds)
+		if err == nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, nil, expect)
+		}
+
+		got := err.Error()
+		if got != expect {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
+		}
+	})
+
+	t.Run("check body", func(t *testing.T) {
+		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		if err != nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
+		}
+
+		expect := testBody
+		got := testMsg.Body
 		if got != expect {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
 		}
@@ -70,32 +126,6 @@ func TestNew(t *testing.T) {
 			if got != expect {
 				t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
 			}
-		}
-	})
-
-	t.Run("check sender id", func(t *testing.T) {
-		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
-		if err != nil {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
-		}
-
-		expect := testSenderId
-		got := testMsg.SenderId
-		if got != expect {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
-		}
-	})
-
-	t.Run("check body", func(t *testing.T) {
-		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
-		if err != nil {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
-		}
-
-		expect := testBody
-		got := testMsg.Body
-		if got != expect {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
 		}
 	})
 
