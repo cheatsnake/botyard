@@ -91,6 +91,20 @@ func (h *BotHandlers) RemoveCommand(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("command removed"))
 }
 
+func (h *BotHandlers) GetInfo(c *fiber.Ctx) error {
+	botId := c.Params("id", "")
+	if botId == "" {
+		return extlib.ErrorBadRequest("id is required")
+	}
+
+	bot, err := h.service.FindById(botId)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(bot)
+}
+
 func (h *BotHandlers) GetCommands(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 	if botId == "" {
