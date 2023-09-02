@@ -84,7 +84,7 @@ func TestBotService(t *testing.T) {
 
 	t.Run("verify bot key", func(t *testing.T) {
 		botId := ulid.New()
-		err := botService.VerifyBotKey(botId, botId+":"+"test")
+		err := botService.VerifyBotKey(botId, "test")
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
@@ -92,7 +92,7 @@ func TestBotService(t *testing.T) {
 
 	t.Run("verify invalid bot key", func(t *testing.T) {
 		botId := ulid.New()
-		err := botService.VerifyBotKey(botId, ulid.New()+":"+"test")
+		err := botService.VerifyBotKey(botId, "fail")
 		if err == nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, "error")
 		}
@@ -119,7 +119,7 @@ func (mbs *mockBotStore) DeleteBot(id string) error {
 
 func (mbs *mockBotStore) GetBotKeyData(id string) (*bot.BotKeyData, error) {
 	return &bot.BotKeyData{
-		Key: id + ":" + "test",
+		Key: "test",
 	}, nil
 }
 
