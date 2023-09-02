@@ -2,14 +2,14 @@ package services
 
 import (
 	"botyard/internal/entities/bot"
+	mock "botyard/internal/storage/_mock"
 	"botyard/internal/tools/ulid"
 	"strings"
 	"testing"
 )
 
 func TestBotService(t *testing.T) {
-	testBotStore := &mockBotStore{}
-	botService := NewBotService(testBotStore)
+	botService := NewBotService(mock.BotStore())
 
 	t.Run("add a new bot", func(t *testing.T) {
 		res, err := botService.Create(&BotCreateBody{
@@ -97,32 +97,4 @@ func TestBotService(t *testing.T) {
 			t.Errorf("got: %v,\nexpect: %v\n", err, "error")
 		}
 	})
-}
-
-type mockBotStore struct{}
-
-func (mbs *mockBotStore) AddBot(bot *bot.Bot) error {
-	return nil
-}
-
-func (mbs *mockBotStore) EditBot(bot *bot.Bot) error {
-	return nil
-}
-
-func (mbs *mockBotStore) GetBot(id string) (*bot.Bot, error) {
-	return &bot.Bot{}, nil
-}
-
-func (mbs *mockBotStore) DeleteBot(id string) error {
-	return nil
-}
-
-func (mbs *mockBotStore) GetBotKeyData(id string) (*bot.BotKeyData, error) {
-	return &bot.BotKeyData{
-		Key: "test",
-	}, nil
-}
-
-func (mbs *mockBotStore) SaveBotKeyData(bkd *bot.BotKeyData) error {
-	return nil
 }

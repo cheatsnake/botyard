@@ -2,15 +2,14 @@ package services
 
 import (
 	"botyard/internal/entities/message"
+	mock "botyard/internal/storage/_mock"
 	"botyard/internal/tools/ulid"
 	"testing"
 )
 
 func TestMessageService(t *testing.T) {
-	mockFileStore := &mockFileStore{}
-	mockMessageStore := &mockMessageStore{}
-	testFileService := NewFileService(mockFileStore)
-	messageService := NewMessageService(mockMessageStore, testFileService)
+	testFileService := NewFileService(mock.FileStore())
+	messageService := NewMessageService(mock.MessageStore(), testFileService)
 
 	t.Run("add message", func(t *testing.T) {
 		err := messageService.AddMessage(&CreateMessageBody{
@@ -45,18 +44,4 @@ func TestMessageService(t *testing.T) {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
-}
-
-type mockMessageStore struct{}
-
-func (mms *mockMessageStore) AddMessage(msg *message.Message) error {
-	return nil
-}
-
-func (mms *mockMessageStore) GetMessagesByChat(chatId string, page, limit int) (int, []*message.Message, error) {
-	return 0, []*message.Message{}, nil
-}
-
-func (mms *mockMessageStore) DeleteMessagesByChat(chatId string) error {
-	return nil
 }

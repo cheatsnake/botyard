@@ -1,18 +1,15 @@
 package services
 
 import (
-	"botyard/internal/entities/chat"
+	mock "botyard/internal/storage/_mock"
 	"botyard/internal/tools/ulid"
 	"testing"
 )
 
 func TestChatService(t *testing.T) {
-	mockFileStore := &mockFileStore{}
-	mockMessageStore := &mockMessageStore{}
-	mockChatStore := &mockChatStore{}
-	fileService := NewFileService(mockFileStore)
-	messageService := NewMessageService(mockMessageStore, fileService)
-	chatService := NewChatService(mockChatStore, messageService)
+	fileService := NewFileService(mock.FileStore())
+	messageService := NewMessageService(mock.MessageStore(), fileService)
+	chatService := NewChatService(mock.ChatStore(), messageService)
 
 	t.Run("create a new chat", func(t *testing.T) {
 		_, err := chatService.Create(ulid.New(), ulid.New())
@@ -41,22 +38,4 @@ func TestChatService(t *testing.T) {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
-}
-
-type mockChatStore struct{}
-
-func (mcs *mockChatStore) AddChat(chat *chat.Chat) error {
-	return nil
-}
-
-func (mcs *mockChatStore) GetChat(id string) (*chat.Chat, error) {
-	return &chat.Chat{}, nil
-}
-
-func (mcs *mockChatStore) GetChats(userId, botId string) ([]*chat.Chat, error) {
-	return []*chat.Chat{}, nil
-}
-
-func (mcs *mockChatStore) DeleteChat(id string) error {
-	return nil
 }

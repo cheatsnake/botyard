@@ -1,9 +1,9 @@
 package middlewares
 
 import (
-	"botyard/internal/entities/bot"
 	"botyard/internal/http/helpers"
 	"botyard/internal/services"
+	mock "botyard/internal/storage/_mock"
 	"botyard/internal/tools/ulid"
 	"net/http/httptest"
 	"testing"
@@ -12,7 +12,7 @@ import (
 )
 
 func TestBotAuth(t *testing.T) {
-	botService := services.NewBotService(&mockBotStore{})
+	botService := services.NewBotService(mock.BotStore())
 	botMiddlewares := NewBotMiddlewares(botService)
 	testApp := fiber.New(fiber.Config{
 		ErrorHandler: helpers.CursomErrorHandler,
@@ -71,32 +71,4 @@ func TestBotAuth(t *testing.T) {
 			}
 		}
 	})
-}
-
-type mockBotStore struct{}
-
-func (mbs *mockBotStore) AddBot(bot *bot.Bot) error {
-	return nil
-}
-
-func (mbs *mockBotStore) EditBot(bot *bot.Bot) error {
-	return nil
-}
-
-func (mbs *mockBotStore) GetBot(id string) (*bot.Bot, error) {
-	return &bot.Bot{}, nil
-}
-
-func (mbs *mockBotStore) DeleteBot(id string) error {
-	return nil
-}
-
-func (mbs *mockBotStore) GetBotKeyData(id string) (*bot.BotKeyData, error) {
-	return &bot.BotKeyData{
-		Key: "test",
-	}, nil
-}
-
-func (mbs *mockBotStore) SaveBotKeyData(bkd *bot.BotKeyData) error {
-	return nil
 }

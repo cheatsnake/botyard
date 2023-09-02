@@ -2,14 +2,14 @@ package services
 
 import (
 	"botyard/internal/entities/user"
+	mock "botyard/internal/storage/_mock"
 	"botyard/pkg/extlib"
 	"errors"
 	"testing"
 )
 
 func TestUserService(t *testing.T) {
-	testStore := &mockUserStore{}
-	testService := NewUserService(testStore)
+	testService := NewUserService(mock.UserStore())
 	t.Run("create new user", func(t *testing.T) {
 		testBody := &UserCreateBody{
 			User: user.User{
@@ -49,18 +49,4 @@ func TestUserService(t *testing.T) {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", user, err, extErr)
 		}
 	})
-}
-
-type mockUserStore struct{}
-
-func (mus *mockUserStore) AddUser(user *user.User) error {
-	return nil
-}
-
-func (mus *mockUserStore) GetUser(id string) (*user.User, error) {
-	u := &user.User{
-		Id:       id,
-		Nickname: "test",
-	}
-	return u, nil
 }

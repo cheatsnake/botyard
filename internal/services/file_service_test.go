@@ -2,13 +2,13 @@ package services
 
 import (
 	"botyard/internal/entities/file"
+	mock "botyard/internal/storage/_mock"
 	"botyard/internal/tools/ulid"
 	"testing"
 )
 
 func TestFileService(t *testing.T) {
-	mockStore := &mockFileStore{}
-	fileService := NewFileService(mockStore)
+	fileService := NewFileService(mock.FileStore())
 
 	t.Run("add a new file", func(t *testing.T) {
 		testFile, err := file.New("/test", "text/plain")
@@ -41,22 +41,4 @@ func TestFileService(t *testing.T) {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
-}
-
-type mockFileStore struct{}
-
-func (mfs *mockFileStore) AddFile(file *file.File) error {
-	return nil
-}
-
-func (mfs *mockFileStore) GetFile(id string) (*file.File, error) {
-	return &file.File{Id: id}, nil
-}
-
-func (mfs *mockFileStore) GetFiles(ids []string) ([]*file.File, error) {
-	return []*file.File{}, nil
-}
-
-func (mfs *mockFileStore) DeleteFile(id string) error {
-	return nil
 }
