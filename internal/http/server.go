@@ -6,8 +6,6 @@ import (
 	"botyard/internal/http/middlewares"
 	"botyard/internal/services"
 	"botyard/internal/storage"
-	"botyard/pkg/extlib"
-	"errors"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,7 +18,7 @@ type Server struct {
 func New(store storage.Storage) *Server {
 	return &Server{
 		App: fiber.New(fiber.Config{
-			ErrorHandler: errHandler,
+			ErrorHandler: helpers.CursomErrorHandler,
 			BodyLimit:    25 * 1024 * 1024, // 25 MB
 		}),
 		store: store,
@@ -35,10 +33,12 @@ func (s *Server) InitRoutes(prefix string) {
 	bot := handlers.NewBotHandlers(botService)
 	api.Post("/bot", middlewares.AdminAuth, bot.Create)
 	api.Put("/bot/key", middlewares.AdminAuth, bot.RefreshBotKey)
+
+	api.Get("/bot/:id", middlewares.UserAuth, bot.GetInfo)
+	api.Get("/bot/:id/commands", middlewares.UserAuth, bot.GetCommands)
+
 	api.Put("/bot", botMiddlewares.Auth, bot.Edit)
 	api.Delete("/bot", botMiddlewares.Auth, bot.RemoveCommand)
-
-	api.Get("/bot/commands/:id", middlewares.UserAuth, bot.GetCommands)
 	api.Post("/bot/commands", botMiddlewares.Auth, bot.AddCommands)
 	api.Delete("/bot/command", botMiddlewares.Auth, bot.RemoveCommand)
 
@@ -60,16 +60,4 @@ func (s *Server) InitRoutes(prefix string) {
 	api.Get("/chats/:botId", middlewares.UserAuth, chat.GetMany)
 	api.Post("/chat", middlewares.UserAuth, chat.Create)
 	api.Delete("/chat/:id", middlewares.UserAuth, chat.Delete)
-}
-
-func errHandler(c *fiber.Ctx, err error) error {
-	code := fiber.StatusInternalServerError
-
-	var e *extlib.ExtendedError
-	if errors.As(err, &e) {
-		code = e.Code
-	}
-
-	c.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
-	return c.Status(code).JSON(helpers.JsonMessage(err.Error()))
 }
