@@ -14,7 +14,7 @@ import (
 )
 
 const filesFolder = "stock"
-const maxFilesAmount = 10
+const maxFiles = 10
 const fileFieldName = "file"
 
 var maxFileSizes = map[string]int64{
@@ -54,7 +54,6 @@ func NewFileHandlers(s *services.FileService) *FileHandlers {
 }
 
 func (h *FileHandlers) LoadMany(c *fiber.Ctx) error {
-
 	form, err := c.MultipartForm()
 	if err != nil {
 		return extlib.ErrorBadRequest(err.Error())
@@ -62,9 +61,9 @@ func (h *FileHandlers) LoadMany(c *fiber.Ctx) error {
 
 	files := form.File[fileFieldName]
 
-	if len(files) > maxFilesAmount {
+	if len(files) > maxFiles {
 		return extlib.ErrorBadRequest(
-			fmt.Sprintf("too many files, max allowed amount is %d", maxFilesAmount),
+			fmt.Sprintf("too many files, max allowed amount is %d", maxFiles),
 		)
 	}
 

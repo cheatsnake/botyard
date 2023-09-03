@@ -24,7 +24,7 @@ func main() {
 	storage := memory.New()
 	server := http.New(storage)
 	server.App.Static("/"+filesFolder, path.Join(".", filesFolder))
-	server.InitRoutes("/api")
+	server.InitRoutes()
 
 	go printMemoryUsage()
 

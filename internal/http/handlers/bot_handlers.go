@@ -78,12 +78,9 @@ func (h *BotHandlers) RemoveCommand(c *fiber.Ctx) error {
 		return extlib.ErrorBadRequest("id is required")
 	}
 
-	body := new(services.BotCommandBody)
-	if err := c.BodyParser(body); err != nil {
-		return extlib.ErrorBadRequest(err.Error())
-	}
+	alias := c.Query("alias", "")
 
-	err := h.service.RemoveCommand(botId, body)
+	err := h.service.RemoveCommand(botId, alias)
 	if err != nil {
 		return err
 	}

@@ -57,7 +57,7 @@ func TestBotService(t *testing.T) {
 	})
 
 	t.Run("remove bot command", func(t *testing.T) {
-		err := botService.RemoveCommand(ulid.New(), &BotCommandBody{})
+		err := botService.RemoveCommand(ulid.New(), "")
 		if err == nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, "error")
 		}

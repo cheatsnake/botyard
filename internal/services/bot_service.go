@@ -30,10 +30,6 @@ type BotCommandsBody struct {
 	Commands []bot.Command `json:"commands"`
 }
 
-type BotCommandBody struct {
-	Alias string
-}
-
 func NewBotService(s storage.BotStore) *BotService {
 	return &BotService{
 		store: s,
@@ -124,13 +120,13 @@ func (s *BotService) AddCommands(id string, body *BotCommandsBody) error {
 	return nil
 }
 
-func (s *BotService) RemoveCommand(id string, body *BotCommandBody) error {
+func (s *BotService) RemoveCommand(id string, alias string) error {
 	newBot, err := s.FindById(id)
 	if err != nil {
 		return err
 	}
 
-	err = newBot.RemoveCommand(body.Alias)
+	err = newBot.RemoveCommand(alias)
 	if err != nil {
 		return extlib.ErrorNotFound(err.Error())
 	}
