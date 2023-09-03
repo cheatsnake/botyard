@@ -22,7 +22,7 @@ type Command struct {
 	Description string `json:"description"`
 }
 
-type BotKeyData struct {
+type AuthKeyData struct {
 	BotId string
 	Key   string
 }

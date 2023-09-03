@@ -16,17 +16,21 @@ func (mbs *botStore) GetBot(id string) (*bot.Bot, error) {
 	return &bot.Bot{}, nil
 }
 
+func (mbs *botStore) GetAllBots() ([]*bot.Bot, error) {
+	return []*bot.Bot{}, nil
+}
+
 func (mbs *botStore) DeleteBot(id string) error {
 	return nil
 }
 
-func (mbs *botStore) GetBotKeyData(id string) (*bot.BotKeyData, error) {
-	return &bot.BotKeyData{
+func (mbs *botStore) GetAuthKeyData(id string) (*bot.AuthKeyData, error) {
+	return &bot.AuthKeyData{
 		Key: "test",
 	}, nil
 }
 
-func (mbs *botStore) SaveBotKeyData(bkd *bot.BotKeyData) error {
+func (mbs *botStore) SaveAuthKeyData(bkd *bot.AuthKeyData) error {
 	return nil
 }
 

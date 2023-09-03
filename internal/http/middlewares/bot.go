@@ -32,7 +32,7 @@ func (bm *BotMiddlewares) Auth(c *fiber.Ctx) error {
 	botId := strings.Split(key, ":")[0]
 	botKey := strings.Split(key, ":")[1]
 
-	err := bm.service.VerifyBotKey(botId, botKey)
+	err := bm.service.VerifyAuthKey(botId, botKey)
 	if err != nil {
 		return err
 	}

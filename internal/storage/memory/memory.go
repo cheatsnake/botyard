@@ -13,7 +13,7 @@ import (
 
 type Storage struct {
 	bots        []*bot.Bot
-	botKeysData []*bot.BotKeyData
+	botAuthKeys []*bot.AuthKeyData
 	users       []*user.User
 	chats       []*chat.Chat
 	messages    []*message.Message
@@ -24,7 +24,7 @@ type Storage struct {
 func New() *Storage {
 	return &Storage{
 		bots:        make([]*bot.Bot, 0, 10),
-		botKeysData: make([]*bot.BotKeyData, 0, 10),
+		botAuthKeys: make([]*bot.AuthKeyData, 0, 10),
 		users:       make([]*user.User, 0, 10),
 		chats:       make([]*chat.Chat, 0, 10),
 		messages:    make([]*message.Message, 0, 10),

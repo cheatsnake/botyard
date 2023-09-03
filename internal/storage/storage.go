@@ -12,9 +12,10 @@ type BotStore interface {
 	AddBot(bot *bot.Bot) error
 	EditBot(bot *bot.Bot) error
 	GetBot(id string) (*bot.Bot, error)
+	GetAllBots() ([]*bot.Bot, error)
 	DeleteBot(id string) error
-	GetBotKeyData(id string) (*bot.BotKeyData, error)
-	SaveBotKeyData(bkd *bot.BotKeyData) error
+	GetAuthKeyData(id string) (*bot.AuthKeyData, error)
+	SaveAuthKeyData(bkd *bot.AuthKeyData) error
 }
 
 type UserStore interface {

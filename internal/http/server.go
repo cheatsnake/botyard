@@ -48,10 +48,9 @@ func (s *Server) InitRoutes() {
 	// Admin API --------------------------------------------------------------
 	adminApiV1 := s.App.Group(adminApiV1Prefix)
 
-	adminApiV1.Get("/bots", middlewares.AdminAuth)
 	adminApiV1.Get("/bot/:id/key", middlewares.AdminAuth)
-	adminApiV1.Post("/bot", middlewares.AdminAuth, bot.Create)
-	adminApiV1.Put("/bot/:id/key", middlewares.AdminAuth, bot.RefreshBotKey)
+	adminApiV1.Post("/bot", middlewares.AdminAuth, bot.CreateBot)
+	adminApiV1.Put("/bot/:id/key", middlewares.AdminAuth, bot.RefreshAuthKey)
 	adminApiV1.Delete("/bot/:id", middlewares.AdminAuth)
 	// ------------------------------------------------------------------------
 
@@ -59,12 +58,12 @@ func (s *Server) InitRoutes() {
 	botApiV1 := s.App.Group(botApiV1Prefix)
 
 	botApiV1.Get("/bot", botMiddlewares.Auth)
-	botApiV1.Put("/bot", botMiddlewares.Auth, bot.Edit)
+	botApiV1.Put("/bot", botMiddlewares.Auth, bot.EditBot)
 	botApiV1.Post("/bot/commands", botMiddlewares.Auth, bot.AddCommands)
 	botApiV1.Delete("/bot/command", botMiddlewares.Auth, bot.RemoveCommand)
 
-	botApiV1.Get("/messages/:chatId", middlewares.UserAuth, message.GetByChat)
-	botApiV1.Post("/message", middlewares.UserAuth, message.Send)
+	botApiV1.Get("/messages/:chatId", botMiddlewares.Auth, message.GetByChat)
+	botApiV1.Post("/message", botMiddlewares.Auth, message.SendMessage)
 	// ------------------------------------------------------------------------
 
 	// Client API -------------------------------------------------------------
@@ -72,13 +71,13 @@ func (s *Server) InitRoutes() {
 
 	clientApiV1.Post("/user", user.Create)
 
-	clientApiV1.Get("/bot/:id", middlewares.UserAuth, bot.GetInfo)
-	clientApiV1.Get("/bot/:id/commands", middlewares.UserAuth, bot.GetCommands)
+	clientApiV1.Get("/bots", bot.GetAllBots)
+	clientApiV1.Get("/bot/:id", bot.GetBot)
 
 	clientApiV1.Post("/files", middlewares.UserAuth, file.LoadMany)
 
 	clientApiV1.Get("/messages/:chatId", middlewares.UserAuth, message.GetByChat)
-	clientApiV1.Post("/message", middlewares.UserAuth, message.Send)
+	clientApiV1.Post("/message", middlewares.UserAuth, message.SendMessage)
 
 	clientApiV1.Get("/chats/:botId", middlewares.UserAuth, chat.GetMany)
 	clientApiV1.Post("/chat", middlewares.UserAuth, chat.Create)

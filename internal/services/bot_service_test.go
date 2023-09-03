@@ -12,7 +12,7 @@ func TestBotService(t *testing.T) {
 	botService := NewBotService(mock.BotStore())
 
 	t.Run("add a new bot", func(t *testing.T) {
-		res, err := botService.Create(&BotCreateBody{
+		res, err := botService.CreateBot(&BotCreateBody{
 			Bot: bot.Bot{
 				Name: "test",
 			},
@@ -27,7 +27,7 @@ func TestBotService(t *testing.T) {
 	})
 
 	t.Run("add a new bot without name", func(t *testing.T) {
-		_, err := botService.Create(&BotCreateBody{
+		_, err := botService.CreateBot(&BotCreateBody{
 			Bot: bot.Bot{},
 		})
 		if err == nil {
@@ -36,14 +36,21 @@ func TestBotService(t *testing.T) {
 	})
 
 	t.Run("get bot by id", func(t *testing.T) {
-		_, err := botService.FindById(ulid.New())
+		_, err := botService.GetBotById(ulid.New())
+		if err != nil {
+			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
+		}
+	})
+
+	t.Run("get all bots", func(t *testing.T) {
+		_, err := botService.GetAllBots()
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 
 	t.Run("edit bot", func(t *testing.T) {
-		_, err := botService.Edit(ulid.New(), &BotEditBody{})
+		_, err := botService.EditBot(ulid.New(), &BotEditBody{})
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
@@ -63,16 +70,9 @@ func TestBotService(t *testing.T) {
 		}
 	})
 
-	t.Run("get bot commands", func(t *testing.T) {
-		_, err := botService.GetCommands(ulid.New())
-		if err != nil {
-			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
-		}
-	})
-
 	t.Run("generate bot key", func(t *testing.T) {
 		botId := ulid.New()
-		bkr, err := botService.GenerateBotKey(botId)
+		bkr, err := botService.GenerateAuthKey(botId)
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
@@ -84,7 +84,7 @@ func TestBotService(t *testing.T) {
 
 	t.Run("verify bot key", func(t *testing.T) {
 		botId := ulid.New()
-		err := botService.VerifyBotKey(botId, "test")
+		err := botService.VerifyAuthKey(botId, "test")
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
@@ -92,7 +92,7 @@ func TestBotService(t *testing.T) {
 
 	t.Run("verify invalid bot key", func(t *testing.T) {
 		botId := ulid.New()
-		err := botService.VerifyBotKey(botId, "fail")
+		err := botService.VerifyAuthKey(botId, "fail")
 		if err == nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, "error")
 		}

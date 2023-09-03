@@ -19,13 +19,13 @@ func NewBotHandlers(s *services.BotService) *BotHandlers {
 	}
 }
 
-func (h *BotHandlers) Create(c *fiber.Ctx) error {
+func (h *BotHandlers) CreateBot(c *fiber.Ctx) error {
 	body := new(services.BotCreateBody)
 	if err := c.BodyParser(body); err != nil {
 		return extlib.ErrorBadRequest(err.Error())
 	}
 
-	result, err := h.service.Create(body)
+	result, err := h.service.CreateBot(body)
 	if err != nil {
 		return err
 	}
@@ -33,7 +33,30 @@ func (h *BotHandlers) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(result)
 }
 
-func (h *BotHandlers) Edit(c *fiber.Ctx) error {
+func (h *BotHandlers) GetBot(c *fiber.Ctx) error {
+	botId := c.Params("id", "")
+	if botId == "" {
+		return extlib.ErrorBadRequest("id is required")
+	}
+
+	bot, err := h.service.GetBotById(botId)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(bot)
+}
+
+func (h *BotHandlers) GetAllBots(c *fiber.Ctx) error {
+	bots, err := h.service.GetAllBots()
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(bots)
+}
+
+func (h *BotHandlers) EditBot(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
 		return extlib.ErrorBadRequest("id is required")
@@ -45,7 +68,7 @@ func (h *BotHandlers) Edit(c *fiber.Ctx) error {
 		return extlib.ErrorBadRequest(err.Error())
 	}
 
-	editedBot, err := h.service.Edit(botId, body)
+	editedBot, err := h.service.EditBot(botId, body)
 	if err != nil {
 		return err
 	}
@@ -88,44 +111,10 @@ func (h *BotHandlers) RemoveCommand(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("command removed"))
 }
 
-func (h *BotHandlers) GetInfo(c *fiber.Ctx) error {
+func (h *BotHandlers) RefreshAuthKey(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
-	if botId == "" {
-		return extlib.ErrorBadRequest("id is required")
-	}
 
-	bot, err := h.service.FindById(botId)
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(bot)
-}
-
-func (h *BotHandlers) GetCommands(c *fiber.Ctx) error {
-	botId := c.Params("id", "")
-	if botId == "" {
-		return extlib.ErrorBadRequest("id is required")
-	}
-
-	commands, err := h.service.GetCommands(botId)
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(commands)
-}
-
-func (h *BotHandlers) RefreshBotKey(c *fiber.Ctx) error {
-	body := new(struct {
-		BotId string `json:"botId"`
-	})
-
-	if err := c.BodyParser(body); err != nil {
-		return extlib.ErrorBadRequest(err.Error())
-	}
-
-	botKeyRes, err := h.service.GenerateBotKey(body.BotId)
+	botKeyRes, err := h.service.GenerateAuthKey(botId)
 	if err != nil {
 		return extlib.ErrorBadRequest(err.Error())
 	}

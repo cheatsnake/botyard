@@ -36,7 +36,7 @@ func NewBotService(s storage.BotStore) *BotService {
 	}
 }
 
-func (s *BotService) Create(body *BotCreateBody) (*BotKeyResult, error) {
+func (s *BotService) CreateBot(body *BotCreateBody) (*BotKeyResult, error) {
 	newBot, err := bot.New(body.Name)
 	if err != nil {
 		return nil, extlib.ErrorBadRequest(err.Error())
@@ -59,7 +59,7 @@ func (s *BotService) Create(body *BotCreateBody) (*BotKeyResult, error) {
 		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
-	botKeyRes, err := s.GenerateBotKey(newBot.Id)
+	botKeyRes, err := s.GenerateAuthKey(newBot.Id)
 	if err != nil {
 		return nil, extlib.ErrorBadRequest(err.Error())
 	}
@@ -67,7 +67,7 @@ func (s *BotService) Create(body *BotCreateBody) (*BotKeyResult, error) {
 	return botKeyRes, nil
 }
 
-func (s *BotService) FindById(id string) (*bot.Bot, error) {
+func (s *BotService) GetBotById(id string) (*bot.Bot, error) {
 	foundBot, err := s.store.GetBot(id)
 	if err != nil {
 		return nil, extlib.ErrorBadRequest(err.Error())
@@ -76,8 +76,17 @@ func (s *BotService) FindById(id string) (*bot.Bot, error) {
 	return foundBot, nil
 }
 
-func (s *BotService) Edit(id string, body *BotEditBody) (*bot.Bot, error) {
-	foundBot, err := s.FindById(id)
+func (s *BotService) GetAllBots() ([]*bot.Bot, error) {
+	bots, err := s.store.GetAllBots()
+	if err != nil {
+		return nil, extlib.ErrorBadRequest(err.Error())
+	}
+
+	return bots, nil
+}
+
+func (s *BotService) EditBot(id string, body *BotEditBody) (*bot.Bot, error) {
+	foundBot, err := s.GetBotById(id)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +112,7 @@ func (s *BotService) Edit(id string, body *BotEditBody) (*bot.Bot, error) {
 }
 
 func (s *BotService) AddCommands(id string, body *BotCommandsBody) error {
-	foundBot, err := s.FindById(id)
+	foundBot, err := s.GetBotById(id)
 	if err != nil {
 		return err
 	}
@@ -121,7 +130,7 @@ func (s *BotService) AddCommands(id string, body *BotCommandsBody) error {
 }
 
 func (s *BotService) RemoveCommand(id string, alias string) error {
-	newBot, err := s.FindById(id)
+	newBot, err := s.GetBotById(id)
 	if err != nil {
 		return err
 	}
@@ -139,22 +148,13 @@ func (s *BotService) RemoveCommand(id string, alias string) error {
 	return nil
 }
 
-func (s *BotService) GetCommands(id string) ([]bot.Command, error) {
-	foundBot, err := s.FindById(id)
-	if err != nil {
-		return nil, err
-	}
-
-	return foundBot.GetCommands(), nil
-}
-
-func (s *BotService) GenerateBotKey(id string) (*BotKeyResult, error) {
+func (s *BotService) GenerateAuthKey(id string) (*BotKeyResult, error) {
 	key, err := extlib.RandomToken(ulid.Length)
 	if err != nil {
 		return nil, extlib.ErrorBadRequest("bot key generation failed: " + err.Error())
 	}
 
-	err = s.store.SaveBotKeyData(&bot.BotKeyData{
+	err = s.store.SaveAuthKeyData(&bot.AuthKeyData{
 		BotId: id,
 		Key:   key,
 	})
@@ -169,8 +169,8 @@ func (s *BotService) GenerateBotKey(id string) (*BotKeyResult, error) {
 	}, nil
 }
 
-func (s *BotService) VerifyBotKey(id, key string) error {
-	bkd, err := s.store.GetBotKeyData(id)
+func (s *BotService) VerifyAuthKey(id, key string) error {
+	bkd, err := s.store.GetAuthKeyData(id)
 	if err != nil {
 		return nil
 	}

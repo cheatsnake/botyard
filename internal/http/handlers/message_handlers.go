@@ -18,7 +18,7 @@ func NewMessageHandlers(s *services.MessageService) *MessageHandlers {
 	}
 }
 
-func (mh *MessageHandlers) Send(c *fiber.Ctx) error {
+func (mh *MessageHandlers) SendMessage(c *fiber.Ctx) error {
 	body := new(services.CreateMessageBody)
 
 	if err := c.BodyParser(body); err != nil {
