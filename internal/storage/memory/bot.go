@@ -48,8 +48,8 @@ func (s *Storage) DeleteBot(id string) error {
 	return errors.New("bot not found")
 }
 
-func (s *Storage) GetAuthKeyData(id string) (*bot.AuthKeyData, error) {
-	for _, bkd := range s.botAuthKeys {
+func (s *Storage) GetKeyData(id string) (*bot.KeyData, error) {
+	for _, bkd := range s.botKeys {
 		if bkd.BotId == id {
 			return bkd, nil
 		}
@@ -58,8 +58,8 @@ func (s *Storage) GetAuthKeyData(id string) (*bot.AuthKeyData, error) {
 	return nil, nil
 }
 
-func (s *Storage) SaveAuthKeyData(newBkd *bot.AuthKeyData) error {
-	bkd, err := s.GetAuthKeyData(newBkd.BotId)
+func (s *Storage) SaveKeyData(newBkd *bot.KeyData) error {
+	bkd, err := s.GetKeyData(newBkd.BotId)
 	if err != nil {
 		return err
 	}
@@ -69,6 +69,6 @@ func (s *Storage) SaveAuthKeyData(newBkd *bot.AuthKeyData) error {
 		return nil
 	}
 
-	s.botAuthKeys = append(s.botAuthKeys, newBkd)
+	s.botKeys = append(s.botKeys, newBkd)
 	return nil
 }

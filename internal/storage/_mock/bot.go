@@ -24,13 +24,13 @@ func (mbs *botStore) DeleteBot(id string) error {
 	return nil
 }
 
-func (mbs *botStore) GetAuthKeyData(id string) (*bot.AuthKeyData, error) {
-	return &bot.AuthKeyData{
+func (mbs *botStore) GetKeyData(id string) (*bot.KeyData, error) {
+	return &bot.KeyData{
 		Key: "test",
 	}, nil
 }
 
-func (mbs *botStore) SaveAuthKeyData(bkd *bot.AuthKeyData) error {
+func (mbs *botStore) SaveKeyData(bkd *bot.KeyData) error {
 	return nil
 }
 

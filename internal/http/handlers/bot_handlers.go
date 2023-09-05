@@ -111,10 +111,10 @@ func (h *BotHandlers) RemoveCommand(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("command removed"))
 }
 
-func (h *BotHandlers) RefreshAuthKey(c *fiber.Ctx) error {
+func (h *BotHandlers) RefreshKey(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 
-	botKeyRes, err := h.service.GenerateAuthKey(botId)
+	botKeyRes, err := h.service.GenerateKey(botId)
 	if err != nil {
 		return extlib.ErrorBadRequest(err.Error())
 	}

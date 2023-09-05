@@ -50,7 +50,7 @@ func (s *Server) InitRoutes() {
 
 	adminApiV1.Get("/bot/:id/key", middlewares.AdminAuth)
 	adminApiV1.Post("/bot", middlewares.AdminAuth, bot.CreateBot)
-	adminApiV1.Put("/bot/:id/key", middlewares.AdminAuth, bot.RefreshAuthKey)
+	adminApiV1.Put("/bot/:id/key", middlewares.AdminAuth, bot.RefreshKey)
 	adminApiV1.Delete("/bot/:id", middlewares.AdminAuth)
 	// ------------------------------------------------------------------------
 

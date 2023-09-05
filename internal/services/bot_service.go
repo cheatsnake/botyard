@@ -16,8 +16,9 @@ type BotCreateBody struct {
 	Id struct{} `json:"-"`
 }
 
-type BotKeyResult struct {
-	Key string `json:"key"`
+type BotCreateResult struct {
+	Bot *bot.Bot `json:"bot"`
+	Key string   `json:"key"`
 }
 
 type BotEditBody struct {
@@ -36,7 +37,7 @@ func NewBotService(s storage.BotStore) *BotService {
 	}
 }
 
-func (s *BotService) CreateBot(body *BotCreateBody) (*BotKeyResult, error) {
+func (s *BotService) CreateBot(body *BotCreateBody) (*BotCreateResult, error) {
 	newBot, err := bot.New(body.Name)
 	if err != nil {
 		return nil, extlib.ErrorBadRequest(err.Error())
@@ -59,12 +60,16 @@ func (s *BotService) CreateBot(body *BotCreateBody) (*BotKeyResult, error) {
 		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
-	botKeyRes, err := s.GenerateAuthKey(newBot.Id)
+	botKey, err := s.GenerateKey(newBot.Id)
 	if err != nil {
 		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
-	return botKeyRes, nil
+	result := &BotCreateResult{
+		Bot: newBot,
+		Key: botKey,
+	}
+	return result, nil
 }
 
 func (s *BotService) GetBotById(id string) (*bot.Bot, error) {
@@ -148,29 +153,27 @@ func (s *BotService) RemoveCommand(id string, alias string) error {
 	return nil
 }
 
-func (s *BotService) GenerateAuthKey(id string) (*BotKeyResult, error) {
+func (s *BotService) GenerateKey(id string) (string, error) {
 	key, err := extlib.RandomToken(ulid.Length)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest("bot key generation failed: " + err.Error())
+		return "", extlib.ErrorBadRequest("bot key generation failed: " + err.Error())
 	}
 
-	err = s.store.SaveAuthKeyData(&bot.AuthKeyData{
+	err = s.store.SaveKeyData(&bot.KeyData{
 		BotId: id,
 		Key:   key,
 	})
 
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return "", extlib.ErrorBadRequest(err.Error())
 	}
 
 	botKey := id + ":" + key
-	return &BotKeyResult{
-		Key: botKey,
-	}, nil
+	return botKey, nil
 }
 
-func (s *BotService) VerifyAuthKey(id, key string) error {
-	bkd, err := s.store.GetAuthKeyData(id)
+func (s *BotService) VerifyKey(id, key string) error {
+	bkd, err := s.store.GetKeyData(id)
 	if err != nil {
 		return nil
 	}

@@ -14,8 +14,8 @@ type BotStore interface {
 	GetBot(id string) (*bot.Bot, error)
 	GetAllBots() ([]*bot.Bot, error)
 	DeleteBot(id string) error
-	GetAuthKeyData(id string) (*bot.AuthKeyData, error)
-	SaveAuthKeyData(bkd *bot.AuthKeyData) error
+	GetKeyData(id string) (*bot.KeyData, error)
+	SaveKeyData(bkd *bot.KeyData) error
 }
 
 type UserStore interface {
