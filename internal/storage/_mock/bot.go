@@ -26,7 +26,7 @@ func (mbs *botStore) DeleteBot(id string) error {
 
 func (mbs *botStore) GetKeyData(id string) (*bot.KeyData, error) {
 	return &bot.KeyData{
-		Key: "test",
+		Token: "test",
 	}, nil
 }
 

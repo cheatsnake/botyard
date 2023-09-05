@@ -17,8 +17,12 @@ type BotCreateBody struct {
 }
 
 type BotCreateResult struct {
-	Bot *bot.Bot `json:"bot"`
-	Key string   `json:"key"`
+	Bot *bot.Bot      `json:"bot"`
+	Key *BotKeyResult `json:"key"`
+}
+
+type BotKeyResult struct {
+	Value string `json:"value"`
 }
 
 type BotEditBody struct {
@@ -153,32 +157,46 @@ func (s *BotService) RemoveCommand(id string, alias string) error {
 	return nil
 }
 
-func (s *BotService) GenerateKey(id string) (string, error) {
-	key, err := extlib.RandomToken(ulid.Length)
+func (s *BotService) GetKey(id string) (*BotKeyResult, error) {
+	keyData, err := s.store.GetKeyData(id)
 	if err != nil {
-		return "", extlib.ErrorBadRequest("bot key generation failed: " + err.Error())
+		return nil, extlib.ErrorBadRequest(err.Error())
+	}
+
+	keyValue := keyData.BotId + ":" + keyData.Token
+	return &BotKeyResult{
+		Value: keyValue,
+	}, nil
+}
+
+func (s *BotService) GenerateKey(id string) (*BotKeyResult, error) {
+	token, err := extlib.RandomToken(ulid.Length)
+	if err != nil {
+		return nil, extlib.ErrorBadRequest("bot key generation failed: " + err.Error())
 	}
 
 	err = s.store.SaveKeyData(&bot.KeyData{
 		BotId: id,
-		Key:   key,
+		Token: token,
 	})
 
 	if err != nil {
-		return "", extlib.ErrorBadRequest(err.Error())
+		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
-	botKey := id + ":" + key
-	return botKey, nil
+	key := id + ":" + token
+	return &BotKeyResult{
+		Value: key,
+	}, nil
 }
 
-func (s *BotService) VerifyKey(id, key string) error {
-	bkd, err := s.store.GetKeyData(id)
+func (s *BotService) VerifyKeyData(id, token string) error {
+	kd, err := s.store.GetKeyData(id)
 	if err != nil {
 		return nil
 	}
 
-	if bkd == nil || bkd.Key != key {
+	if kd == nil || kd.Token != token {
 		return extlib.ErrorForbidden("invalid bot key")
 	}
 

@@ -30,15 +30,15 @@ func (bm *BotMiddlewares) Auth(c *fiber.Ctx) error {
 	}
 
 	botId := strings.Split(key, ":")[0]
-	botKey := strings.Split(key, ":")[1]
+	token := strings.Split(key, ":")[1]
 
-	err := bm.service.VerifyKey(botId, botKey)
+	err := bm.service.VerifyKeyData(botId, token)
 	if err != nil {
 		return err
 	}
 
 	c.Locals("botId", botId)
-	c.Locals("botKey", botKey)
+	c.Locals("token", token)
 
 	return c.Next()
 }

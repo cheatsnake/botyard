@@ -48,7 +48,7 @@ func (s *Server) InitRoutes() {
 	// Admin API --------------------------------------------------------------
 	adminApiV1 := s.App.Group(adminApiV1Prefix)
 
-	adminApiV1.Get("/bot/:id/key", middlewares.AdminAuth)
+	adminApiV1.Get("/bot/:id/key", middlewares.AdminAuth, bot.GetKey)
 	adminApiV1.Post("/bot", middlewares.AdminAuth, bot.CreateBot)
 	adminApiV1.Put("/bot/:id/key", middlewares.AdminAuth, bot.RefreshKey)
 	adminApiV1.Delete("/bot/:id", middlewares.AdminAuth)

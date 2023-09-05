@@ -65,7 +65,7 @@ func (s *Storage) SaveKeyData(newBkd *bot.KeyData) error {
 	}
 
 	if bkd != nil {
-		bkd.Key = newBkd.Key
+		bkd.Token = newBkd.Token
 		return nil
 	}
 

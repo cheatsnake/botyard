@@ -22,9 +22,10 @@ type Command struct {
 	Description string `json:"description"`
 }
 
+// Key = BotId:Token
 type KeyData struct {
 	BotId string
-	Key   string
+	Token string
 }
 
 func New(name string) (*Bot, error) {

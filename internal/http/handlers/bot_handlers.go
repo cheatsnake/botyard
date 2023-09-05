@@ -19,13 +19,13 @@ func NewBotHandlers(s *services.BotService) *BotHandlers {
 	}
 }
 
-func (h *BotHandlers) CreateBot(c *fiber.Ctx) error {
+func (bh *BotHandlers) CreateBot(c *fiber.Ctx) error {
 	body := new(services.BotCreateBody)
 	if err := c.BodyParser(body); err != nil {
 		return extlib.ErrorBadRequest(err.Error())
 	}
 
-	result, err := h.service.CreateBot(body)
+	result, err := bh.service.CreateBot(body)
 	if err != nil {
 		return err
 	}
@@ -33,13 +33,13 @@ func (h *BotHandlers) CreateBot(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(result)
 }
 
-func (h *BotHandlers) GetBot(c *fiber.Ctx) error {
+func (bh *BotHandlers) GetBot(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 	if botId == "" {
 		return extlib.ErrorBadRequest("id is required")
 	}
 
-	bot, err := h.service.GetBotById(botId)
+	bot, err := bh.service.GetBotById(botId)
 	if err != nil {
 		return err
 	}
@@ -47,8 +47,8 @@ func (h *BotHandlers) GetBot(c *fiber.Ctx) error {
 	return c.JSON(bot)
 }
 
-func (h *BotHandlers) GetAllBots(c *fiber.Ctx) error {
-	bots, err := h.service.GetAllBots()
+func (bh *BotHandlers) GetAllBots(c *fiber.Ctx) error {
+	bots, err := bh.service.GetAllBots()
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (h *BotHandlers) GetAllBots(c *fiber.Ctx) error {
 	return c.JSON(bots)
 }
 
-func (h *BotHandlers) EditBot(c *fiber.Ctx) error {
+func (bh *BotHandlers) EditBot(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
 		return extlib.ErrorBadRequest("id is required")
@@ -68,7 +68,7 @@ func (h *BotHandlers) EditBot(c *fiber.Ctx) error {
 		return extlib.ErrorBadRequest(err.Error())
 	}
 
-	editedBot, err := h.service.EditBot(botId, body)
+	editedBot, err := bh.service.EditBot(botId, body)
 	if err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func (h *BotHandlers) EditBot(c *fiber.Ctx) error {
 	return c.JSON(editedBot)
 }
 
-func (h *BotHandlers) AddCommands(c *fiber.Ctx) error {
+func (bh *BotHandlers) AddCommands(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
 		return extlib.ErrorBadRequest("id is required")
@@ -87,7 +87,7 @@ func (h *BotHandlers) AddCommands(c *fiber.Ctx) error {
 		return extlib.ErrorBadRequest(err.Error())
 	}
 
-	err := h.service.AddCommands(botId, body)
+	err := bh.service.AddCommands(botId, body)
 	if err != nil {
 		return err
 	}
@@ -95,7 +95,7 @@ func (h *BotHandlers) AddCommands(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("commands added"))
 }
 
-func (h *BotHandlers) RemoveCommand(c *fiber.Ctx) error {
+func (bh *BotHandlers) RemoveCommand(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
 		return extlib.ErrorBadRequest("id is required")
@@ -103,7 +103,7 @@ func (h *BotHandlers) RemoveCommand(c *fiber.Ctx) error {
 
 	alias := c.Query("alias", "")
 
-	err := h.service.RemoveCommand(botId, alias)
+	err := bh.service.RemoveCommand(botId, alias)
 	if err != nil {
 		return err
 	}
@@ -111,13 +111,24 @@ func (h *BotHandlers) RemoveCommand(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("command removed"))
 }
 
-func (h *BotHandlers) RefreshKey(c *fiber.Ctx) error {
+func (bh *BotHandlers) GetKey(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 
-	botKeyRes, err := h.service.GenerateKey(botId)
+	result, err := bh.service.GetKey(botId)
 	if err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return err
 	}
 
-	return c.JSON(botKeyRes)
+	return c.JSON(result)
+}
+
+func (bh *BotHandlers) RefreshKey(c *fiber.Ctx) error {
+	botId := c.Params("id", "")
+
+	botKey, err := bh.service.GenerateKey(botId)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(botKey)
 }

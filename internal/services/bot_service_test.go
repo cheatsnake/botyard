@@ -21,7 +21,7 @@ func TestBotService(t *testing.T) {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 
-		if res.Key == "" {
+		if res.Key.Value == "" {
 			t.Errorf("got: %v,\nexpect: %v\n", res.Key, "key")
 		}
 	})
@@ -70,6 +70,14 @@ func TestBotService(t *testing.T) {
 		}
 	})
 
+	t.Run("get bot key", func(t *testing.T) {
+		botId := ulid.New()
+		_, err := botService.GetKey(botId)
+		if err != nil {
+			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
+		}
+	})
+
 	t.Run("generate bot key", func(t *testing.T) {
 		botId := ulid.New()
 		botKey, err := botService.GenerateKey(botId)
@@ -77,14 +85,14 @@ func TestBotService(t *testing.T) {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 
-		if !strings.Contains(botKey, botId) {
+		if !strings.Contains(botKey.Value, botId) {
 			t.Errorf("got: %v,\nexpect: %v\n", botKey, botId)
 		}
 	})
 
 	t.Run("verify bot key", func(t *testing.T) {
 		botId := ulid.New()
-		err := botService.VerifyKey(botId, "test")
+		err := botService.VerifyKeyData(botId, "test")
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
@@ -92,7 +100,7 @@ func TestBotService(t *testing.T) {
 
 	t.Run("verify invalid bot key", func(t *testing.T) {
 		botId := ulid.New()
-		err := botService.VerifyKey(botId, "fail")
+		err := botService.VerifyKeyData(botId, "fail")
 		if err == nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, "error")
 		}
