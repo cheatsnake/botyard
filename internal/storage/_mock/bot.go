@@ -24,13 +24,21 @@ func (mbs *botStore) DeleteBot(id string) error {
 	return nil
 }
 
-func (mbs *botStore) GetKeyData(id string) (*bot.KeyData, error) {
-	return &bot.KeyData{
+func (mbs *botStore) GetKey(id string) (*bot.Key, error) {
+	return &bot.Key{
 		Token: "test",
 	}, nil
 }
 
-func (mbs *botStore) SaveKeyData(bkd *bot.KeyData) error {
+func (mbs *botStore) SaveKey(bkd *bot.Key) error {
+	return nil
+}
+
+func (mbs *botStore) GetWebhook(id string) (*bot.Webhook, error) {
+	return &bot.Webhook{}, nil
+}
+
+func (mbs *botStore) SaveWebhook(webhook *bot.Webhook) error {
 	return nil
 }
 

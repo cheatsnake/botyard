@@ -12,22 +12,24 @@ import (
 )
 
 type Storage struct {
-	bots     []*bot.Bot
-	botKeys  []*bot.KeyData
-	users    []*user.User
-	chats    []*chat.Chat
-	messages []*message.Message
-	files    []*file.File
-	mu       sync.Mutex
+	bots        []*bot.Bot
+	botKeys     []*bot.Key
+	botWebhooks []*bot.Webhook
+	users       []*user.User
+	chats       []*chat.Chat
+	messages    []*message.Message
+	files       []*file.File
+	mu          sync.Mutex
 }
 
 func New() *Storage {
 	return &Storage{
-		bots:     make([]*bot.Bot, 0, 10),
-		botKeys:  make([]*bot.KeyData, 0, 10),
-		users:    make([]*user.User, 0, 10),
-		chats:    make([]*chat.Chat, 0, 10),
-		messages: make([]*message.Message, 0, 10),
-		files:    make([]*file.File, 0, 10),
+		bots:        make([]*bot.Bot, 0, 10),
+		botKeys:     make([]*bot.Key, 0, 10),
+		botWebhooks: make([]*bot.Webhook, 0, 10),
+		users:       make([]*user.User, 0, 10),
+		chats:       make([]*chat.Chat, 0, 10),
+		messages:    make([]*message.Message, 0, 10),
+		files:       make([]*file.File, 0, 10),
 	}
 }

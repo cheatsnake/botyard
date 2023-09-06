@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"botyard/pkg/extlib"
 	"errors"
 )
 
@@ -43,6 +44,47 @@ func validateCmd(alias, descr string) error {
 
 	if len(descr) > maxCmdDescrLen {
 		return errors.New(errCmdDescrTooLong)
+	}
+
+	return nil
+}
+
+func validateBotId(id string) error {
+	if len(id) == 0 {
+		return errors.New(errBotIdIsEmpty)
+	}
+
+	return nil
+}
+
+func validateKeyToken(token string) error {
+	if len(token) == 0 {
+		return errors.New(errKeyTokenIsEmpty)
+	}
+
+	return nil
+}
+
+func validateWebhookUrl(url string) error {
+	if len(url) == 0 {
+		return errors.New(errWebhookUrlIsEmpty)
+	}
+
+	if len(url) > maxWebhookUrlLen {
+		return errors.New(errWebhookUrlTooLong)
+	}
+
+	err := extlib.ValidateURL(url)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func validateWebhookSecret(secret string) error {
+	if len(secret) > maxWebhookSecretLen {
+		return errors.New(errWebhookSecretTooLong)
 	}
 
 	return nil

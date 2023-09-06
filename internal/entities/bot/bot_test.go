@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestNew(t *testing.T) {
+func TestNewBot(t *testing.T) {
 	testName := "test"
 	testCommands := []Command{
 		{Alias: "start", Description: "test start"},

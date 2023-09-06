@@ -1,5 +1,5 @@
 test:
-	@go test -race -cover ./...
+	@go test -race -cover ./... | grep -v '^?'
 fmt:
 	go fmt ./...
 count-lines:

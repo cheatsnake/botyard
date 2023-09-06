@@ -12,6 +12,7 @@ func (s *Storage) AddBot(bot *bot.Bot) error {
 
 	candidate, _ := s.GetBot(bot.Name)
 	if candidate != nil {
+		// TODO consts for errors
 		return errors.New("bot with this name already exists")
 	}
 
@@ -48,27 +49,53 @@ func (s *Storage) DeleteBot(id string) error {
 	return errors.New("bot not found")
 }
 
-func (s *Storage) GetKeyData(id string) (*bot.KeyData, error) {
-	for _, bkd := range s.botKeys {
-		if bkd.BotId == id {
-			return bkd, nil
+func (s *Storage) GetKey(id string) (*bot.Key, error) {
+	for _, bk := range s.botKeys {
+		if bk.BotId == id {
+			return bk, nil
 		}
 	}
 
 	return nil, nil
 }
 
-func (s *Storage) SaveKeyData(newBkd *bot.KeyData) error {
-	bkd, err := s.GetKeyData(newBkd.BotId)
+func (s *Storage) SaveKey(botKey *bot.Key) error {
+	existKey, err := s.GetKey(botKey.BotId)
 	if err != nil {
 		return err
 	}
 
-	if bkd != nil {
-		bkd.Token = newBkd.Token
+	if existKey != nil {
+		existKey.Token = botKey.Token
 		return nil
 	}
 
-	s.botKeys = append(s.botKeys, newBkd)
+	s.botKeys = append(s.botKeys, botKey)
+	return nil
+}
+
+func (s *Storage) GetWebhook(id string) (*bot.Webhook, error) {
+	for _, wh := range s.botWebhooks {
+		if wh.BotId == id {
+			return wh, nil
+		}
+	}
+
+	return nil, nil
+}
+
+func (s *Storage) SaveWebhook(webhook *bot.Webhook) error {
+	existWebhook, err := s.GetWebhook(webhook.BotId)
+	if err != nil {
+		return err
+	}
+
+	if existWebhook != nil {
+		existWebhook.Url = webhook.Url
+		existWebhook.Secret = webhook.Secret
+		return nil
+	}
+
+	s.botWebhooks = append(s.botWebhooks, webhook)
 	return nil
 }

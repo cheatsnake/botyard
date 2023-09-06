@@ -158,7 +158,7 @@ func (s *BotService) RemoveCommand(id string, alias string) error {
 }
 
 func (s *BotService) GetKey(id string) (*BotKeyResult, error) {
-	keyData, err := s.store.GetKeyData(id)
+	keyData, err := s.store.GetKey(id)
 	if err != nil {
 		return nil, extlib.ErrorBadRequest(err.Error())
 	}
@@ -175,23 +175,24 @@ func (s *BotService) GenerateKey(id string) (*BotKeyResult, error) {
 		return nil, extlib.ErrorBadRequest("bot key generation failed: " + err.Error())
 	}
 
-	err = s.store.SaveKeyData(&bot.KeyData{
-		BotId: id,
-		Token: token,
-	})
+	botKey, err := bot.NewKey(id, token)
+	if err != nil {
+		return nil, extlib.ErrorBadRequest(err.Error())
+	}
+
+	err = s.store.SaveKey(botKey)
 
 	if err != nil {
 		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
-	key := id + ":" + token
 	return &BotKeyResult{
-		Value: key,
+		Value: id + ":" + token,
 	}, nil
 }
 
 func (s *BotService) VerifyKeyData(id, token string) error {
-	kd, err := s.store.GetKeyData(id)
+	kd, err := s.store.GetKey(id)
 	if err != nil {
 		return nil
 	}
