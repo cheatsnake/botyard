@@ -395,7 +395,7 @@ func TestNewBot(t *testing.T) {
 		}
 
 		expect := len(testCommands)
-		result := len(testBot.GetCommands())
+		result := len(testBot.Commands)
 
 		if result != expect {
 			t.Errorf("%#v\ngot: %d,\nexpect: %d\n", testBot, result, expect)
