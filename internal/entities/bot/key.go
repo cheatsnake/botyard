@@ -2,7 +2,6 @@ package bot
 
 import "sync"
 
-// Key = BotId + ":" + Token
 type Key struct {
 	BotId string
 	Token string
@@ -37,4 +36,8 @@ func (k *Key) SetToken(token string) error {
 
 	k.Token = token
 	return nil
+}
+
+func (k *Key) Assemble() string {
+	return k.BotId + ":" + k.Token
 }

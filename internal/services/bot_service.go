@@ -163,9 +163,8 @@ func (s *BotService) GetKey(id string) (*BotKeyResult, error) {
 		return nil, extlib.ErrorBadRequest(err.Error())
 	}
 
-	keyValue := keyData.BotId + ":" + keyData.Token
 	return &BotKeyResult{
-		Value: keyValue,
+		Value: keyData.Assemble(),
 	}, nil
 }
 
@@ -187,7 +186,7 @@ func (s *BotService) GenerateKey(id string) (*BotKeyResult, error) {
 	}
 
 	return &BotKeyResult{
-		Value: id + ":" + token,
+		Value: botKey.Assemble(),
 	}, nil
 }
 

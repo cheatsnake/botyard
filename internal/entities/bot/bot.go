@@ -107,10 +107,6 @@ func (b *Bot) GetCommand(alias string) (Command, error) {
 	return Command{}, errors.New(errCmdNotFound)
 }
 
-func (b *Bot) GetCommands() []Command {
-	return b.Commands
-}
-
 func (b *Bot) RemoveCommand(alias string) error {
 	b.mu.Lock()
 	defer b.mu.Unlock()
