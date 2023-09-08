@@ -4,6 +4,8 @@ import (
 	"botyard/internal/entities/chat"
 	"botyard/pkg/extlib"
 	"errors"
+
+	"golang.org/x/exp/slices"
 )
 
 func (s *Storage) AddChat(chat *chat.Chat) error {
@@ -37,12 +39,17 @@ func (s *Storage) GetChats(userId, botId string) ([]*chat.Chat, error) {
 }
 
 func (s *Storage) DeleteChat(id string) error {
-	for i, chat := range s.chats {
-		if chat.Id == id {
-			s.chats = extlib.SliceRemoveElement(s.chats, i)
-			return nil
-		}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	delIndex := slices.IndexFunc(s.chats, func(c *chat.Chat) bool {
+		return c.Id == id
+	})
+
+	if delIndex == -1 {
+		return errors.New("chat not found")
 	}
 
-	return errors.New("chat not found")
+	s.chats = extlib.SliceRemoveElement(s.chats, delIndex)
+	return nil
 }

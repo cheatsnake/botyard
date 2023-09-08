@@ -42,14 +42,14 @@ func (s *Storage) DeleteFile(id string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	idx := slices.IndexFunc(s.files, func(f *file.File) bool {
+	delIndex := slices.IndexFunc(s.files, func(f *file.File) bool {
 		return f.Id == id
 	})
 
-	if idx == -1 {
+	if delIndex == -1 {
 		return errors.New("file not found")
 	}
 
-	s.messages = extlib.SliceRemoveElement(s.messages, idx)
+	s.messages = extlib.SliceRemoveElement(s.messages, delIndex)
 	return nil
 }

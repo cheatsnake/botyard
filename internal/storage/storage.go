@@ -14,10 +14,11 @@ type BotStore interface {
 	GetBot(id string) (*bot.Bot, error)
 	GetAllBots() ([]*bot.Bot, error)
 	DeleteBot(id string) error
-	GetKey(id string) (*bot.Key, error)
+	GetKey(botId string) (*bot.Key, error)
 	SaveKey(key *bot.Key) error
-	GetWebhook(id string) (*bot.Webhook, error)
+	GetWebhook(botId string) (*bot.Webhook, error)
 	SaveWebhook(wh *bot.Webhook) error
+	DeleteWebhook(botId string) error
 }
 
 type UserStore interface {

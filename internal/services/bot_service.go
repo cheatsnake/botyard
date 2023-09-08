@@ -61,7 +61,7 @@ func (s *BotService) CreateBot(body *BotCreateBody) (*BotCreateResult, error) {
 
 	err = s.store.AddBot(newBot)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, err
 	}
 
 	botKey, err := s.GenerateKey(newBot.Id)
@@ -79,7 +79,7 @@ func (s *BotService) CreateBot(body *BotCreateBody) (*BotCreateResult, error) {
 func (s *BotService) GetBotById(id string) (*bot.Bot, error) {
 	foundBot, err := s.store.GetBot(id)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, err
 	}
 
 	return foundBot, nil
@@ -88,7 +88,7 @@ func (s *BotService) GetBotById(id string) (*bot.Bot, error) {
 func (s *BotService) GetAllBots() ([]*bot.Bot, error) {
 	bots, err := s.store.GetAllBots()
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, err
 	}
 
 	return bots, nil
@@ -101,23 +101,41 @@ func (s *BotService) EditBot(id string, body *BotEditBody) (*bot.Bot, error) {
 	}
 
 	if body.Name != "" {
-		foundBot.SetName(body.Name)
+		err := foundBot.SetName(body.Name)
+		if err != nil {
+			return nil, extlib.ErrorBadRequest(err.Error())
+		}
 	}
 
 	if body.Description != "" {
-		foundBot.SetDescription(body.Description)
+		err := foundBot.SetDescription(body.Description)
+		if err != nil {
+			return nil, extlib.ErrorBadRequest(err.Error())
+		}
 	}
 
 	if body.Avatar != "" {
-		foundBot.SetAvatar(body.Avatar)
+		err := foundBot.SetAvatar(body.Avatar)
+		if err != nil {
+			return nil, extlib.ErrorBadRequest(err.Error())
+		}
 	}
 
 	err = s.store.EditBot(foundBot)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, err
 	}
 
 	return foundBot, nil
+}
+
+func (s *BotService) DeleteBot(id string) error {
+	err := s.store.DeleteBot(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *BotService) AddCommands(id string, body *BotCommandsBody) error {
@@ -132,7 +150,7 @@ func (s *BotService) AddCommands(id string, body *BotCommandsBody) error {
 
 	err = s.store.EditBot(foundBot)
 	if err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return err
 	}
 
 	return nil
@@ -151,7 +169,7 @@ func (s *BotService) RemoveCommand(id string, alias string) error {
 
 	err = s.store.EditBot(newBot)
 	if err != nil {
-		return extlib.ErrorNotFound(err.Error())
+		return err
 	}
 
 	return nil
@@ -160,7 +178,7 @@ func (s *BotService) RemoveCommand(id string, alias string) error {
 func (s *BotService) GetKey(id string) (*BotKeyResult, error) {
 	keyData, err := s.store.GetKey(id)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, err
 	}
 
 	return &BotKeyResult{
@@ -180,9 +198,8 @@ func (s *BotService) GenerateKey(id string) (*BotKeyResult, error) {
 	}
 
 	err = s.store.SaveKey(botKey)
-
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, err
 	}
 
 	return &BotKeyResult{
@@ -198,6 +215,38 @@ func (s *BotService) VerifyKeyData(id, token string) error {
 
 	if kd == nil || kd.Token != token {
 		return extlib.ErrorForbidden("invalid bot key")
+	}
+
+	return nil
+}
+
+func (s *BotService) CreateWebhook(botId, url, secret string) error {
+	webhook, err := bot.NewWebhook(botId, url, secret)
+	if err != nil {
+		return extlib.ErrorBadRequest(err.Error())
+	}
+
+	err = s.store.SaveWebhook(webhook)
+	if err != nil {
+		return extlib.ErrorBadRequest(err.Error())
+	}
+
+	return nil
+}
+
+func (s *BotService) GetWebhook(botId string) (*bot.Webhook, error) {
+	wh, err := s.store.GetWebhook(botId)
+	if err != nil {
+		return nil, err
+	}
+
+	return wh, nil
+}
+
+func (s *BotService) DeleteWebhook(botId string) error {
+	err := s.store.DeleteWebhook(botId)
+	if err != nil {
+		return err
 	}
 
 	return nil

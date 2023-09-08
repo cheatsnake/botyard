@@ -42,6 +42,10 @@ func (mbs *botStore) SaveWebhook(webhook *bot.Webhook) error {
 	return nil
 }
 
+func (mbs *botStore) DeleteWebhook(id string) error {
+	return nil
+}
+
 func BotStore() *botStore {
 	return &botStore{}
 }

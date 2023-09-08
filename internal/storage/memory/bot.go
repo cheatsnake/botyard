@@ -3,7 +3,8 @@ package memory
 import (
 	"botyard/internal/entities/bot"
 	"botyard/pkg/extlib"
-	"errors"
+
+	"golang.org/x/exp/slices"
 )
 
 func (s *Storage) AddBot(bot *bot.Bot) error {
@@ -13,7 +14,7 @@ func (s *Storage) AddBot(bot *bot.Bot) error {
 	candidate, _ := s.GetBot(bot.Name)
 	if candidate != nil {
 		// TODO consts for errors
-		return errors.New("bot with this name already exists")
+		return extlib.ErrorBadRequest("bot with this name already exists")
 	}
 
 	s.bots = append(s.bots, bot)
@@ -27,7 +28,7 @@ func (s *Storage) GetBot(id string) (*bot.Bot, error) {
 		}
 	}
 
-	return nil, errors.New("bot not found")
+	return nil, extlib.ErrorNotFound("bot not found")
 }
 
 func (s *Storage) GetAllBots() ([]*bot.Bot, error) {
@@ -39,31 +40,36 @@ func (s *Storage) EditBot(bot *bot.Bot) error {
 }
 
 func (s *Storage) DeleteBot(id string) error {
-	for i, bot := range s.bots {
-		if bot.Id == id {
-			s.bots = extlib.SliceRemoveElement(s.bots, i)
-			return nil
-		}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	delIndex := slices.IndexFunc(s.bots, func(b *bot.Bot) bool {
+		return b.Id == id
+	})
+
+	if delIndex == -1 {
+		return extlib.ErrorNotFound("bot not found")
 	}
 
-	return errors.New("bot not found")
+	s.bots = extlib.SliceRemoveElement(s.bots, delIndex)
+	return nil
 }
 
-func (s *Storage) GetKey(id string) (*bot.Key, error) {
+func (s *Storage) GetKey(botId string) (*bot.Key, error) {
 	for _, bk := range s.botKeys {
-		if bk.BotId == id {
+		if bk.BotId == botId {
 			return bk, nil
 		}
 	}
 
-	return nil, nil
+	return nil, extlib.ErrorNotFound("bot key not found")
 }
 
 func (s *Storage) SaveKey(botKey *bot.Key) error {
-	existKey, err := s.GetKey(botKey.BotId)
-	if err != nil {
-		return err
-	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	existKey, _ := s.GetKey(botKey.BotId)
 
 	if existKey != nil {
 		existKey.Token = botKey.Token
@@ -74,21 +80,21 @@ func (s *Storage) SaveKey(botKey *bot.Key) error {
 	return nil
 }
 
-func (s *Storage) GetWebhook(id string) (*bot.Webhook, error) {
+func (s *Storage) GetWebhook(botId string) (*bot.Webhook, error) {
 	for _, wh := range s.botWebhooks {
-		if wh.BotId == id {
+		if wh.BotId == botId {
 			return wh, nil
 		}
 	}
 
-	return nil, nil
+	return nil, extlib.ErrorNotFound("webhook not found")
 }
 
 func (s *Storage) SaveWebhook(webhook *bot.Webhook) error {
-	existWebhook, err := s.GetWebhook(webhook.BotId)
-	if err != nil {
-		return err
-	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	existWebhook, _ := s.GetWebhook(webhook.BotId)
 
 	if existWebhook != nil {
 		existWebhook.Url = webhook.Url
@@ -97,5 +103,21 @@ func (s *Storage) SaveWebhook(webhook *bot.Webhook) error {
 	}
 
 	s.botWebhooks = append(s.botWebhooks, webhook)
+	return nil
+}
+
+func (s *Storage) DeleteWebhook(botId string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	delIndex := slices.IndexFunc(s.botWebhooks, func(w *bot.Webhook) bool {
+		return w.BotId == botId
+	})
+
+	if delIndex == -1 {
+		return extlib.ErrorNotFound("webhook not found")
+	}
+
+	s.botWebhooks = extlib.SliceRemoveElement(s.botWebhooks, delIndex)
 	return nil
 }
