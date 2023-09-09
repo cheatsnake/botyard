@@ -7,20 +7,26 @@ import (
 	"testing"
 )
 
-func TestFileService(t *testing.T) {
+func TestFileServiceAddFile(t *testing.T) {
 	fileService := NewFileService(mock.FileStore())
 
 	t.Run("add a new file", func(t *testing.T) {
-		testFile, err := file.New("/test", "text/plain")
-		if err != nil {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFile, err, nil)
-		}
-
-		err = fileService.AddFile(testFile)
+		testFile, err := fileService.AddFile("/test", "text/plain")
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFile, err, nil)
 		}
 	})
+
+	t.Run("add a new file with invalid data", func(t *testing.T) {
+		testFile, err := fileService.AddFile("/test", "invalid type")
+		if err == nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFile, err, "error")
+		}
+	})
+}
+
+func TestFileServiceGetFiles(t *testing.T) {
+	fileService := NewFileService(mock.FileStore())
 
 	t.Run("get files", func(t *testing.T) {
 		testFileIds := []string{ulid.New(), ulid.New()}
@@ -33,6 +39,10 @@ func TestFileService(t *testing.T) {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFiles, testFiles, []*file.File{})
 		}
 	})
+}
+
+func TestFileServiceDeleteFile(t *testing.T) {
+	fileService := NewFileService(mock.FileStore())
 
 	t.Run("delete a file", func(t *testing.T) {
 		testFileId := ulid.New()

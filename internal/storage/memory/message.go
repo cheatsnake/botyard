@@ -15,7 +15,7 @@ func (s *Storage) AddMessage(msg *message.Message) error {
 }
 
 func (s *Storage) GetMessagesByChat(chatId string, page, limit int) (int, []*message.Message, error) {
-	if page == 0 || limit == 0 {
+	if page <= 0 || limit <= 0 {
 		return 0, nil, nil
 	}
 

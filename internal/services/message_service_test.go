@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestMessageService(t *testing.T) {
+func TestMessageServiceAddMessage(t *testing.T) {
 	testFileService := NewFileService(mock.FileStore())
 	messageService := NewMessageService(mock.MessageStore(), testFileService)
 
@@ -31,12 +31,23 @@ func TestMessageService(t *testing.T) {
 		}
 	})
 
+}
+
+func TestMessageServiceGetMessagesByChat(t *testing.T) {
+	testFileService := NewFileService(mock.FileStore())
+	messageService := NewMessageService(mock.MessageStore(), testFileService)
+
 	t.Run("get messages by chat", func(t *testing.T) {
 		_, err := messageService.GetMessagesByChat(ulid.New(), 1, 1)
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
+}
+
+func TestMessageServiceDeleteMessagesByChat(t *testing.T) {
+	testFileService := NewFileService(mock.FileStore())
+	messageService := NewMessageService(mock.MessageStore(), testFileService)
 
 	t.Run("delete messages by chat", func(t *testing.T) {
 		err := messageService.DeleteMessagesByChat(ulid.New())

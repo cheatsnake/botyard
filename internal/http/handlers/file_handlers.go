@@ -76,12 +76,7 @@ func (h *FileHandlers) LoadMany(c *fiber.Ctx) error {
 			return extlib.ErrorBadRequest(err.Error())
 		}
 
-		newFile, err := file.New(filePath, contentType)
-		if err != nil {
-			return extlib.ErrorBadRequest(err.Error())
-		}
-
-		err = h.service.AddFile(newFile)
+		newFile, err := h.service.AddFile(filePath, contentType)
 		if err != nil {
 			return extlib.ErrorBadRequest(err.Error())
 		}

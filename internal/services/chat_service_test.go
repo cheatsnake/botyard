@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestChatService(t *testing.T) {
+func TestChatServiceCreate(t *testing.T) {
 	fileService := NewFileService(mock.FileStore())
 	messageService := NewMessageService(mock.MessageStore(), fileService)
 	chatService := NewChatService(mock.ChatStore(), messageService)
@@ -24,6 +24,12 @@ func TestChatService(t *testing.T) {
 			t.Errorf("got: %v,\nexpect: %v\n", err, "error")
 		}
 	})
+}
+
+func TestChatServiceGetByBot(t *testing.T) {
+	fileService := NewFileService(mock.FileStore())
+	messageService := NewMessageService(mock.MessageStore(), fileService)
+	chatService := NewChatService(mock.ChatStore(), messageService)
 
 	t.Run("get chats by bot", func(t *testing.T) {
 		_, err := chatService.GetByBot(ulid.New(), ulid.New())
@@ -31,6 +37,12 @@ func TestChatService(t *testing.T) {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
+}
+
+func TestChatServiceDelete(t *testing.T) {
+	fileService := NewFileService(mock.FileStore())
+	messageService := NewMessageService(mock.MessageStore(), fileService)
+	chatService := NewChatService(mock.ChatStore(), messageService)
 
 	t.Run("delete chat", func(t *testing.T) {
 		err := chatService.Delete(ulid.New())

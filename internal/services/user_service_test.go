@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestUserService(t *testing.T) {
+func TestUserServiceCreate(t *testing.T) {
 	testService := NewUserService(mock.UserStore())
 	t.Run("create new user", func(t *testing.T) {
 		testBody := &UserCreateBody{
