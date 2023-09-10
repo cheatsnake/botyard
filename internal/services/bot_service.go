@@ -27,12 +27,14 @@ type BotKeyResult struct {
 
 type BotEditBody struct {
 	bot.Bot
-	Commands struct{} `json:"-"`
-	Id       struct{} `json:"-"`
+	Id struct{} `json:"-"`
 }
 
 type BotCommandsBody struct {
-	Commands []bot.Command `json:"commands"`
+	Commands []struct {
+		bot.Command
+		BotId struct{} `json:"-"`
+	} `json:"commands"`
 }
 
 func NewBotService(s storage.BotStore) *BotService {
@@ -53,10 +55,6 @@ func (s *BotService) CreateBot(body *BotCreateBody) (*BotCreateResult, error) {
 
 	if body.Avatar != "" {
 		newBot.SetAvatar(body.Avatar)
-	}
-
-	for _, cmd := range body.Commands {
-		newBot.AddCommand(cmd.Alias, cmd.Description)
 	}
 
 	err = s.store.AddBot(newBot)
@@ -138,36 +136,34 @@ func (s *BotService) DeleteBot(id string) error {
 	return nil
 }
 
-func (s *BotService) AddCommands(id string, body *BotCommandsBody) error {
-	foundBot, err := s.GetBotById(id)
+func (s *BotService) AddCommands(botId string, body *BotCommandsBody) error {
+	_, err := s.GetBotById(botId)
 	if err != nil {
 		return err
 	}
 
-	for _, cmd := range body.Commands {
-		foundBot.AddCommand(cmd.Alias, cmd.Description)
-	}
+	for _, c := range body.Commands {
+		newCmd, err := bot.NewCommand(botId, c.Alias, c.Description)
+		if err != nil {
+			return extlib.ErrorBadRequest(err.Error())
+		}
 
-	err = s.store.EditBot(foundBot)
-	if err != nil {
-		return err
+		err = s.store.SaveCommand(newCmd)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (s *BotService) RemoveCommand(id string, alias string) error {
-	newBot, err := s.GetBotById(id)
+func (s *BotService) RemoveCommand(botId string, alias string) error {
+	_, err := s.GetBotById(botId)
 	if err != nil {
 		return err
 	}
 
-	err = newBot.RemoveCommand(alias)
-	if err != nil {
-		return extlib.ErrorNotFound(err.Error())
-	}
-
-	err = s.store.EditBot(newBot)
+	err = s.store.DeleteCommand(botId, alias)
 	if err != nil {
 		return err
 	}

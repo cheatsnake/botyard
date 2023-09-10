@@ -34,5 +34,4 @@ var (
 	errWebhookSecretTooLong = fmt.Sprintf("webhook secret should not be longer than %d characters", maxWebhookSecretLen)
 	errCmdAliasSymbols      = "command alias should contain lower case English letters, underscores, dashes or numbers"
 	errNameSymbols          = "bot name should contain upper/lower case English letters, spaces, dashes or numbers"
-	errCmdNotFound          = "command not found"
 )

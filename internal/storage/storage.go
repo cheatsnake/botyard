@@ -15,6 +15,11 @@ type BotStore interface {
 	GetAllBots() ([]*bot.Bot, error)
 	DeleteBot(id string) error
 
+	SaveCommand(cmd *bot.Command) error
+	GetCommands(botId string) ([]*bot.Command, error)
+	DeleteCommand(botId, alias string) error
+	DeleteCommandsByBot(botId string) error
+
 	GetKey(botId string) (*bot.Key, error)
 	SaveKey(key *bot.Key) error
 	DeleteKey(botId string) error

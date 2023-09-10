@@ -24,6 +24,22 @@ func (mbs *botStore) DeleteBot(id string) error {
 	return nil
 }
 
+func (mbs *botStore) SaveCommand(cmd *bot.Command) error {
+	return nil
+}
+
+func (mbs *botStore) GetCommands(botId string) ([]*bot.Command, error) {
+	return []*bot.Command{}, nil
+}
+
+func (mbs *botStore) DeleteCommand(botId, alias string) error {
+	return nil
+}
+
+func (mbs *botStore) DeleteCommandsByBot(botId string) error {
+	return nil
+}
+
 func (mbs *botStore) GetKey(id string) (*bot.Key, error) {
 	return &bot.Key{
 		Token: "test",

@@ -39,7 +39,7 @@ func (s *Storage) DeleteMessagesByChat(chatId string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	filtered := extlib.SliceFilter(s.messages, len(s.messages), func(m *message.Message) bool {
+	filtered := extlib.SliceFilter(s.messages, 0, func(m *message.Message) bool {
 		return m.ChatId != chatId
 	})
 

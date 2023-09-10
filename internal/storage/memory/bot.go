@@ -7,16 +7,17 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func (s *Storage) AddBot(bot *bot.Bot) error {
+func (s *Storage) AddBot(newBot *bot.Bot) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	candidate, _ := s.GetBot(bot.Name)
-	if candidate != nil {
-		return extlib.ErrorBadRequest("bot with this name already exists")
+	for _, b := range s.bots {
+		if b.Name == newBot.Name {
+			return extlib.ErrorBadRequest("bot with this name already exists")
+		}
 	}
 
-	s.bots = append(s.bots, bot)
+	s.bots = append(s.bots, newBot)
 	return nil
 }
 
@@ -51,6 +52,61 @@ func (s *Storage) DeleteBot(id string) error {
 	}
 
 	s.bots = extlib.SliceRemoveElement(s.bots, delIndex)
+	return nil
+}
+
+func (s *Storage) SaveCommand(newCmd *bot.Command) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for _, c := range s.botCommands {
+		if c.BotId == newCmd.BotId && c.Alias == newCmd.Alias {
+			c.Description = newCmd.Description
+			return nil
+		}
+	}
+
+	s.botCommands = append(s.botCommands, newCmd)
+	return nil
+}
+
+func (s *Storage) GetCommands(botId string) ([]*bot.Command, error) {
+	var cmds []*bot.Command
+
+	for _, cmd := range s.botCommands {
+		if cmd.BotId == botId {
+			cmds = append(cmds, cmd)
+		}
+	}
+
+	return cmds, nil
+}
+
+func (s *Storage) DeleteCommand(botId, alias string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	delIndex := slices.IndexFunc(s.botCommands, func(cmd *bot.Command) bool {
+		return cmd.BotId == botId && cmd.Alias == alias
+	})
+
+	if delIndex == -1 {
+		return extlib.ErrorNotFound("command not found")
+	}
+
+	s.botCommands = extlib.SliceRemoveElement(s.botCommands, delIndex)
+	return nil
+}
+
+func (s *Storage) DeleteCommandsByBot(botId string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	filtered := extlib.SliceFilter(s.botCommands, 0, func(cmd *bot.Command) bool {
+		return cmd.BotId != botId
+	})
+
+	s.botCommands = filtered
 	return nil
 }
 
