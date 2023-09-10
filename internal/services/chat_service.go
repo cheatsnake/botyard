@@ -26,7 +26,7 @@ func (s *ChatService) Create(userId string, botId string) (*chat.Chat, error) {
 
 	err = s.store.AddChat(chat)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, err
 	}
 
 	return chat, nil
@@ -35,7 +35,7 @@ func (s *ChatService) Create(userId string, botId string) (*chat.Chat, error) {
 func (s *ChatService) GetByBot(userId string, botId string) ([]*chat.Chat, error) {
 	chats, err := s.store.GetChats(userId, botId)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, err
 	}
 
 	return chats, nil
@@ -44,7 +44,7 @@ func (s *ChatService) GetByBot(userId string, botId string) ([]*chat.Chat, error
 func (s *ChatService) Delete(id string) error {
 	err := s.store.DeleteChat(id)
 	if err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return err
 	}
 
 	return nil

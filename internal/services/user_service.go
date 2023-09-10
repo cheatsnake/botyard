@@ -29,7 +29,7 @@ func (s *UserService) Create(body *UserCreateBody) (*user.User, error) {
 
 	err = s.store.AddUser(newUser)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, err
 	}
 
 	return newUser, nil

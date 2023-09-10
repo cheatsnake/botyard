@@ -24,6 +24,7 @@ type BotStore interface {
 type UserStore interface {
 	AddUser(user *user.User) error
 	GetUser(id string) (*user.User, error)
+	DeleteUser(id string) error
 }
 
 type ChatStore interface {

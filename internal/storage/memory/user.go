@@ -2,7 +2,9 @@ package memory
 
 import (
 	"botyard/internal/entities/user"
-	"errors"
+	"botyard/pkg/extlib"
+
+	"golang.org/x/exp/slices"
 )
 
 func (s *Storage) AddUser(user *user.User) error {
@@ -20,5 +22,21 @@ func (s *Storage) GetUser(id string) (*user.User, error) {
 		}
 	}
 
-	return nil, errors.New("bot not found")
+	return nil, extlib.ErrorNotFound("user not found")
+}
+
+func (s *Storage) DeleteUser(id string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	delIndex := slices.IndexFunc(s.users, func(u *user.User) bool {
+		return u.Id == id
+	})
+
+	if delIndex == -1 {
+		return extlib.ErrorNotFound("user not found")
+	}
+
+	s.users = extlib.SliceRemoveElement(s.users, delIndex)
+	return nil
 }

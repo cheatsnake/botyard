@@ -16,6 +16,10 @@ func (mus *userStore) GetUser(id string) (*user.User, error) {
 	return u, nil
 }
 
+func (mus *userStore) DeleteUser(id string) error {
+	return nil
+}
+
 func UserStore() *userStore {
 	return &userStore{}
 }

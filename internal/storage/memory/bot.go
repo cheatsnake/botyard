@@ -13,7 +13,6 @@ func (s *Storage) AddBot(bot *bot.Bot) error {
 
 	candidate, _ := s.GetBot(bot.Name)
 	if candidate != nil {
-		// TODO consts for errors
 		return extlib.ErrorBadRequest("bot with this name already exists")
 	}
 
