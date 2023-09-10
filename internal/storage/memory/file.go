@@ -15,16 +15,6 @@ func (s *Storage) AddFile(file *file.File) error {
 	return nil
 }
 
-func (s *Storage) GetFile(id string) (*file.File, error) {
-	for _, file := range s.files {
-		if file.Id == id {
-			return file, nil
-		}
-	}
-
-	return nil, extlib.ErrorNotFound("file not found")
-}
-
 func (s *Storage) GetFiles(ids []string) ([]*file.File, error) {
 	files := make([]*file.File, 0, len(ids))
 
@@ -37,18 +27,21 @@ func (s *Storage) GetFiles(ids []string) ([]*file.File, error) {
 	return files, nil
 }
 
-func (s *Storage) DeleteFile(id string) error {
+func (s *Storage) DeleteFiles(ids []string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	delIndex := slices.IndexFunc(s.files, func(f *file.File) bool {
-		return f.Id == id
-	})
+	for _, id := range ids {
+		delIndex := slices.IndexFunc(s.files, func(f *file.File) bool {
+			return f.Id == id
+		})
 
-	if delIndex == -1 {
-		return extlib.ErrorNotFound("file not found")
+		if delIndex == -1 {
+			return extlib.ErrorNotFound("file not found")
+		}
+
+		s.messages = extlib.SliceRemoveElement(s.messages, delIndex)
 	}
 
-	s.messages = extlib.SliceRemoveElement(s.messages, delIndex)
 	return nil
 }

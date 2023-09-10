@@ -39,8 +39,8 @@ func (fs *FileService) GetFiles(ids []string) ([]*file.File, error) {
 	return files, nil
 }
 
-func (fs *FileService) DeleteFile(id string) error {
-	err := fs.store.DeleteFile(id)
+func (fs *FileService) DeleteFiles(ids []string) error {
+	err := fs.store.DeleteFiles(ids)
 	if err != nil {
 		return err
 	}

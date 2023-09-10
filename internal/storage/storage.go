@@ -14,8 +14,11 @@ type BotStore interface {
 	GetBot(id string) (*bot.Bot, error)
 	GetAllBots() ([]*bot.Bot, error)
 	DeleteBot(id string) error
+
 	GetKey(botId string) (*bot.Key, error)
 	SaveKey(key *bot.Key) error
+	DeleteKey(botId string) error
+
 	GetWebhook(botId string) (*bot.Webhook, error)
 	SaveWebhook(wh *bot.Webhook) error
 	DeleteWebhook(botId string) error
@@ -42,9 +45,8 @@ type MessageStore interface {
 
 type FileStore interface {
 	AddFile(file *file.File) error
-	GetFile(id string) (*file.File, error)
 	GetFiles(ids []string) ([]*file.File, error)
-	DeleteFile(id string) error
+	DeleteFiles(ids []string) error
 }
 
 type Storage interface {

@@ -44,9 +44,9 @@ func TestFileServiceGetFiles(t *testing.T) {
 func TestFileServiceDeleteFile(t *testing.T) {
 	fileService := NewFileService(mock.FileStore())
 
-	t.Run("delete a file", func(t *testing.T) {
+	t.Run("delete files", func(t *testing.T) {
 		testFileId := ulid.New()
-		err := fileService.DeleteFile(testFileId)
+		err := fileService.DeleteFiles([]string{testFileId})
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}

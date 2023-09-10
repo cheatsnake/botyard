@@ -34,6 +34,10 @@ func (mbs *botStore) SaveKey(bkd *bot.Key) error {
 	return nil
 }
 
+func (mbs *botStore) DeleteKey(botId string) error {
+	return nil
+}
+
 func (mbs *botStore) GetWebhook(id string) (*bot.Webhook, error) {
 	return &bot.Webhook{}, nil
 }

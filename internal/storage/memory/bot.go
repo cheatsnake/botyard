@@ -79,6 +79,22 @@ func (s *Storage) SaveKey(botKey *bot.Key) error {
 	return nil
 }
 
+func (s *Storage) DeleteKey(botId string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	delIndex := slices.IndexFunc(s.botKeys, func(k *bot.Key) bool {
+		return k.BotId == botId
+	})
+
+	if delIndex == -1 {
+		return extlib.ErrorNotFound("bot key not found")
+	}
+
+	s.botKeys = extlib.SliceRemoveElement(s.botKeys, delIndex)
+	return nil
+}
+
 func (s *Storage) GetWebhook(botId string) (*bot.Webhook, error) {
 	for _, wh := range s.botWebhooks {
 		if wh.BotId == botId {
