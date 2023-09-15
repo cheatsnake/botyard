@@ -1,19 +1,20 @@
-package services
+package messageservice
 
 import (
 	"botyard/internal/entities/file"
 	"botyard/internal/entities/message"
+	"botyard/internal/services/fileservice"
 	"botyard/internal/storage"
 	"botyard/pkg/exterr"
 	"time"
 )
 
-type MessageService struct {
-	file  *FileService
+type Service struct {
+	file  *fileservice.Service
 	store storage.MessageStore
 }
 
-type CreateMessageBody struct {
+type CreateBody struct {
 	message.Message
 	Id        struct{} `json:"-"`
 	Timestamp struct{} `json:"-"`
@@ -35,14 +36,14 @@ type MessagesPage struct {
 	Limit    int                `json:"limit"`
 }
 
-func NewMessageService(s storage.MessageStore, fs *FileService) *MessageService {
-	return &MessageService{
+func New(s storage.MessageStore, fs *fileservice.Service) *Service {
+	return &Service{
 		file:  fs,
 		store: s,
 	}
 }
 
-func (ms *MessageService) AddMessage(body *CreateMessageBody) error {
+func (ms *Service) AddMessage(body *CreateBody) error {
 	msg, err := message.New(body.ChatId, body.SenderId, body.Body, body.FileIds)
 	if err != nil {
 		return exterr.ErrorBadRequest(err.Error())
@@ -56,7 +57,7 @@ func (ms *MessageService) AddMessage(body *CreateMessageBody) error {
 	return nil
 }
 
-func (ms *MessageService) GetMessagesByChat(chatId string, page, limit int) (*MessagesPage, error) {
+func (ms *Service) GetMessagesByChat(chatId string, page, limit int) (*MessagesPage, error) {
 	total, msgs, err := ms.store.GetMessagesByChat(chatId, page, limit)
 	if err != nil {
 		return nil, err
@@ -92,7 +93,7 @@ func (ms *MessageService) GetMessagesByChat(chatId string, page, limit int) (*Me
 	}, nil
 }
 
-func (ms *MessageService) DeleteMessagesByChat(chatId string) error {
+func (ms *Service) DeleteMessagesByChat(chatId string) error {
 	err := ms.store.DeleteMessagesByChat(chatId)
 	if err != nil {
 		return err

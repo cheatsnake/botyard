@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"botyard/internal/entities/file"
-	"botyard/internal/services"
+	"botyard/internal/services/fileservice"
 	"botyard/internal/tools/ulid"
 	"botyard/pkg/exterr"
 	"botyard/pkg/extlib"
@@ -45,10 +45,10 @@ var knownContentTypes = map[string]string{
 }
 
 type FileHandlers struct {
-	service *services.FileService
+	service *fileservice.Service
 }
 
-func NewFileHandlers(s *services.FileService) *FileHandlers {
+func NewFileHandlers(s *fileservice.Service) *FileHandlers {
 	return &FileHandlers{
 		service: s,
 	}

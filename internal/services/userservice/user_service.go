@@ -1,4 +1,4 @@
-package services
+package userservice
 
 import (
 	"botyard/internal/entities/user"
@@ -6,22 +6,22 @@ import (
 	"botyard/pkg/exterr"
 )
 
-type UserService struct {
+type Service struct {
 	store storage.UserStore
 }
 
-type UserCreateBody struct {
+type CreateBody struct {
 	user.User
 	Id struct{} `json:"-"`
 }
 
-func NewUserService(s storage.UserStore) *UserService {
-	return &UserService{
+func New(s storage.UserStore) *Service {
+	return &Service{
 		store: s,
 	}
 }
 
-func (s *UserService) Create(body *UserCreateBody) (*user.User, error) {
+func (s *Service) Create(body *CreateBody) (*user.User, error) {
 	newUser, err := user.New(body.Nickname)
 	if err != nil {
 		return nil, exterr.ErrorBadRequest(err.Error())

@@ -4,7 +4,11 @@ import (
 	"botyard/internal/http/handlers"
 	"botyard/internal/http/helpers"
 	"botyard/internal/http/middlewares"
-	"botyard/internal/services"
+	"botyard/internal/services/botservice"
+	"botyard/internal/services/chatservice"
+	"botyard/internal/services/fileservice"
+	"botyard/internal/services/messageservice"
+	"botyard/internal/services/userservice"
 	"botyard/internal/storage"
 
 	"github.com/gofiber/fiber/v2"
@@ -33,11 +37,11 @@ func New(store storage.Storage) *Server {
 }
 
 func (s *Server) InitRoutes() {
-	botService := services.NewBotService(s.store)
-	userService := services.NewUserService(s.store)
-	fileService := services.NewFileService(s.store)
-	messageService := services.NewMessageService(s.store, fileService)
-	chatService := services.NewChatService(s.store, messageService)
+	botService := botservice.New(s.store)
+	userService := userservice.New(s.store)
+	fileService := fileservice.New(s.store)
+	messageService := messageservice.New(s.store, fileService)
+	chatService := chatservice.New(s.store, messageService)
 	botMiddlewares := middlewares.NewBotMiddlewares(botService)
 	bot := handlers.NewBotHandlers(botService)
 	user := handlers.NewUserHandlers(userService)

@@ -1,4 +1,4 @@
-package services
+package botservice
 
 import (
 	"botyard/internal/entities/bot"
@@ -8,11 +8,11 @@ import (
 	"testing"
 )
 
-func TestBotServiceCreateBot(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestCreateBot(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("add a new bot", func(t *testing.T) {
-		res, err := botService.CreateBot(&BotCreateBody{
+		res, err := bs.CreateBot(&CreateBody{
 			Bot: bot.Bot{
 				Name: "test",
 			},
@@ -27,7 +27,7 @@ func TestBotServiceCreateBot(t *testing.T) {
 	})
 
 	t.Run("add a new bot without name", func(t *testing.T) {
-		_, err := botService.CreateBot(&BotCreateBody{
+		_, err := bs.CreateBot(&CreateBody{
 			Bot: bot.Bot{},
 		})
 		if err == nil {
@@ -36,117 +36,117 @@ func TestBotServiceCreateBot(t *testing.T) {
 	})
 }
 
-func TestBotServiceGetBotById(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestGetBotById(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("get bot by id", func(t *testing.T) {
-		_, err := botService.GetBotById(ulid.New())
+		_, err := bs.GetBotById(ulid.New())
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 }
 
-func TestBotServiceGetAllBots(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestGetAllBots(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("get all bots", func(t *testing.T) {
-		_, err := botService.GetAllBots()
+		_, err := bs.GetAllBots()
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 }
 
-func TestBotServiceEditBot(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestEditBot(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("edit bot", func(t *testing.T) {
-		_, err := botService.EditBot(ulid.New(), &BotEditBody{})
+		_, err := bs.EditBot(ulid.New(), &EditBody{})
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 }
 
-func TestBotServiceAddCommands(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestAddCommands(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("add bot commands", func(t *testing.T) {
-		err := botService.AddCommands(ulid.New(), &BotCommandsBody{})
+		err := bs.AddCommands(ulid.New(), &CommandsBody{})
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 }
 
-func TestBotServiceRemoveCommand(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestRemoveCommand(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("remove bot command", func(t *testing.T) {
-		err := botService.RemoveCommand(ulid.New(), "test")
+		err := bs.RemoveCommand(ulid.New(), "test")
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 }
 
-func TestBotServiceDeleteBot(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestDeleteBot(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("delete bot using valid id", func(t *testing.T) {
-		err := botService.DeleteBot(ulid.New())
+		err := bs.DeleteBot(ulid.New())
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 }
 
-func TestBotServiceCreateWebhook(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestCreateWebhook(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("create webhook", func(t *testing.T) {
-		err := botService.CreateWebhook(ulid.New(), "https://go.dev", "")
+		err := bs.CreateWebhook(ulid.New(), "https://go.dev", "")
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 
 	t.Run("create webhook with invalid input", func(t *testing.T) {
-		err := botService.CreateWebhook(ulid.New(), "bad url", "")
+		err := bs.CreateWebhook(ulid.New(), "bad url", "")
 		if err == nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, "error")
 		}
 	})
 }
-func TestBotServiceGetWebhook(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestGetWebhook(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("get webhook", func(t *testing.T) {
-		_, err := botService.GetWebhook(ulid.New())
+		_, err := bs.GetWebhook(ulid.New())
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 }
 
-func TestBotServiceDeleteWebhook(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestDeleteWebhook(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("delete webhook", func(t *testing.T) {
-		err := botService.DeleteWebhook(ulid.New())
+		err := bs.DeleteWebhook(ulid.New())
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 }
 
-func TestBotServiceGenerateKey(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestGenerateKey(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("generate bot key", func(t *testing.T) {
 		botId := ulid.New()
-		botKey, err := botService.GenerateKey(botId)
+		botKey, err := bs.GenerateKey(botId)
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
@@ -157,7 +157,7 @@ func TestBotServiceGenerateKey(t *testing.T) {
 	})
 
 	t.Run("generate bot key with invalid botId", func(t *testing.T) {
-		_, err := botService.GenerateKey("")
+		_, err := bs.GenerateKey("")
 		if err == nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, "error")
 		}
@@ -165,24 +165,24 @@ func TestBotServiceGenerateKey(t *testing.T) {
 
 }
 
-func TestBotServiceGetKey(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestGetKey(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("get bot key", func(t *testing.T) {
 		botId := ulid.New()
-		_, err := botService.GetKey(botId)
+		_, err := bs.GetKey(botId)
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 
 }
-func TestBotServiceVerifyKeyData(t *testing.T) {
-	botService := NewBotService(mock.BotStore())
+func TestVerifyKeyData(t *testing.T) {
+	bs := New(mock.BotStore())
 
 	t.Run("verify bot key", func(t *testing.T) {
 		botId := ulid.New()
-		err := botService.VerifyKeyData(botId, "test")
+		err := bs.VerifyKeyData(botId, "test")
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
@@ -190,7 +190,7 @@ func TestBotServiceVerifyKeyData(t *testing.T) {
 
 	t.Run("verify invalid bot key", func(t *testing.T) {
 		botId := ulid.New()
-		err := botService.VerifyKeyData(botId, "fail")
+		err := bs.VerifyKeyData(botId, "fail")
 		if err == nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, "error")
 		}

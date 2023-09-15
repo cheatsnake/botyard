@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"botyard/internal/services"
+	"botyard/internal/services/userservice"
 	"botyard/pkg/exterr"
 	"time"
 
@@ -9,17 +9,17 @@ import (
 )
 
 type UserHandlers struct {
-	service *services.UserService
+	service *userservice.Service
 }
 
-func NewUserHandlers(s *services.UserService) *UserHandlers {
+func NewUserHandlers(s *userservice.Service) *UserHandlers {
 	return &UserHandlers{
 		service: s,
 	}
 }
 
 func (h *UserHandlers) Create(c *fiber.Ctx) error {
-	body := new(services.UserCreateBody)
+	body := new(userservice.CreateBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return exterr.ErrorBadRequest(err.Error())

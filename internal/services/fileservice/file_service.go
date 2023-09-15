@@ -1,4 +1,4 @@
-package services
+package fileservice
 
 import (
 	"botyard/internal/entities/file"
@@ -6,17 +6,17 @@ import (
 	"botyard/pkg/exterr"
 )
 
-type FileService struct {
+type Service struct {
 	store storage.FileStore
 }
 
-func NewFileService(s storage.FileStore) *FileService {
-	return &FileService{
+func New(s storage.FileStore) *Service {
+	return &Service{
 		store: s,
 	}
 }
 
-func (fs *FileService) AddFile(path, mime string) (*file.File, error) {
+func (fs *Service) AddFile(path, mime string) (*file.File, error) {
 	newFile, err := file.New(path, mime)
 	if err != nil {
 		return nil, exterr.ErrorBadRequest(err.Error())
@@ -30,7 +30,7 @@ func (fs *FileService) AddFile(path, mime string) (*file.File, error) {
 	return newFile, nil
 }
 
-func (fs *FileService) GetFiles(ids []string) ([]*file.File, error) {
+func (fs *Service) GetFiles(ids []string) ([]*file.File, error) {
 	files, err := fs.store.GetFiles(ids)
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func (fs *FileService) GetFiles(ids []string) ([]*file.File, error) {
 	return files, nil
 }
 
-func (fs *FileService) DeleteFiles(ids []string) error {
+func (fs *Service) DeleteFiles(ids []string) error {
 	err := fs.store.DeleteFiles(ids)
 	if err != nil {
 		return err

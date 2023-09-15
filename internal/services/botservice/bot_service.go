@@ -1,4 +1,4 @@
-package services
+package botservice
 
 import (
 	"botyard/internal/entities/bot"
@@ -8,43 +8,43 @@ import (
 	"botyard/pkg/extlib"
 )
 
-type BotService struct {
+type Service struct {
 	store storage.BotStore
 }
 
-type BotCreateBody struct {
+type CreateBody struct {
 	bot.Bot
 	Id struct{} `json:"-"`
 }
 
-type BotCreateResult struct {
-	Bot *bot.Bot      `json:"bot"`
-	Key *BotKeyResult `json:"key"`
+type CreateResult struct {
+	Bot *bot.Bot   `json:"bot"`
+	Key *KeyResult `json:"key"`
 }
 
-type BotKeyResult struct {
+type KeyResult struct {
 	Value string `json:"value"`
 }
 
-type BotEditBody struct {
+type EditBody struct {
 	bot.Bot
 	Id struct{} `json:"-"`
 }
 
-type BotCommandsBody struct {
+type CommandsBody struct {
 	Commands []struct {
 		bot.Command
 		BotId struct{} `json:"-"`
 	} `json:"commands"`
 }
 
-func NewBotService(s storage.BotStore) *BotService {
-	return &BotService{
+func New(s storage.BotStore) *Service {
+	return &Service{
 		store: s,
 	}
 }
 
-func (s *BotService) CreateBot(body *BotCreateBody) (*BotCreateResult, error) {
+func (s *Service) CreateBot(body *CreateBody) (*CreateResult, error) {
 	newBot, err := bot.New(body.Name)
 	if err != nil {
 		return nil, exterr.ErrorBadRequest(err.Error())
@@ -68,14 +68,14 @@ func (s *BotService) CreateBot(body *BotCreateBody) (*BotCreateResult, error) {
 		return nil, exterr.ErrorBadRequest(err.Error())
 	}
 
-	result := &BotCreateResult{
+	result := &CreateResult{
 		Bot: newBot,
 		Key: botKey,
 	}
 	return result, nil
 }
 
-func (s *BotService) GetBotById(id string) (*bot.Bot, error) {
+func (s *Service) GetBotById(id string) (*bot.Bot, error) {
 	foundBot, err := s.store.GetBot(id)
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (s *BotService) GetBotById(id string) (*bot.Bot, error) {
 	return foundBot, nil
 }
 
-func (s *BotService) GetAllBots() ([]*bot.Bot, error) {
+func (s *Service) GetAllBots() ([]*bot.Bot, error) {
 	bots, err := s.store.GetAllBots()
 	if err != nil {
 		return nil, err
@@ -93,7 +93,7 @@ func (s *BotService) GetAllBots() ([]*bot.Bot, error) {
 	return bots, nil
 }
 
-func (s *BotService) EditBot(id string, body *BotEditBody) (*bot.Bot, error) {
+func (s *Service) EditBot(id string, body *EditBody) (*bot.Bot, error) {
 	foundBot, err := s.GetBotById(id)
 	if err != nil {
 		return nil, err
@@ -128,7 +128,7 @@ func (s *BotService) EditBot(id string, body *BotEditBody) (*bot.Bot, error) {
 	return foundBot, nil
 }
 
-func (s *BotService) DeleteBot(id string) error {
+func (s *Service) DeleteBot(id string) error {
 	err := s.store.DeleteBot(id)
 	if err != nil {
 		return err
@@ -137,7 +137,7 @@ func (s *BotService) DeleteBot(id string) error {
 	return nil
 }
 
-func (s *BotService) AddCommands(botId string, body *BotCommandsBody) error {
+func (s *Service) AddCommands(botId string, body *CommandsBody) error {
 	_, err := s.GetBotById(botId)
 	if err != nil {
 		return err
@@ -158,7 +158,7 @@ func (s *BotService) AddCommands(botId string, body *BotCommandsBody) error {
 	return nil
 }
 
-func (s *BotService) RemoveCommand(botId string, alias string) error {
+func (s *Service) RemoveCommand(botId string, alias string) error {
 	_, err := s.GetBotById(botId)
 	if err != nil {
 		return err
@@ -172,18 +172,18 @@ func (s *BotService) RemoveCommand(botId string, alias string) error {
 	return nil
 }
 
-func (s *BotService) GetKey(id string) (*BotKeyResult, error) {
+func (s *Service) GetKey(id string) (*KeyResult, error) {
 	keyData, err := s.store.GetKey(id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &BotKeyResult{
+	return &KeyResult{
 		Value: keyData.Assemble(),
 	}, nil
 }
 
-func (s *BotService) GenerateKey(id string) (*BotKeyResult, error) {
+func (s *Service) GenerateKey(id string) (*KeyResult, error) {
 	token, err := extlib.RandomToken(ulid.Length)
 	if err != nil {
 		return nil, exterr.ErrorBadRequest("bot key generation failed: " + err.Error())
@@ -199,12 +199,12 @@ func (s *BotService) GenerateKey(id string) (*BotKeyResult, error) {
 		return nil, err
 	}
 
-	return &BotKeyResult{
+	return &KeyResult{
 		Value: botKey.Assemble(),
 	}, nil
 }
 
-func (s *BotService) VerifyKeyData(id, token string) error {
+func (s *Service) VerifyKeyData(id, token string) error {
 	kd, err := s.store.GetKey(id)
 	if err != nil {
 		return nil
@@ -217,7 +217,7 @@ func (s *BotService) VerifyKeyData(id, token string) error {
 	return nil
 }
 
-func (s *BotService) CreateWebhook(botId, url, secret string) error {
+func (s *Service) CreateWebhook(botId, url, secret string) error {
 	webhook, err := bot.NewWebhook(botId, url, secret)
 	if err != nil {
 		return exterr.ErrorBadRequest(err.Error())
@@ -231,7 +231,7 @@ func (s *BotService) CreateWebhook(botId, url, secret string) error {
 	return nil
 }
 
-func (s *BotService) GetWebhook(botId string) (*bot.Webhook, error) {
+func (s *Service) GetWebhook(botId string) (*bot.Webhook, error) {
 	wh, err := s.store.GetWebhook(botId)
 	if err != nil {
 		return nil, err
@@ -240,7 +240,7 @@ func (s *BotService) GetWebhook(botId string) (*bot.Webhook, error) {
 	return wh, nil
 }
 
-func (s *BotService) DeleteWebhook(botId string) error {
+func (s *Service) DeleteWebhook(botId string) error {
 	err := s.store.DeleteWebhook(botId)
 	if err != nil {
 		return err

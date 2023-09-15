@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"botyard/internal/http/helpers"
-	"botyard/internal/services"
+	"botyard/internal/services/messageservice"
 	"botyard/pkg/exterr"
 	"fmt"
 
@@ -10,10 +10,10 @@ import (
 )
 
 type MessageHandlers struct {
-	service *services.MessageService
+	service *messageservice.Service
 }
 
-func NewMessageHandlers(s *services.MessageService) *MessageHandlers {
+func NewMessageHandlers(s *messageservice.Service) *MessageHandlers {
 	return &MessageHandlers{
 		service: s,
 	}
@@ -25,7 +25,7 @@ func (mh *MessageHandlers) SendUserMessage(c *fiber.Ctx) error {
 		return exterr.ErrorUnauthorized("user is not authorized")
 	}
 
-	body := new(services.CreateMessageBody)
+	body := new(messageservice.CreateBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return exterr.ErrorBadRequest(err.Error())
@@ -46,7 +46,7 @@ func (mh *MessageHandlers) SendBotMessage(c *fiber.Ctx) error {
 		return exterr.ErrorUnauthorized("bot is not authorized")
 	}
 
-	body := new(services.CreateMessageBody)
+	body := new(messageservice.CreateBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return exterr.ErrorBadRequest(err.Error())

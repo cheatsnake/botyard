@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"botyard/internal/services"
+	"botyard/internal/services/botservice"
 	"botyard/pkg/exterr"
 	"strings"
 
@@ -9,10 +9,10 @@ import (
 )
 
 type BotMiddlewares struct {
-	service *services.BotService
+	service *botservice.Service
 }
 
-func NewBotMiddlewares(s *services.BotService) *BotMiddlewares {
+func NewBotMiddlewares(s *botservice.Service) *BotMiddlewares {
 	return &BotMiddlewares{
 		service: s,
 	}

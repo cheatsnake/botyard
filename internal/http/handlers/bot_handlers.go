@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"botyard/internal/http/helpers"
-	"botyard/internal/services"
+	"botyard/internal/services/botservice"
 	"botyard/pkg/exterr"
 	"fmt"
 
@@ -10,17 +10,17 @@ import (
 )
 
 type BotHandlers struct {
-	service *services.BotService
+	service *botservice.Service
 }
 
-func NewBotHandlers(s *services.BotService) *BotHandlers {
+func NewBotHandlers(s *botservice.Service) *BotHandlers {
 	return &BotHandlers{
 		service: s,
 	}
 }
 
 func (bh *BotHandlers) CreateBot(c *fiber.Ctx) error {
-	body := new(services.BotCreateBody)
+	body := new(botservice.CreateBody)
 	if err := c.BodyParser(body); err != nil {
 		return exterr.ErrorBadRequest(err.Error())
 	}
@@ -62,7 +62,7 @@ func (bh *BotHandlers) EditBot(c *fiber.Ctx) error {
 		return exterr.ErrorBadRequest("id is required")
 	}
 
-	body := new(services.BotEditBody)
+	body := new(botservice.EditBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return exterr.ErrorBadRequest(err.Error())
@@ -82,7 +82,7 @@ func (bh *BotHandlers) AddCommands(c *fiber.Ctx) error {
 		return exterr.ErrorBadRequest("id is required")
 	}
 
-	body := new(services.BotCommandsBody)
+	body := new(botservice.CommandsBody)
 	if err := c.BodyParser(body); err != nil {
 		return exterr.ErrorBadRequest(err.Error())
 	}

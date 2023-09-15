@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"botyard/internal/http/helpers"
-	"botyard/internal/services"
+	"botyard/internal/services/chatservice"
 	"botyard/pkg/exterr"
 	"fmt"
 
@@ -10,10 +10,10 @@ import (
 )
 
 type ChatHandlers struct {
-	service *services.ChatService
+	service *chatservice.Service
 }
 
-func NewChatHandlers(s *services.ChatService) *ChatHandlers {
+func NewChatHandlers(s *chatservice.Service) *ChatHandlers {
 	return &ChatHandlers{
 		service: s,
 	}

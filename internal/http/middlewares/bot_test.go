@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"botyard/internal/http/helpers"
-	"botyard/internal/services"
+	"botyard/internal/services/botservice"
 	mock "botyard/internal/storage/_mock"
 	"botyard/internal/tools/ulid"
 	"net/http/httptest"
@@ -12,7 +12,7 @@ import (
 )
 
 func TestBotAuth(t *testing.T) {
-	botService := services.NewBotService(mock.BotStore())
+	botService := botservice.New(mock.BotStore())
 	botMiddlewares := NewBotMiddlewares(botService)
 	testApp := fiber.New(fiber.Config{
 		ErrorHandler: helpers.CursomErrorHandler,

@@ -3,7 +3,7 @@ package handlers
 import (
 	"botyard/internal/entities/user"
 	"botyard/internal/http/helpers"
-	"botyard/internal/services"
+	"botyard/internal/services/userservice"
 	mock "botyard/internal/storage/_mock"
 	"encoding/json"
 	"io"
@@ -15,7 +15,7 @@ import (
 )
 
 func TestUserHandlers(t *testing.T) {
-	userService := services.NewUserService(mock.UserStore())
+	userService := userservice.New(mock.UserStore())
 	userHandlers := NewUserHandlers(userService)
 	testApp := fiber.New(fiber.Config{
 		ErrorHandler: helpers.CursomErrorHandler,
@@ -24,7 +24,7 @@ func TestUserHandlers(t *testing.T) {
 	testApp.Post(testPath, userHandlers.Create)
 
 	t.Run("create new user with valid body", func(t *testing.T) {
-		jsonBody, err := json.Marshal(services.UserCreateBody{
+		jsonBody, err := json.Marshal(userservice.CreateBody{
 			User: user.User{
 				Nickname: "test",
 			},

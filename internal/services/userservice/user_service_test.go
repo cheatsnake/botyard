@@ -1,4 +1,4 @@
-package services
+package userservice
 
 import (
 	"botyard/internal/entities/user"
@@ -8,16 +8,16 @@ import (
 	"testing"
 )
 
-func TestUserServiceCreate(t *testing.T) {
-	testService := NewUserService(mock.UserStore())
+func TestCreate(t *testing.T) {
+	us := New(mock.UserStore())
 	t.Run("create new user", func(t *testing.T) {
-		testBody := &UserCreateBody{
+		testBody := &CreateBody{
 			User: user.User{
 				Nickname: "test",
 			},
 		}
 
-		user, err := testService.Create(testBody)
+		user, err := us.Create(testBody)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", user, err, nil)
 		}
@@ -28,14 +28,14 @@ func TestUserServiceCreate(t *testing.T) {
 	})
 
 	t.Run("create new user with incorrect name", func(t *testing.T) {
-		testBody := &UserCreateBody{
+		testBody := &CreateBody{
 			User: user.User{
 				Nickname: "-",
 			},
 		}
 
 		var extErr *exterr.ExtendedError
-		user, err := testService.Create(testBody)
+		user, err := us.Create(testBody)
 
 		if err == nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", user, err, extErr)
