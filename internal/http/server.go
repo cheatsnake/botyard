@@ -63,7 +63,7 @@ func (s *Server) InitRoutes() {
 	botApiV1.Delete("/bot/command", botMiddlewares.Auth, bot.RemoveCommand)
 
 	botApiV1.Get("/messages/:chatId", botMiddlewares.Auth, message.GetByChat)
-	botApiV1.Post("/message", botMiddlewares.Auth, message.SendMessage)
+	botApiV1.Post("/message", botMiddlewares.Auth, message.SendBotMessage)
 	// ------------------------------------------------------------------------
 
 	// Client API -------------------------------------------------------------
@@ -77,7 +77,7 @@ func (s *Server) InitRoutes() {
 	clientApiV1.Post("/files", middlewares.UserAuth, file.LoadMany)
 
 	clientApiV1.Get("/messages/:chatId", middlewares.UserAuth, message.GetByChat)
-	clientApiV1.Post("/message", middlewares.UserAuth, message.SendMessage)
+	clientApiV1.Post("/message", middlewares.UserAuth, message.SendUserMessage)
 
 	clientApiV1.Get("/chats/:botId", middlewares.UserAuth, chat.GetMany)
 	clientApiV1.Post("/chat", middlewares.UserAuth, chat.Create)

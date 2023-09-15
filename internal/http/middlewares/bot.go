@@ -38,7 +38,6 @@ func (bm *BotMiddlewares) Auth(c *fiber.Ctx) error {
 	}
 
 	c.Locals("botId", botId)
-	c.Locals("token", token)
 
 	return c.Next()
 }
