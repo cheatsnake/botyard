@@ -2,6 +2,7 @@ package memory
 
 import (
 	"botyard/internal/entities/bot"
+	"botyard/pkg/exterr"
 	"botyard/pkg/extlib"
 
 	"golang.org/x/exp/slices"
@@ -13,7 +14,7 @@ func (s *Storage) AddBot(newBot *bot.Bot) error {
 
 	for _, b := range s.bots {
 		if b.Name == newBot.Name {
-			return extlib.ErrorBadRequest("bot with this name already exists")
+			return exterr.ErrorBadRequest("bot with this name already exists")
 		}
 	}
 
@@ -28,7 +29,7 @@ func (s *Storage) GetBot(id string) (*bot.Bot, error) {
 		}
 	}
 
-	return nil, extlib.ErrorNotFound("bot not found")
+	return nil, exterr.ErrorNotFound("bot not found")
 }
 
 func (s *Storage) GetAllBots() ([]*bot.Bot, error) {
@@ -48,7 +49,7 @@ func (s *Storage) DeleteBot(id string) error {
 	})
 
 	if delIndex == -1 {
-		return extlib.ErrorNotFound("bot not found")
+		return exterr.ErrorNotFound("bot not found")
 	}
 
 	s.bots = extlib.SliceRemoveElement(s.bots, delIndex)
@@ -91,7 +92,7 @@ func (s *Storage) DeleteCommand(botId, alias string) error {
 	})
 
 	if delIndex == -1 {
-		return extlib.ErrorNotFound("command not found")
+		return exterr.ErrorNotFound("command not found")
 	}
 
 	s.botCommands = extlib.SliceRemoveElement(s.botCommands, delIndex)
@@ -117,7 +118,7 @@ func (s *Storage) GetKey(botId string) (*bot.Key, error) {
 		}
 	}
 
-	return nil, extlib.ErrorNotFound("bot key not found")
+	return nil, exterr.ErrorNotFound("bot key not found")
 }
 
 func (s *Storage) SaveKey(botKey *bot.Key) error {
@@ -144,7 +145,7 @@ func (s *Storage) DeleteKey(botId string) error {
 	})
 
 	if delIndex == -1 {
-		return extlib.ErrorNotFound("bot key not found")
+		return exterr.ErrorNotFound("bot key not found")
 	}
 
 	s.botKeys = extlib.SliceRemoveElement(s.botKeys, delIndex)
@@ -158,7 +159,7 @@ func (s *Storage) GetWebhook(botId string) (*bot.Webhook, error) {
 		}
 	}
 
-	return nil, extlib.ErrorNotFound("webhook not found")
+	return nil, exterr.ErrorNotFound("webhook not found")
 }
 
 func (s *Storage) SaveWebhook(webhook *bot.Webhook) error {
@@ -186,7 +187,7 @@ func (s *Storage) DeleteWebhook(botId string) error {
 	})
 
 	if delIndex == -1 {
-		return extlib.ErrorNotFound("webhook not found")
+		return exterr.ErrorNotFound("webhook not found")
 	}
 
 	s.botWebhooks = extlib.SliceRemoveElement(s.botWebhooks, delIndex)

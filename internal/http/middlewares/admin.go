@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"botyard/pkg/extlib"
+	"botyard/pkg/exterr"
 	"os"
 	"strings"
 
@@ -12,7 +12,7 @@ func AdminAuth(c *fiber.Ctx) error {
 	key := strings.TrimPrefix(c.Get("Authorization"), "Bearer ")
 
 	if key != os.Getenv("ADMIN_SECRET_KEY") {
-		return extlib.ErrorForbidden("access denied")
+		return exterr.ErrorForbidden("access denied")
 	}
 
 	return c.Next()

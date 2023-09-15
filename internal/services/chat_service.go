@@ -3,7 +3,7 @@ package services
 import (
 	"botyard/internal/entities/chat"
 	"botyard/internal/storage"
-	"botyard/pkg/extlib"
+	"botyard/pkg/exterr"
 )
 
 type ChatService struct {
@@ -21,7 +21,7 @@ func NewChatService(s storage.ChatStore, ms *MessageService) *ChatService {
 func (s *ChatService) Create(userId string, botId string) (*chat.Chat, error) {
 	chat, err := chat.New(userId, botId)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, exterr.ErrorBadRequest(err.Error())
 	}
 
 	err = s.store.AddChat(chat)

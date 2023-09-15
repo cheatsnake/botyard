@@ -3,7 +3,7 @@ package services
 import (
 	"botyard/internal/entities/user"
 	"botyard/internal/storage"
-	"botyard/pkg/extlib"
+	"botyard/pkg/exterr"
 )
 
 type UserService struct {
@@ -24,7 +24,7 @@ func NewUserService(s storage.UserStore) *UserService {
 func (s *UserService) Create(body *UserCreateBody) (*user.User, error) {
 	newUser, err := user.New(body.Nickname)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, exterr.ErrorBadRequest(err.Error())
 	}
 
 	err = s.store.AddUser(newUser)

@@ -2,6 +2,7 @@ package memory
 
 import (
 	"botyard/internal/entities/file"
+	"botyard/pkg/exterr"
 	"botyard/pkg/extlib"
 
 	"golang.org/x/exp/slices"
@@ -37,7 +38,7 @@ func (s *Storage) DeleteFiles(ids []string) error {
 		})
 
 		if delIndex == -1 {
-			return extlib.ErrorNotFound("file not found")
+			return exterr.ErrorNotFound("file not found")
 		}
 
 		s.messages = extlib.SliceRemoveElement(s.messages, delIndex)

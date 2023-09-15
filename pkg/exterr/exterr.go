@@ -1,4 +1,4 @@
-package extlib
+package exterr
 
 import "net/http"
 

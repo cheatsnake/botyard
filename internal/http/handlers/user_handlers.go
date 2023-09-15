@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"botyard/internal/services"
-	"botyard/pkg/extlib"
+	"botyard/pkg/exterr"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,7 +22,7 @@ func (h *UserHandlers) Create(c *fiber.Ctx) error {
 	body := new(services.UserCreateBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return exterr.ErrorBadRequest(err.Error())
 	}
 
 	newUser, err := h.service.Create(body)

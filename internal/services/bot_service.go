@@ -4,6 +4,7 @@ import (
 	"botyard/internal/entities/bot"
 	"botyard/internal/storage"
 	"botyard/internal/tools/ulid"
+	"botyard/pkg/exterr"
 	"botyard/pkg/extlib"
 )
 
@@ -46,7 +47,7 @@ func NewBotService(s storage.BotStore) *BotService {
 func (s *BotService) CreateBot(body *BotCreateBody) (*BotCreateResult, error) {
 	newBot, err := bot.New(body.Name)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, exterr.ErrorBadRequest(err.Error())
 	}
 
 	if body.Description != "" {
@@ -64,7 +65,7 @@ func (s *BotService) CreateBot(body *BotCreateBody) (*BotCreateResult, error) {
 
 	botKey, err := s.GenerateKey(newBot.Id)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, exterr.ErrorBadRequest(err.Error())
 	}
 
 	result := &BotCreateResult{
@@ -101,21 +102,21 @@ func (s *BotService) EditBot(id string, body *BotEditBody) (*bot.Bot, error) {
 	if body.Name != "" {
 		err := foundBot.SetName(body.Name)
 		if err != nil {
-			return nil, extlib.ErrorBadRequest(err.Error())
+			return nil, exterr.ErrorBadRequest(err.Error())
 		}
 	}
 
 	if body.Description != "" {
 		err := foundBot.SetDescription(body.Description)
 		if err != nil {
-			return nil, extlib.ErrorBadRequest(err.Error())
+			return nil, exterr.ErrorBadRequest(err.Error())
 		}
 	}
 
 	if body.Avatar != "" {
 		err := foundBot.SetAvatar(body.Avatar)
 		if err != nil {
-			return nil, extlib.ErrorBadRequest(err.Error())
+			return nil, exterr.ErrorBadRequest(err.Error())
 		}
 	}
 
@@ -145,7 +146,7 @@ func (s *BotService) AddCommands(botId string, body *BotCommandsBody) error {
 	for _, c := range body.Commands {
 		newCmd, err := bot.NewCommand(botId, c.Alias, c.Description)
 		if err != nil {
-			return extlib.ErrorBadRequest(err.Error())
+			return exterr.ErrorBadRequest(err.Error())
 		}
 
 		err = s.store.SaveCommand(newCmd)
@@ -185,12 +186,12 @@ func (s *BotService) GetKey(id string) (*BotKeyResult, error) {
 func (s *BotService) GenerateKey(id string) (*BotKeyResult, error) {
 	token, err := extlib.RandomToken(ulid.Length)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest("bot key generation failed: " + err.Error())
+		return nil, exterr.ErrorBadRequest("bot key generation failed: " + err.Error())
 	}
 
 	botKey, err := bot.NewKey(id, token)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, exterr.ErrorBadRequest(err.Error())
 	}
 
 	err = s.store.SaveKey(botKey)
@@ -210,7 +211,7 @@ func (s *BotService) VerifyKeyData(id, token string) error {
 	}
 
 	if kd == nil || kd.Token != token {
-		return extlib.ErrorForbidden("invalid bot key")
+		return exterr.ErrorForbidden("invalid bot key")
 	}
 
 	return nil
@@ -219,12 +220,12 @@ func (s *BotService) VerifyKeyData(id, token string) error {
 func (s *BotService) CreateWebhook(botId, url, secret string) error {
 	webhook, err := bot.NewWebhook(botId, url, secret)
 	if err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return exterr.ErrorBadRequest(err.Error())
 	}
 
 	err = s.store.SaveWebhook(webhook)
 	if err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return exterr.ErrorBadRequest(err.Error())
 	}
 
 	return nil

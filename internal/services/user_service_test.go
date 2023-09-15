@@ -3,7 +3,7 @@ package services
 import (
 	"botyard/internal/entities/user"
 	mock "botyard/internal/storage/_mock"
-	"botyard/pkg/extlib"
+	"botyard/pkg/exterr"
 	"errors"
 	"testing"
 )
@@ -34,7 +34,7 @@ func TestUserServiceCreate(t *testing.T) {
 			},
 		}
 
-		var extErr *extlib.ExtendedError
+		var extErr *exterr.ExtendedError
 		user, err := testService.Create(testBody)
 
 		if err == nil {

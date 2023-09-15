@@ -3,7 +3,7 @@ package services
 import (
 	"botyard/internal/entities/file"
 	"botyard/internal/storage"
-	"botyard/pkg/extlib"
+	"botyard/pkg/exterr"
 )
 
 type FileService struct {
@@ -19,7 +19,7 @@ func NewFileService(s storage.FileStore) *FileService {
 func (fs *FileService) AddFile(path, mime string) (*file.File, error) {
 	newFile, err := file.New(path, mime)
 	if err != nil {
-		return nil, extlib.ErrorBadRequest(err.Error())
+		return nil, exterr.ErrorBadRequest(err.Error())
 	}
 
 	err = fs.store.AddFile(newFile)

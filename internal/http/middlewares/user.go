@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"botyard/pkg/extlib"
+	"botyard/pkg/exterr"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -9,7 +9,7 @@ import (
 func UserAuth(c *fiber.Ctx) error {
 	userId := c.Cookies("userId", "")
 	if userId == "" {
-		return extlib.ErrorUnauthorized("user is unauthorized")
+		return exterr.ErrorUnauthorized("user is unauthorized")
 	}
 
 	c.Locals("userId", userId)

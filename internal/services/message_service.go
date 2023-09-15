@@ -4,7 +4,7 @@ import (
 	"botyard/internal/entities/file"
 	"botyard/internal/entities/message"
 	"botyard/internal/storage"
-	"botyard/pkg/extlib"
+	"botyard/pkg/exterr"
 	"time"
 )
 
@@ -45,7 +45,7 @@ func NewMessageService(s storage.MessageStore, fs *FileService) *MessageService 
 func (ms *MessageService) AddMessage(body *CreateMessageBody) error {
 	msg, err := message.New(body.ChatId, body.SenderId, body.Body, body.FileIds)
 	if err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return exterr.ErrorBadRequest(err.Error())
 	}
 
 	err = ms.store.AddMessage(msg)

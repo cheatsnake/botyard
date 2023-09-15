@@ -4,6 +4,7 @@ import (
 	"botyard/internal/entities/file"
 	"botyard/internal/services"
 	"botyard/internal/tools/ulid"
+	"botyard/pkg/exterr"
 	"botyard/pkg/extlib"
 	"errors"
 	"fmt"
@@ -56,13 +57,13 @@ func NewFileHandlers(s *services.FileService) *FileHandlers {
 func (h *FileHandlers) LoadMany(c *fiber.Ctx) error {
 	form, err := c.MultipartForm()
 	if err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return exterr.ErrorBadRequest(err.Error())
 	}
 
 	files := form.File[fileFieldName]
 
 	if len(files) > maxFiles {
-		return extlib.ErrorBadRequest(
+		return exterr.ErrorBadRequest(
 			fmt.Sprintf("too many files, max allowed amount is %d", maxFiles),
 		)
 	}
@@ -73,12 +74,12 @@ func (h *FileHandlers) LoadMany(c *fiber.Ctx) error {
 	for _, f := range files {
 		filePath, contentType, err := fileSaver(c, f)
 		if err != nil {
-			return extlib.ErrorBadRequest(err.Error())
+			return exterr.ErrorBadRequest(err.Error())
 		}
 
 		newFile, err := h.service.AddFile(filePath, contentType)
 		if err != nil {
-			return extlib.ErrorBadRequest(err.Error())
+			return exterr.ErrorBadRequest(err.Error())
 		}
 
 		result = append(result, newFile)

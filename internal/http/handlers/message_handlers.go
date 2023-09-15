@@ -3,7 +3,7 @@ package handlers
 import (
 	"botyard/internal/http/helpers"
 	"botyard/internal/services"
-	"botyard/pkg/extlib"
+	"botyard/pkg/exterr"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,13 +22,13 @@ func NewMessageHandlers(s *services.MessageService) *MessageHandlers {
 func (mh *MessageHandlers) SendUserMessage(c *fiber.Ctx) error {
 	userId := fmt.Sprintf("%s", c.Locals("userId"))
 	if userId == "" {
-		return extlib.ErrorUnauthorized("user is not authorized")
+		return exterr.ErrorUnauthorized("user is not authorized")
 	}
 
 	body := new(services.CreateMessageBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return exterr.ErrorBadRequest(err.Error())
 	}
 
 	body.SenderId = userId
@@ -43,13 +43,13 @@ func (mh *MessageHandlers) SendUserMessage(c *fiber.Ctx) error {
 func (mh *MessageHandlers) SendBotMessage(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
-		return extlib.ErrorUnauthorized("bot is not authorized")
+		return exterr.ErrorUnauthorized("bot is not authorized")
 	}
 
 	body := new(services.CreateMessageBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return exterr.ErrorBadRequest(err.Error())
 	}
 
 	body.SenderId = botId

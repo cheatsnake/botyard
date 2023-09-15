@@ -2,6 +2,7 @@ package memory
 
 import (
 	"botyard/internal/entities/chat"
+	"botyard/pkg/exterr"
 	"botyard/pkg/extlib"
 
 	"golang.org/x/exp/slices"
@@ -22,7 +23,7 @@ func (s *Storage) GetChat(id string) (*chat.Chat, error) {
 		}
 	}
 
-	return nil, extlib.ErrorNotFound("chat not found")
+	return nil, exterr.ErrorNotFound("chat not found")
 }
 
 func (s *Storage) GetChats(userId, botId string) ([]*chat.Chat, error) {
@@ -46,7 +47,7 @@ func (s *Storage) DeleteChat(id string) error {
 	})
 
 	if delIndex == -1 {
-		return extlib.ErrorNotFound("chat not found")
+		return exterr.ErrorNotFound("chat not found")
 	}
 
 	s.chats = extlib.SliceRemoveElement(s.chats, delIndex)

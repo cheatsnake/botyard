@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"botyard/pkg/extlib"
+	"botyard/pkg/exterr"
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,7 +10,7 @@ import (
 func CursomErrorHandler(c *fiber.Ctx, err error) error {
 	code := fiber.StatusInternalServerError
 
-	var e *extlib.ExtendedError
+	var e *exterr.ExtendedError
 	if errors.As(err, &e) {
 		code = e.Code
 	}

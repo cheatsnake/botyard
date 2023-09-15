@@ -3,7 +3,7 @@ package handlers
 import (
 	"botyard/internal/http/helpers"
 	"botyard/internal/services"
-	"botyard/pkg/extlib"
+	"botyard/pkg/exterr"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,7 +22,7 @@ func NewBotHandlers(s *services.BotService) *BotHandlers {
 func (bh *BotHandlers) CreateBot(c *fiber.Ctx) error {
 	body := new(services.BotCreateBody)
 	if err := c.BodyParser(body); err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return exterr.ErrorBadRequest(err.Error())
 	}
 
 	result, err := bh.service.CreateBot(body)
@@ -36,7 +36,7 @@ func (bh *BotHandlers) CreateBot(c *fiber.Ctx) error {
 func (bh *BotHandlers) GetBot(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 	if botId == "" {
-		return extlib.ErrorBadRequest("id is required")
+		return exterr.ErrorBadRequest("id is required")
 	}
 
 	bot, err := bh.service.GetBotById(botId)
@@ -59,13 +59,13 @@ func (bh *BotHandlers) GetAllBots(c *fiber.Ctx) error {
 func (bh *BotHandlers) EditBot(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
-		return extlib.ErrorBadRequest("id is required")
+		return exterr.ErrorBadRequest("id is required")
 	}
 
 	body := new(services.BotEditBody)
 
 	if err := c.BodyParser(body); err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return exterr.ErrorBadRequest(err.Error())
 	}
 
 	editedBot, err := bh.service.EditBot(botId, body)
@@ -79,12 +79,12 @@ func (bh *BotHandlers) EditBot(c *fiber.Ctx) error {
 func (bh *BotHandlers) AddCommands(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
-		return extlib.ErrorBadRequest("id is required")
+		return exterr.ErrorBadRequest("id is required")
 	}
 
 	body := new(services.BotCommandsBody)
 	if err := c.BodyParser(body); err != nil {
-		return extlib.ErrorBadRequest(err.Error())
+		return exterr.ErrorBadRequest(err.Error())
 	}
 
 	err := bh.service.AddCommands(botId, body)
@@ -98,7 +98,7 @@ func (bh *BotHandlers) AddCommands(c *fiber.Ctx) error {
 func (bh *BotHandlers) RemoveCommand(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
-		return extlib.ErrorBadRequest("id is required")
+		return exterr.ErrorBadRequest("id is required")
 	}
 
 	alias := c.Query("alias", "")
