@@ -56,7 +56,7 @@ func TestAddMessage(t *testing.T) {
 	cs := New(mock.ChatStore(), fs)
 
 	t.Run("add message", func(t *testing.T) {
-		err := cs.AddMessage(&CreateBody{
+		_, err := cs.AddMessage(&CreateBody{
 			Message: chat.Message{
 				ChatId:   ulid.New(),
 				SenderId: ulid.New(),
@@ -69,7 +69,7 @@ func TestAddMessage(t *testing.T) {
 	})
 
 	t.Run("add empty message", func(t *testing.T) {
-		err := cs.AddMessage(&CreateBody{})
+		_, err := cs.AddMessage(&CreateBody{})
 		if err == nil {
 			t.Errorf("got: %v,\nexpect: %v\n", nil, err.Error())
 		}

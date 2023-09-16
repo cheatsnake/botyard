@@ -57,6 +57,15 @@ func (s *Service) Create(userId string, botId string) (*chat.Chat, error) {
 	return chat, nil
 }
 
+func (s *Service) GetChat(id string) (*chat.Chat, error) {
+	ch, err := s.store.GetChat(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return ch, nil
+}
+
 func (s *Service) GetChats(userId string, botId string) ([]*chat.Chat, error) {
 	chats, err := s.store.GetChats(userId, botId)
 	if err != nil {
@@ -75,18 +84,18 @@ func (s *Service) Delete(id string) error {
 	return nil
 }
 
-func (ms *Service) AddMessage(body *CreateBody) error {
+func (ms *Service) AddMessage(body *CreateBody) (*chat.Message, error) {
 	msg, err := chat.NewMessage(body.ChatId, body.SenderId, body.Body, body.FileIds)
 	if err != nil {
-		return exterr.ErrorBadRequest(err.Error())
+		return nil, exterr.ErrorBadRequest(err.Error())
 	}
 
 	err = ms.store.AddMessage(msg)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return msg, nil
 }
 
 func (ms *Service) GetMessagesByChat(chatId string, page, limit int) (*MessagesPage, error) {

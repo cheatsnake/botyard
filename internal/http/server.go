@@ -47,7 +47,7 @@ func (s *Server) InitRoutes() {
 	botHands := bothandlers.New(botService)
 	userHands := userhandlers.New(userService)
 	fileHands := filehandlers.New(fileService)
-	chatHands := chathandlers.New(chatService)
+	chatHands := chathandlers.New(chatService, botService)
 
 	// Admin API --------------------------------------------------------------
 	adminApiV1 := s.App.Group(adminApiV1Prefix)

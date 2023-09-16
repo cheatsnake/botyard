@@ -1,7 +1,9 @@
 package chathandlers
 
 import (
+	"botyard/internal/http/client"
 	"botyard/internal/http/helpers"
+	"botyard/internal/services/botservice"
 	"botyard/internal/services/chatservice"
 	"botyard/pkg/exterr"
 	"fmt"
@@ -10,12 +12,16 @@ import (
 )
 
 type Handlers struct {
-	service *chatservice.Service
+	service    *chatservice.Service
+	botService *botservice.Service
+	client     *client.Client
 }
 
-func New(s *chatservice.Service) *Handlers {
+func New(s *chatservice.Service, b *botservice.Service) *Handlers {
 	return &Handlers{
-		service: s,
+		service:    s,
+		botService: b,
+		client:     client.New(),
 	}
 }
 
@@ -83,13 +89,23 @@ func (mh *Handlers) SendUserMessage(c *fiber.Ctx) error {
 		return exterr.ErrorBadRequest(err.Error())
 	}
 
-	body.SenderId = userId
-	err := mh.service.AddMessage(body)
+	chat, err := mh.service.GetChat(body.ChatId)
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(helpers.JsonMessage("message sended"))
+	body.SenderId = userId
+	msg, err := mh.service.AddMessage(body)
+	if err != nil {
+		return err
+	}
+
+	botWh, err := mh.botService.GetWebhook(chat.BotId)
+	if err == nil {
+		mh.client.SendPost(botWh.Url, msg, botWh.Secret)
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(msg)
 }
 
 func (mh *Handlers) SendBotMessage(c *fiber.Ctx) error {
@@ -100,13 +116,18 @@ func (mh *Handlers) SendBotMessage(c *fiber.Ctx) error {
 		return exterr.ErrorBadRequest(err.Error())
 	}
 
-	body.SenderId = botId
-	err := mh.service.AddMessage(body)
+	_, err := mh.service.GetChat(body.ChatId)
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(helpers.JsonMessage("message sended"))
+	body.SenderId = botId
+	msg, err := mh.service.AddMessage(body)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(msg)
 }
 
 func (mh *Handlers) GetMessagesByChat(c *fiber.Ctx) error {
