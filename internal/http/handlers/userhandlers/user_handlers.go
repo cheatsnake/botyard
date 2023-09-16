@@ -1,4 +1,4 @@
-package handlers
+package userhandlers
 
 import (
 	"botyard/internal/services/userservice"
@@ -8,17 +8,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type UserHandlers struct {
+type Handlers struct {
 	service *userservice.Service
 }
 
-func NewUserHandlers(s *userservice.Service) *UserHandlers {
-	return &UserHandlers{
+func New(s *userservice.Service) *Handlers {
+	return &Handlers{
 		service: s,
 	}
 }
 
-func (h *UserHandlers) Create(c *fiber.Ctx) error {
+func (h *Handlers) Create(c *fiber.Ctx) error {
 	body := new(userservice.CreateBody)
 
 	if err := c.BodyParser(body); err != nil {

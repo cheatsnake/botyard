@@ -1,4 +1,4 @@
-package handlers
+package filehandlers
 
 import (
 	"botyard/internal/entities/file"
@@ -44,17 +44,17 @@ var knownContentTypes = map[string]string{
 	"audio/aac":  "audios",
 }
 
-type FileHandlers struct {
+type Handlers struct {
 	service *fileservice.Service
 }
 
-func NewFileHandlers(s *fileservice.Service) *FileHandlers {
-	return &FileHandlers{
+func New(s *fileservice.Service) *Handlers {
+	return &Handlers{
 		service: s,
 	}
 }
 
-func (h *FileHandlers) LoadMany(c *fiber.Ctx) error {
+func (h *Handlers) LoadMany(c *fiber.Ctx) error {
 	form, err := c.MultipartForm()
 	if err != nil {
 		return exterr.ErrorBadRequest(err.Error())

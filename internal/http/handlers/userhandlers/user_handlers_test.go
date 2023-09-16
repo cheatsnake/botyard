@@ -1,4 +1,4 @@
-package handlers
+package userhandlers
 
 import (
 	"botyard/internal/entities/user"
@@ -14,9 +14,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func TestUserHandlers(t *testing.T) {
+func TestCreate(t *testing.T) {
 	userService := userservice.New(mock.UserStore())
-	userHandlers := NewUserHandlers(userService)
+	userHandlers := New(userService)
 	testApp := fiber.New(fiber.Config{
 		ErrorHandler: helpers.CursomErrorHandler,
 	})

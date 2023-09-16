@@ -1,4 +1,4 @@
-package handlers
+package bothandlers
 
 import (
 	"botyard/internal/http/helpers"
@@ -9,17 +9,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type BotHandlers struct {
+type Handlers struct {
 	service *botservice.Service
 }
 
-func NewBotHandlers(s *botservice.Service) *BotHandlers {
-	return &BotHandlers{
+func New(s *botservice.Service) *Handlers {
+	return &Handlers{
 		service: s,
 	}
 }
 
-func (bh *BotHandlers) CreateBot(c *fiber.Ctx) error {
+func (bh *Handlers) CreateBot(c *fiber.Ctx) error {
 	body := new(botservice.CreateBody)
 	if err := c.BodyParser(body); err != nil {
 		return exterr.ErrorBadRequest(err.Error())
@@ -33,7 +33,7 @@ func (bh *BotHandlers) CreateBot(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(result)
 }
 
-func (bh *BotHandlers) GetBot(c *fiber.Ctx) error {
+func (bh *Handlers) GetBot(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 	if botId == "" {
 		return exterr.ErrorBadRequest("id is required")
@@ -47,7 +47,7 @@ func (bh *BotHandlers) GetBot(c *fiber.Ctx) error {
 	return c.JSON(bot)
 }
 
-func (bh *BotHandlers) GetAllBots(c *fiber.Ctx) error {
+func (bh *Handlers) GetAllBots(c *fiber.Ctx) error {
 	bots, err := bh.service.GetAllBots()
 	if err != nil {
 		return err
@@ -56,7 +56,7 @@ func (bh *BotHandlers) GetAllBots(c *fiber.Ctx) error {
 	return c.JSON(bots)
 }
 
-func (bh *BotHandlers) EditBot(c *fiber.Ctx) error {
+func (bh *Handlers) EditBot(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
 		return exterr.ErrorBadRequest("id is required")
@@ -76,7 +76,7 @@ func (bh *BotHandlers) EditBot(c *fiber.Ctx) error {
 	return c.JSON(editedBot)
 }
 
-func (bh *BotHandlers) AddCommands(c *fiber.Ctx) error {
+func (bh *Handlers) AddCommands(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
 		return exterr.ErrorBadRequest("id is required")
@@ -95,7 +95,7 @@ func (bh *BotHandlers) AddCommands(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("commands added"))
 }
 
-func (bh *BotHandlers) RemoveCommand(c *fiber.Ctx) error {
+func (bh *Handlers) RemoveCommand(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
 		return exterr.ErrorBadRequest("id is required")
@@ -111,7 +111,7 @@ func (bh *BotHandlers) RemoveCommand(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("command removed"))
 }
 
-func (bh *BotHandlers) GetKey(c *fiber.Ctx) error {
+func (bh *Handlers) GetKey(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 
 	result, err := bh.service.GetKey(botId)
@@ -122,7 +122,7 @@ func (bh *BotHandlers) GetKey(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 
-func (bh *BotHandlers) RefreshKey(c *fiber.Ctx) error {
+func (bh *Handlers) RefreshKey(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 
 	botKey, err := bh.service.GenerateKey(botId)

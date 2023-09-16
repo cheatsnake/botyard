@@ -1,4 +1,4 @@
-package handlers
+package messagehandlers
 
 import (
 	"botyard/internal/http/helpers"
@@ -9,17 +9,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type MessageHandlers struct {
+type Handlers struct {
 	service *messageservice.Service
 }
 
-func NewMessageHandlers(s *messageservice.Service) *MessageHandlers {
-	return &MessageHandlers{
+func New(s *messageservice.Service) *Handlers {
+	return &Handlers{
 		service: s,
 	}
 }
 
-func (mh *MessageHandlers) SendUserMessage(c *fiber.Ctx) error {
+func (mh *Handlers) SendUserMessage(c *fiber.Ctx) error {
 	userId := fmt.Sprintf("%s", c.Locals("userId"))
 	if userId == "" {
 		return exterr.ErrorUnauthorized("user is not authorized")
@@ -40,7 +40,7 @@ func (mh *MessageHandlers) SendUserMessage(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("message sended"))
 }
 
-func (mh *MessageHandlers) SendBotMessage(c *fiber.Ctx) error {
+func (mh *Handlers) SendBotMessage(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
 		return exterr.ErrorUnauthorized("bot is not authorized")
@@ -61,7 +61,7 @@ func (mh *MessageHandlers) SendBotMessage(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("message sended"))
 }
 
-func (mh *MessageHandlers) GetByChat(c *fiber.Ctx) error {
+func (mh *Handlers) GetByChat(c *fiber.Ctx) error {
 	chatId := c.Params("chatId", "")
 	page := c.QueryInt("page", 1)
 	limit := c.QueryInt("limit", 20)

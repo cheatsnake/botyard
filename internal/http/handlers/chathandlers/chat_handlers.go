@@ -1,4 +1,4 @@
-package handlers
+package chathandlers
 
 import (
 	"botyard/internal/http/helpers"
@@ -9,17 +9,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ChatHandlers struct {
+type Handlers struct {
 	service *chatservice.Service
 }
 
-func NewChatHandlers(s *chatservice.Service) *ChatHandlers {
-	return &ChatHandlers{
+func New(s *chatservice.Service) *Handlers {
+	return &Handlers{
 		service: s,
 	}
 }
 
-func (h *ChatHandlers) Create(c *fiber.Ctx) error {
+func (h *Handlers) Create(c *fiber.Ctx) error {
 	userId := fmt.Sprintf("%v", c.Locals("userId"))
 	body := new(struct {
 		BotId string `json:"botId"`
@@ -37,7 +37,7 @@ func (h *ChatHandlers) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(chat)
 }
 
-func (h *ChatHandlers) GetMany(c *fiber.Ctx) error {
+func (h *Handlers) GetMany(c *fiber.Ctx) error {
 	userId := fmt.Sprintf("%v", c.Locals("userId"))
 	botId := c.Params("botId", "")
 
@@ -49,7 +49,7 @@ func (h *ChatHandlers) GetMany(c *fiber.Ctx) error {
 	return c.JSON(chats)
 }
 
-func (h *ChatHandlers) Delete(c *fiber.Ctx) error {
+func (h *Handlers) Delete(c *fiber.Ctx) error {
 	id := c.Params("id", "")
 	if id == "" {
 		return exterr.ErrorBadRequest("id is required")
