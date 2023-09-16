@@ -4,7 +4,6 @@ import (
 	"botyard/internal/entities/bot"
 	"botyard/internal/entities/chat"
 	"botyard/internal/entities/file"
-	"botyard/internal/entities/message"
 	"botyard/internal/entities/user"
 )
 
@@ -40,14 +39,11 @@ type ChatStore interface {
 	GetChat(id string) (*chat.Chat, error)
 	GetChats(userId, botId string) ([]*chat.Chat, error)
 	DeleteChat(id string) error
-}
 
-type MessageStore interface {
-	AddMessage(msg *message.Message) error
-	GetMessagesByChat(chatId string, page, limit int) (int, []*message.Message, error)
+	AddMessage(msg *chat.Message) error
+	GetMessagesByChat(chatId string, page, limit int) (int, []*chat.Message, error)
 	DeleteMessagesByChat(chatId string) error
 }
-
 type FileStore interface {
 	AddFile(file *file.File) error
 	GetFiles(ids []string) ([]*file.File, error)
@@ -58,6 +54,5 @@ type Storage interface {
 	BotStore
 	UserStore
 	ChatStore
-	MessageStore
 	FileStore
 }

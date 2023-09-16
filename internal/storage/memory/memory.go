@@ -6,7 +6,6 @@ import (
 	"botyard/internal/entities/bot"
 	"botyard/internal/entities/chat"
 	"botyard/internal/entities/file"
-	"botyard/internal/entities/message"
 	"botyard/internal/entities/user"
 	"sync"
 )
@@ -18,7 +17,7 @@ type Storage struct {
 	botWebhooks []*bot.Webhook
 	users       []*user.User
 	chats       []*chat.Chat
-	messages    []*message.Message
+	messages    []*chat.Message
 	files       []*file.File
 	mu          sync.Mutex
 }
@@ -31,7 +30,7 @@ func New() *Storage {
 		botWebhooks: make([]*bot.Webhook, 0, 10),
 		users:       make([]*user.User, 0, 10),
 		chats:       make([]*chat.Chat, 0, 10),
-		messages:    make([]*message.Message, 0, 10),
+		messages:    make([]*chat.Message, 0, 10),
 		files:       make([]*file.File, 0, 10),
 	}
 }

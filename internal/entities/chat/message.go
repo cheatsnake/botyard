@@ -1,4 +1,4 @@
-package message
+package chat
 
 import (
 	"botyard/internal/tools/ulid"
@@ -15,7 +15,7 @@ type Message struct {
 	Timestamp time.Time `json:"timestamp"`
 }
 
-func New(chatId, senderId, body string, fileIds []string) (*Message, error) {
+func NewMessage(chatId, senderId, body string, fileIds []string) (*Message, error) {
 	if len(chatId) == 0 {
 		return nil, errors.New(errChatIdIsEmpty)
 	}

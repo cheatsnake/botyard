@@ -4,14 +4,12 @@ import (
 	"botyard/internal/http/handlers/bothandlers"
 	"botyard/internal/http/handlers/chathandlers"
 	"botyard/internal/http/handlers/filehandlers"
-	"botyard/internal/http/handlers/messagehandlers"
 	"botyard/internal/http/handlers/userhandlers"
 	"botyard/internal/http/helpers"
 	"botyard/internal/http/middlewares"
 	"botyard/internal/services/botservice"
 	"botyard/internal/services/chatservice"
 	"botyard/internal/services/fileservice"
-	"botyard/internal/services/messageservice"
 	"botyard/internal/services/userservice"
 	"botyard/internal/storage"
 
@@ -44,13 +42,11 @@ func (s *Server) InitRoutes() {
 	botService := botservice.New(s.store)
 	userService := userservice.New(s.store)
 	fileService := fileservice.New(s.store)
-	messageService := messageservice.New(s.store, fileService)
-	chatService := chatservice.New(s.store, messageService)
+	chatService := chatservice.New(s.store, fileService)
 	botMiddlewares := middlewares.NewBotMiddlewares(botService)
 	botHands := bothandlers.New(botService)
 	userHands := userhandlers.New(userService)
 	fileHands := filehandlers.New(fileService)
-	messageHands := messagehandlers.New(messageService)
 	chatHands := chathandlers.New(chatService)
 
 	// Admin API --------------------------------------------------------------
@@ -72,8 +68,8 @@ func (s *Server) InitRoutes() {
 	botApiV1.Post("/bot/commands", botMiddlewares.Auth, botHands.AddCommands)
 	botApiV1.Delete("/bot/command", botMiddlewares.Auth, botHands.RemoveCommand)
 
-	botApiV1.Get("/messages/:chatId", botMiddlewares.Auth, messageHands.GetByChat)
-	botApiV1.Post("/message", botMiddlewares.Auth, messageHands.SendBotMessage)
+	botApiV1.Get("/messages/:chatId", botMiddlewares.Auth, chatHands.GetByChat)
+	botApiV1.Post("/message", botMiddlewares.Auth, chatHands.SendBotMessage)
 	// ------------------------------------------------------------------------
 
 	// Client API -------------------------------------------------------------
@@ -86,8 +82,8 @@ func (s *Server) InitRoutes() {
 
 	clientApiV1.Post("/files", middlewares.UserAuth, fileHands.LoadMany)
 
-	clientApiV1.Get("/messages/:chatId", middlewares.UserAuth, messageHands.GetByChat)
-	clientApiV1.Post("/message", middlewares.UserAuth, messageHands.SendUserMessage)
+	clientApiV1.Get("/messages/:chatId", middlewares.UserAuth, chatHands.GetByChat)
+	clientApiV1.Post("/message", middlewares.UserAuth, chatHands.SendUserMessage)
 
 	clientApiV1.Get("/chats/:botId", middlewares.UserAuth, chatHands.GetMany)
 	clientApiV1.Post("/chat", middlewares.UserAuth, chatHands.Create)

@@ -1,4 +1,4 @@
-package message
+package chat
 
 import (
 	"botyard/internal/tools/ulid"
@@ -7,14 +7,14 @@ import (
 	"time"
 )
 
-func TestNew(t *testing.T) {
+func TestNewMessage(t *testing.T) {
 	testChatId := ulid.New()
 	testSenderId := ulid.New()
 	testBody := "test"
 	testFileIds := []string{ulid.New(), ulid.New()}
 
 	t.Run("check id", func(t *testing.T) {
-		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testFileIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
@@ -25,7 +25,7 @@ func TestNew(t *testing.T) {
 	})
 
 	t.Run("check chat id", func(t *testing.T) {
-		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testFileIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
@@ -39,7 +39,7 @@ func TestNew(t *testing.T) {
 
 	t.Run("check empty chat id", func(t *testing.T) {
 		expect := errChatIdIsEmpty
-		testMsg, err := New("", testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage("", testSenderId, testBody, testFileIds)
 		if err == nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, nil, expect)
 		}
@@ -51,7 +51,7 @@ func TestNew(t *testing.T) {
 	})
 
 	t.Run("check sender id", func(t *testing.T) {
-		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testFileIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
@@ -65,7 +65,7 @@ func TestNew(t *testing.T) {
 
 	t.Run("check empty sender id", func(t *testing.T) {
 		expect := errSenderIdIsEmpty
-		testMsg, err := New(testChatId, "", testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, "", testBody, testFileIds)
 		if err == nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, nil, expect)
 		}
@@ -77,7 +77,7 @@ func TestNew(t *testing.T) {
 	})
 
 	t.Run("check body", func(t *testing.T) {
-		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testFileIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
@@ -91,7 +91,7 @@ func TestNew(t *testing.T) {
 
 	t.Run("check empty body", func(t *testing.T) {
 		expect := errBodyIsEmpty
-		testMsg, err := New(testChatId, testSenderId, "", testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, "", testFileIds)
 		if err == nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, nil, expect)
 		}
@@ -105,7 +105,7 @@ func TestNew(t *testing.T) {
 	t.Run("check too long body", func(t *testing.T) {
 		bodies := []string{strings.Repeat("a", maxBodyLen+1), strings.Repeat("B", maxBodyLen*2)}
 		for _, b := range bodies {
-			testMsg, err := New(testChatId, testSenderId, b, testFileIds)
+			testMsg, err := NewMessage(testChatId, testSenderId, b, testFileIds)
 			expect := errBodyTooLong
 			got := err.Error()
 			if got != expect {
@@ -120,7 +120,7 @@ func TestNew(t *testing.T) {
 			strings.Split(strings.Repeat("a", maxFiles*2), ""),
 		}
 		for _, fi := range fileIds {
-			testMsg, err := New(testChatId, testSenderId, testBody, fi)
+			testMsg, err := NewMessage(testChatId, testSenderId, testBody, fi)
 			expect := errTooManyFiles
 			got := err.Error()
 			if got != expect {
@@ -130,7 +130,7 @@ func TestNew(t *testing.T) {
 	})
 
 	t.Run("check file ids", func(t *testing.T) {
-		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testFileIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
@@ -146,7 +146,7 @@ func TestNew(t *testing.T) {
 
 	t.Run("check timestamp", func(t *testing.T) {
 		testTimestamp := time.Now()
-		testMsg, err := New(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testFileIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}

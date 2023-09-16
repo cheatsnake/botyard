@@ -1,6 +1,8 @@
 package mock
 
-import "botyard/internal/entities/chat"
+import (
+	"botyard/internal/entities/chat"
+)
 
 type chatStore struct{}
 
@@ -17,6 +19,18 @@ func (mcs *chatStore) GetChats(userId, botId string) ([]*chat.Chat, error) {
 }
 
 func (mcs *chatStore) DeleteChat(id string) error {
+	return nil
+}
+
+func (mcs *chatStore) AddMessage(msg *chat.Message) error {
+	return nil
+}
+
+func (mcs *chatStore) GetMessagesByChat(chatId string, page, limit int) (int, []*chat.Message, error) {
+	return 0, []*chat.Message{}, nil
+}
+
+func (mcs *chatStore) DeleteMessagesByChat(chatId string) error {
 	return nil
 }
 
