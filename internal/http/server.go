@@ -56,17 +56,19 @@ func (s *Server) InitRoutes() {
 	// Admin API --------------------------------------------------------------
 	adminApiV1 := s.App.Group(adminApiV1Prefix)
 
-	adminApiV1.Get("/bot/:id/key", middlewares.AdminAuth, botHands.GetKey)
 	adminApiV1.Post("/bot", middlewares.AdminAuth, botHands.CreateBot)
-	adminApiV1.Put("/bot/:id/key", middlewares.AdminAuth, botHands.RefreshKey)
 	adminApiV1.Delete("/bot/:id", middlewares.AdminAuth)
+
+	adminApiV1.Get("/bot/:id/key", middlewares.AdminAuth, botHands.GetKey)
+	adminApiV1.Put("/bot/:id/key", middlewares.AdminAuth, botHands.RefreshKey)
 	// ------------------------------------------------------------------------
 
 	// Bot API ----------------------------------------------------------------
 	botApiV1 := s.App.Group(botApiV1Prefix)
 
-	botApiV1.Get("/bot", botMiddlewares.Auth)
+	botApiV1.Get("/bot", botMiddlewares.Auth, botHands.GetCurrentBot)
 	botApiV1.Put("/bot", botMiddlewares.Auth, botHands.EditBot)
+
 	botApiV1.Post("/bot/commands", botMiddlewares.Auth, botHands.AddCommands)
 	botApiV1.Delete("/bot/command", botMiddlewares.Auth, botHands.RemoveCommand)
 
@@ -80,7 +82,7 @@ func (s *Server) InitRoutes() {
 	clientApiV1.Post("/user", userHands.Create)
 
 	clientApiV1.Get("/bots", botHands.GetAllBots)
-	clientApiV1.Get("/bot/:id", botHands.GetBot)
+	clientApiV1.Get("/bot/:id", botHands.GetBotById)
 
 	clientApiV1.Post("/files", middlewares.UserAuth, fileHands.LoadMany)
 

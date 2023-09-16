@@ -25,8 +25,7 @@ type generator struct {
 func New() string {
 	u := initGenerator()
 
-	return strings.ToLower(
-		ulid.MustNew(u.timestamp, u.entropy).String())
+	return strings.ToLower(ulid.MustNew(u.timestamp, u.entropy).String())
 }
 
 func Verify(s string) error {

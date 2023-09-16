@@ -33,7 +33,7 @@ func (bh *Handlers) CreateBot(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(result)
 }
 
-func (bh *Handlers) GetBot(c *fiber.Ctx) error {
+func (bh *Handlers) GetBotById(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 	if botId == "" {
 		return exterr.ErrorBadRequest("id is required")
@@ -45,6 +45,20 @@ func (bh *Handlers) GetBot(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(bot)
+}
+
+func (bh *Handlers) GetCurrentBot(c *fiber.Ctx) error {
+	botId := fmt.Sprintf("%s", c.Locals("botId"))
+	if botId == "" {
+		return exterr.ErrorUnauthorized("bot is not authorized")
+	}
+
+	bot, err := bh.service.GetBotById(botId)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON((bot))
 }
 
 func (bh *Handlers) GetAllBots(c *fiber.Ctx) error {
@@ -59,7 +73,7 @@ func (bh *Handlers) GetAllBots(c *fiber.Ctx) error {
 func (bh *Handlers) EditBot(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
-		return exterr.ErrorBadRequest("id is required")
+		return exterr.ErrorUnauthorized("bot is not authorized")
 	}
 
 	body := new(botservice.EditBody)
@@ -79,7 +93,7 @@ func (bh *Handlers) EditBot(c *fiber.Ctx) error {
 func (bh *Handlers) AddCommands(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
-		return exterr.ErrorBadRequest("id is required")
+		return exterr.ErrorUnauthorized("bot is not authorized")
 	}
 
 	body := new(botservice.CommandsBody)
@@ -98,7 +112,7 @@ func (bh *Handlers) AddCommands(c *fiber.Ctx) error {
 func (bh *Handlers) RemoveCommand(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	if botId == "" {
-		return exterr.ErrorBadRequest("id is required")
+		return exterr.ErrorUnauthorized("bot is not authorized")
 	}
 
 	alias := c.Query("alias", "")
