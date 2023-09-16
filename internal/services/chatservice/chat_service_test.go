@@ -27,12 +27,12 @@ func TestCreate(t *testing.T) {
 	})
 }
 
-func TestGetByBot(t *testing.T) {
+func TestGetChats(t *testing.T) {
 	fs := fileservice.New(mock.FileStore())
 	cs := New(mock.ChatStore(), fs)
 
 	t.Run("get chats by bot", func(t *testing.T) {
-		_, err := cs.GetByBot(ulid.New(), ulid.New())
+		_, err := cs.GetChats(ulid.New(), ulid.New())
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}

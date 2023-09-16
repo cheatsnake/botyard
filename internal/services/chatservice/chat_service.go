@@ -57,7 +57,7 @@ func (s *Service) Create(userId string, botId string) (*chat.Chat, error) {
 	return chat, nil
 }
 
-func (s *Service) GetByBot(userId string, botId string) ([]*chat.Chat, error) {
+func (s *Service) GetChats(userId string, botId string) ([]*chat.Chat, error) {
 	chats, err := s.store.GetChats(userId, botId)
 	if err != nil {
 		return nil, err

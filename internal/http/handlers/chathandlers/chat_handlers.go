@@ -19,7 +19,7 @@ func New(s *chatservice.Service) *Handlers {
 	}
 }
 
-func (h *Handlers) Create(c *fiber.Ctx) error {
+func (h *Handlers) CreateChat(c *fiber.Ctx) error {
 	userId := fmt.Sprintf("%v", c.Locals("userId"))
 	body := new(struct {
 		BotId string `json:"botId"`
@@ -37,11 +37,11 @@ func (h *Handlers) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(chat)
 }
 
-func (h *Handlers) GetMany(c *fiber.Ctx) error {
+func (h *Handlers) GetChatsByBot(c *fiber.Ctx) error {
 	userId := fmt.Sprintf("%v", c.Locals("userId"))
 	botId := c.Params("botId", "")
 
-	chats, err := h.service.GetByBot(userId, botId)
+	chats, err := h.service.GetChats(userId, botId)
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,19 @@ func (h *Handlers) GetMany(c *fiber.Ctx) error {
 	return c.JSON(chats)
 }
 
-func (h *Handlers) Delete(c *fiber.Ctx) error {
+func (h *Handlers) GetChatsByUser(c *fiber.Ctx) error {
+	botId := fmt.Sprintf("%v", c.Locals("botId"))
+	userId := c.Params("userId", "")
+
+	chats, err := h.service.GetChats(userId, botId)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(chats)
+}
+
+func (h *Handlers) DeleteChat(c *fiber.Ctx) error {
 	id := c.Params("id", "")
 	if id == "" {
 		return exterr.ErrorBadRequest("id is required")
@@ -60,15 +72,11 @@ func (h *Handlers) Delete(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(helpers.JsonMessage("chat cleared"))
+	return c.JSON(helpers.JsonMessage("chat deleted"))
 }
 
 func (mh *Handlers) SendUserMessage(c *fiber.Ctx) error {
 	userId := fmt.Sprintf("%s", c.Locals("userId"))
-	if userId == "" {
-		return exterr.ErrorUnauthorized("user is not authorized")
-	}
-
 	body := new(chatservice.CreateBody)
 
 	if err := c.BodyParser(body); err != nil {
@@ -86,10 +94,6 @@ func (mh *Handlers) SendUserMessage(c *fiber.Ctx) error {
 
 func (mh *Handlers) SendBotMessage(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
-	if botId == "" {
-		return exterr.ErrorUnauthorized("bot is not authorized")
-	}
-
 	body := new(chatservice.CreateBody)
 
 	if err := c.BodyParser(body); err != nil {
@@ -105,12 +109,12 @@ func (mh *Handlers) SendBotMessage(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("message sended"))
 }
 
-func (mh *Handlers) GetByChat(c *fiber.Ctx) error {
-	chatId := c.Params("chatId", "")
+func (mh *Handlers) GetMessagesByChat(c *fiber.Ctx) error {
+	id := c.Params("id", "")
 	page := c.QueryInt("page", 1)
 	limit := c.QueryInt("limit", 20)
 
-	result, err := mh.service.GetMessagesByChat(chatId, page, limit)
+	result, err := mh.service.GetMessagesByChat(id, page, limit)
 	if err != nil {
 		return err
 	}

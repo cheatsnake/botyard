@@ -49,10 +49,6 @@ func (bh *Handlers) GetBotById(c *fiber.Ctx) error {
 
 func (bh *Handlers) GetCurrentBot(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
-	if botId == "" {
-		return exterr.ErrorUnauthorized("bot is not authorized")
-	}
-
 	bot, err := bh.service.GetBotById(botId)
 	if err != nil {
 		return err
@@ -72,10 +68,6 @@ func (bh *Handlers) GetAllBots(c *fiber.Ctx) error {
 
 func (bh *Handlers) EditBot(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
-	if botId == "" {
-		return exterr.ErrorUnauthorized("bot is not authorized")
-	}
-
 	body := new(botservice.EditBody)
 
 	if err := c.BodyParser(body); err != nil {
@@ -92,10 +84,6 @@ func (bh *Handlers) EditBot(c *fiber.Ctx) error {
 
 func (bh *Handlers) AddCommands(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
-	if botId == "" {
-		return exterr.ErrorUnauthorized("bot is not authorized")
-	}
-
 	body := new(botservice.CommandsBody)
 	if err := c.BodyParser(body); err != nil {
 		return exterr.ErrorBadRequest(err.Error())
@@ -109,12 +97,12 @@ func (bh *Handlers) AddCommands(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("commands added"))
 }
 
+func (bh *Handlers) GetAllCommands(c *fiber.Ctx) error {
+	return nil
+}
+
 func (bh *Handlers) RemoveCommand(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
-	if botId == "" {
-		return exterr.ErrorUnauthorized("bot is not authorized")
-	}
-
 	alias := c.Query("alias", "")
 
 	err := bh.service.RemoveCommand(botId, alias)
@@ -145,4 +133,28 @@ func (bh *Handlers) RefreshKey(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(botKey)
+}
+
+func (bh *Handlers) CreateWebhook(c *fiber.Ctx) error {
+	// botId := fmt.Sprintf("%s", c.Locals("botId"))
+
+	return nil
+}
+
+func (bh *Handlers) GetWebhook(c *fiber.Ctx) error {
+	// botId := fmt.Sprintf("%s", c.Locals("botId"))
+
+	return nil
+}
+
+func (bh *Handlers) EditWebhook(c *fiber.Ctx) error {
+	// botId := fmt.Sprintf("%s", c.Locals("botId"))
+
+	return nil
+}
+
+func (bh *Handlers) DeleteWebhook(c *fiber.Ctx) error {
+	// botId := fmt.Sprintf("%s", c.Locals("botId"))
+
+	return nil
 }
