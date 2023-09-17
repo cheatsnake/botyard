@@ -44,6 +44,7 @@ type ChatStore interface {
 	GetMessagesByChat(chatId string, page, limit int) (int, []*chat.Message, error)
 	DeleteMessagesByChat(chatId string) error
 }
+
 type FileStore interface {
 	AddFile(file *file.File) error
 	GetFiles(ids []string) ([]*file.File, error)

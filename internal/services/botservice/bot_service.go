@@ -38,6 +38,11 @@ type CommandsBody struct {
 	} `json:"commands"`
 }
 
+type WebhookBody struct {
+	bot.Webhook
+	BotId struct{} `json:"-"`
+}
+
 func New(s storage.BotStore) *Service {
 	return &Service{
 		store: s,
@@ -158,6 +163,20 @@ func (s *Service) AddCommands(botId string, body *CommandsBody) error {
 	return nil
 }
 
+func (s *Service) GetCommands(botId string) ([]*bot.Command, error) {
+	_, err := s.GetBotById(botId)
+	if err != nil {
+		return nil, err
+	}
+
+	cmds, err := s.store.GetCommands(botId)
+	if err != nil {
+		return nil, err
+	}
+
+	return cmds, nil
+}
+
 func (s *Service) RemoveCommand(botId string, alias string) error {
 	_, err := s.GetBotById(botId)
 	if err != nil {
@@ -217,18 +236,18 @@ func (s *Service) VerifyKeyData(id, token string) error {
 	return nil
 }
 
-func (s *Service) CreateWebhook(botId, url, secret string) error {
-	webhook, err := bot.NewWebhook(botId, url, secret)
+func (s *Service) SaveWebhook(botId string, body *WebhookBody) (*bot.Webhook, error) {
+	webhook, err := bot.NewWebhook(botId, body.Url, body.Secret)
 	if err != nil {
-		return exterr.ErrorBadRequest(err.Error())
+		return nil, exterr.ErrorBadRequest(err.Error())
 	}
 
 	err = s.store.SaveWebhook(webhook)
 	if err != nil {
-		return exterr.ErrorBadRequest(err.Error())
+		return nil, exterr.ErrorBadRequest(err.Error())
 	}
 
-	return nil
+	return webhook, nil
 }
 
 func (s *Service) GetWebhook(botId string) (*bot.Webhook, error) {

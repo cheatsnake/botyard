@@ -1,6 +1,7 @@
 package chathandlers
 
 import (
+	"botyard/internal/entities/chat"
 	"botyard/internal/http/client"
 	"botyard/internal/http/helpers"
 	"botyard/internal/services/botservice"
@@ -35,7 +36,7 @@ func (h *Handlers) CreateChat(c *fiber.Ctx) error {
 		return exterr.ErrorBadRequest(err.Error())
 	}
 
-	chat, err := h.service.Create(userId, body.BotId)
+	chat, err := h.service.CreateChat(userId, body.BotId)
 	if err != nil {
 		return err
 	}
@@ -68,12 +69,15 @@ func (h *Handlers) GetChatsByUser(c *fiber.Ctx) error {
 }
 
 func (h *Handlers) DeleteChat(c *fiber.Ctx) error {
+	userId := fmt.Sprintf("%s", c.Locals("userId"))
 	id := c.Params("id", "")
-	if id == "" {
-		return exterr.ErrorBadRequest("id is required")
+
+	_, err := h.checkChatAccess(id, "", userId)
+	if err != nil {
+		return err
 	}
 
-	err := h.service.Delete(id)
+	err = h.service.DeleteChat(id)
 	if err != nil {
 		return err
 	}
@@ -81,7 +85,7 @@ func (h *Handlers) DeleteChat(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("chat deleted"))
 }
 
-func (mh *Handlers) SendUserMessage(c *fiber.Ctx) error {
+func (h *Handlers) SendUserMessage(c *fiber.Ctx) error {
 	userId := fmt.Sprintf("%s", c.Locals("userId"))
 	body := new(chatservice.CreateBody)
 
@@ -89,26 +93,26 @@ func (mh *Handlers) SendUserMessage(c *fiber.Ctx) error {
 		return exterr.ErrorBadRequest(err.Error())
 	}
 
-	chat, err := mh.service.GetChat(body.ChatId)
+	chat, err := h.checkChatAccess(body.ChatId, "", userId)
 	if err != nil {
 		return err
 	}
 
 	body.SenderId = userId
-	msg, err := mh.service.AddMessage(body)
+	msg, err := h.service.AddMessage(body)
 	if err != nil {
 		return err
 	}
 
-	botWh, err := mh.botService.GetWebhook(chat.BotId)
+	botWh, err := h.botService.GetWebhook(chat.BotId)
 	if err == nil {
-		mh.client.SendPost(botWh.Url, msg, botWh.Secret)
+		h.client.SendPost(botWh.Url, msg, botWh.Secret)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(msg)
 }
 
-func (mh *Handlers) SendBotMessage(c *fiber.Ctx) error {
+func (h *Handlers) SendBotMessage(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	body := new(chatservice.CreateBody)
 
@@ -116,13 +120,13 @@ func (mh *Handlers) SendBotMessage(c *fiber.Ctx) error {
 		return exterr.ErrorBadRequest(err.Error())
 	}
 
-	_, err := mh.service.GetChat(body.ChatId)
+	_, err := h.checkChatAccess(body.ChatId, botId, "")
 	if err != nil {
 		return err
 	}
 
 	body.SenderId = botId
-	msg, err := mh.service.AddMessage(body)
+	msg, err := h.service.AddMessage(body)
 	if err != nil {
 		return err
 	}
@@ -130,15 +134,39 @@ func (mh *Handlers) SendBotMessage(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(msg)
 }
 
-func (mh *Handlers) GetMessagesByChat(c *fiber.Ctx) error {
+func (h *Handlers) GetMessagesByChat(c *fiber.Ctx) error {
+	botId := fmt.Sprintf("%s", c.Locals("botId"))
+	userId := fmt.Sprintf("%s", c.Locals("userId"))
 	id := c.Params("id", "")
 	page := c.QueryInt("page", 1)
 	limit := c.QueryInt("limit", 20)
 
-	result, err := mh.service.GetMessagesByChat(id, page, limit)
+	_, err := h.checkChatAccess(id, botId, userId)
+	if err != nil {
+		return err
+	}
+
+	result, err := h.service.GetMessagesByChat(id, page, limit)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(result)
+}
+
+func (h *Handlers) checkChatAccess(chatId, botId, userId string) (*chat.Chat, error) {
+	chat, err := h.service.GetChat(chatId)
+	if err != nil {
+		return nil, err
+	}
+
+	if userId != "" && chat.UserId != userId {
+		return nil, exterr.ErrorForbidden("chat is not related to current user")
+	}
+
+	if botId != "" && chat.BotId != botId {
+		return nil, exterr.ErrorForbidden("chat is not related to current bot")
+	}
+
+	return chat, nil
 }

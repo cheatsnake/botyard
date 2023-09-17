@@ -106,14 +106,24 @@ func TestCreateWebhook(t *testing.T) {
 	bs := New(mock.BotStore())
 
 	t.Run("create webhook", func(t *testing.T) {
-		err := bs.CreateWebhook(ulid.New(), "https://go.dev", "")
+		_, err := bs.SaveWebhook(ulid.New(), &WebhookBody{
+			Webhook: bot.Webhook{
+				Url:    "https://go.dev",
+				Secret: "",
+			},
+		})
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 
 	t.Run("create webhook with invalid input", func(t *testing.T) {
-		err := bs.CreateWebhook(ulid.New(), "bad url", "")
+		_, err := bs.SaveWebhook(ulid.New(), &WebhookBody{
+			Webhook: bot.Webhook{
+				Url:    "bad url",
+				Secret: "",
+			},
+		})
 		if err == nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, "error")
 		}

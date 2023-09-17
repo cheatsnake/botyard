@@ -13,14 +13,14 @@ func TestCreate(t *testing.T) {
 	cs := New(mock.ChatStore(), fs)
 
 	t.Run("create a new chat", func(t *testing.T) {
-		_, err := cs.Create(ulid.New(), ulid.New())
+		_, err := cs.CreateChat(ulid.New(), ulid.New())
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 	})
 
 	t.Run("create a new chat with empty values", func(t *testing.T) {
-		_, err := cs.Create("", "")
+		_, err := cs.CreateChat("", "")
 		if err == nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, "error")
 		}
@@ -44,7 +44,7 @@ func TestDelete(t *testing.T) {
 	cs := New(mock.ChatStore(), fs)
 
 	t.Run("delete chat", func(t *testing.T) {
-		err := cs.Delete(ulid.New())
+		err := cs.DeleteChat(ulid.New())
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}

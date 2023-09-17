@@ -65,7 +65,7 @@ func (s *Server) InitRoutes() {
 	botApiV1.Get("/bot", botMiddlewares.Auth, botHands.GetCurrentBot)
 	botApiV1.Put("/bot", botMiddlewares.Auth, botHands.EditBot)
 
-	botApiV1.Get("/bot/commands", botMiddlewares.Auth, botHands.GetAllCommands)
+	botApiV1.Get("/bot/commands", botMiddlewares.Auth, botHands.GetCommands)
 	botApiV1.Post("/bot/commands", botMiddlewares.Auth, botHands.AddCommands)
 	botApiV1.Delete("/bot/command", botMiddlewares.Auth, botHands.RemoveCommand)
 
@@ -88,7 +88,7 @@ func (s *Server) InitRoutes() {
 
 	clientApiV1.Get("/bots", botHands.GetAllBots)
 	clientApiV1.Get("/bot/:id", botHands.GetBotById)
-	clientApiV1.Get("/bot/:id/commands", middlewares.UserAuth, botHands.GetAllCommands)
+	clientApiV1.Get("/bot/:id/commands", middlewares.UserAuth, botHands.GetCommands)
 
 	clientApiV1.Get("/chats/:botId", middlewares.UserAuth, chatHands.GetChatsByBot)
 	clientApiV1.Get("/chat/:id/messages", middlewares.UserAuth, chatHands.GetMessagesByChat)

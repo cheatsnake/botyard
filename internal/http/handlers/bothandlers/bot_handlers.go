@@ -97,8 +97,19 @@ func (bh *Handlers) AddCommands(c *fiber.Ctx) error {
 	return c.JSON(helpers.JsonMessage("commands added"))
 }
 
-func (bh *Handlers) GetAllCommands(c *fiber.Ctx) error {
-	return nil
+func (bh *Handlers) GetCommands(c *fiber.Ctx) error {
+	botId := fmt.Sprintf("%s", c.Locals("botId"))
+
+	if botId == "" {
+		botId = c.Params("id", "")
+	}
+
+	cmds, err := bh.service.GetCommands(botId)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(cmds)
 }
 
 func (bh *Handlers) RemoveCommand(c *fiber.Ctx) error {
@@ -136,25 +147,59 @@ func (bh *Handlers) RefreshKey(c *fiber.Ctx) error {
 }
 
 func (bh *Handlers) CreateWebhook(c *fiber.Ctx) error {
-	// botId := fmt.Sprintf("%s", c.Locals("botId"))
+	botId := fmt.Sprintf("%s", c.Locals("botId"))
+	body := new(botservice.WebhookBody)
+	if err := c.BodyParser(body); err != nil {
+		return exterr.ErrorBadRequest(err.Error())
+	}
 
-	return nil
+	result, err := bh.service.SaveWebhook(botId, body)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(result)
 }
 
 func (bh *Handlers) GetWebhook(c *fiber.Ctx) error {
-	// botId := fmt.Sprintf("%s", c.Locals("botId"))
+	botId := fmt.Sprintf("%s", c.Locals("botId"))
 
-	return nil
+	wh, err := bh.service.GetWebhook(botId)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(wh)
 }
 
 func (bh *Handlers) EditWebhook(c *fiber.Ctx) error {
-	// botId := fmt.Sprintf("%s", c.Locals("botId"))
+	botId := fmt.Sprintf("%s", c.Locals("botId"))
 
-	return nil
+	_, err := bh.service.GetWebhook(botId)
+	if err != nil {
+		return err
+	}
+
+	body := new(botservice.WebhookBody)
+	if err := c.BodyParser(body); err != nil {
+		return exterr.ErrorBadRequest(err.Error())
+	}
+
+	result, err := bh.service.SaveWebhook(botId, body)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(result)
 }
 
 func (bh *Handlers) DeleteWebhook(c *fiber.Ctx) error {
-	// botId := fmt.Sprintf("%s", c.Locals("botId"))
+	botId := fmt.Sprintf("%s", c.Locals("botId"))
 
-	return nil
+	err := bh.service.DeleteWebhook(botId)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON("webhook deleted")
 }

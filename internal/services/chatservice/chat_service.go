@@ -43,7 +43,7 @@ func New(s storage.ChatStore, fs *fileservice.Service) *Service {
 	}
 }
 
-func (s *Service) Create(userId string, botId string) (*chat.Chat, error) {
+func (s *Service) CreateChat(userId string, botId string) (*chat.Chat, error) {
 	chat, err := chat.New(userId, botId)
 	if err != nil {
 		return nil, exterr.ErrorBadRequest(err.Error())
@@ -75,12 +75,13 @@ func (s *Service) GetChats(userId string, botId string) ([]*chat.Chat, error) {
 	return chats, nil
 }
 
-func (s *Service) Delete(id string) error {
+func (s *Service) DeleteChat(id string) error {
 	err := s.store.DeleteChat(id)
 	if err != nil {
 		return err
 	}
 
+	s.DeleteMessagesByChat(id)
 	return nil
 }
 
