@@ -1,21 +1,13 @@
-import { ActionIcon, Avatar, Box, Container, Flex, ScrollArea, Text, Textarea, Tooltip } from "@mantine/core";
-// import { Header } from "../../components/header";
+import { ActionIcon, Box, Container, FileButton, Flex, ScrollArea, Text, Textarea, Tooltip } from "@mantine/core";
+import { ChatHeader } from "./chat-header";
 import { IconLink, IconSend } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
+import { Message } from "./types";
+import { BotMessage } from "./bot-message";
+import { UserMessage } from "./user-message";
 
 export const ChatPage = () => {
-    const [messages, setMessages] = useState([
-        {
-            id: 1,
-            body: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magnam totam exercitationem corporis perspiciatis debitis quo at nobis distinctio iure harum enim nam, officia in amet sunt quisquam tenetur eligendi ipsum!",
-            timestamp: new Date(),
-        },
-        {
-            id: 2,
-            body: "Lorem ipsum dolor sit, amet consectetur adipisicing elit.",
-            timestamp: new Date(),
-        },
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [body, setBody] = useState("");
 
     const viewport = useRef<HTMLDivElement>(null);
@@ -26,50 +18,26 @@ export const ChatPage = () => {
 
     useEffect(() => {
         scrollToBottom();
-    }, []);
+    }, [messages]);
 
     return (
         <>
-            {/* <Header /> */}
-            <Container pos="relative" p="0" size="md" h="100vh">
+            <ChatHeader />
+            <Container pos="relative" p="0" size="md" h="calc(100vh - 52px)">
                 <Flex direction="column" justify="end" w="100%" h="100%">
                     <ScrollArea
+                        pt="sm"
                         viewportRef={viewport}
                         h="auto"
                         sx={{ display: "flex", flexDirection: "column-reverse", justifyContent: "end" }}
                     >
-                        {messages.map((msg, i) => (
-                            <Box
-                                key={msg.id}
-                                p={window.screen.width > 960 ? "md" : "sm"}
-                                sx={(theme) => ({
-                                    borderRadius: window.screen.width > 960 ? "0.4rem" : "none",
-                                    background:
-                                        theme.colorScheme === "dark"
-                                            ? i % 2 === 0
-                                                ? "transparent"
-                                                : theme.colors.dark[6]
-                                            : i % 2 === 0
-                                            ? "transparent"
-                                            : theme.colors.gray[2],
-                                })}
-                            >
-                                {i % 2 !== 0 ? (
-                                    <Flex gap="sm" align="center" mb="sm">
-                                        <Avatar color="cyan" size="md">
-                                            BC
-                                        </Avatar>
-                                        <Text size="lg" fw={600}>
-                                            Bot calculator
-                                        </Text>
-                                    </Flex>
-                                ) : null}
-                                <Text ta="justify">{msg.body}</Text>
-                                <Text ta="end" opacity={0.5}>
-                                    {msg.timestamp.toLocaleTimeString()}
-                                </Text>
-                            </Box>
-                        ))}
+                        {messages.map((msg, i) =>
+                            i % 2 !== 0 ? (
+                                <BotMessage key={msg.id} message={msg} />
+                            ) : (
+                                <UserMessage key={msg.id} message={msg} />
+                            )
+                        )}
                     </ScrollArea>
 
                     {messages.length === 0 ? (
@@ -111,15 +79,20 @@ export const ChatPage = () => {
                                             { id: Math.random(), body, timestamp: new Date() },
                                         ]);
                                         scrollToBottom();
+                                        setBody("");
                                     }}
                                 >
                                     <IconSend />
                                 </ActionIcon>
                             </Tooltip>
                             <Tooltip openDelay={700} offset={15} label="Attach files">
-                                <ActionIcon c="gray" size="lg" h="50%">
-                                    <IconLink />
-                                </ActionIcon>
+                                <FileButton onChange={() => {}} multiple>
+                                    {(props) => (
+                                        <ActionIcon {...props} c="gray" size="lg" h="50%">
+                                            <IconLink />
+                                        </ActionIcon>
+                                    )}
+                                </FileButton>
                             </Tooltip>
                         </Flex>
                     </Flex>

@@ -1,6 +1,6 @@
 import { Avatar, Badge, Box, Container, Divider, Flex, Grid, Text, Title } from "@mantine/core";
 import { abbreviateName } from "../../helpers/test.helpers";
-import { Header } from "../../components/header";
+import { Header } from "./header";
 
 const SOCIAL_LINKS = [
     { title: "Website", url: "https://example.com" },
@@ -98,7 +98,7 @@ export const GalleryPage = () => {
                         ))}
                     </Grid>
                 </Box>
-                {/* <Divider /> */}
+
                 <Text my="xl" ta="center" color="gray">
                     Made with Botyard
                 </Text>
