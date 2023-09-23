@@ -48,6 +48,7 @@ export const ChatInput: FC<ChatInputProps> = ({ commands, body, setBody, sendMes
                 description: cmd.description,
                 onTrigger: () => commandTrigger(cmd.alias),
             }))}
+            nothingFoundMessage="Command not found..."
             searchPlaceholder="Command..."
             overlayProps={{ blur: "none" }}
             limit={100}
