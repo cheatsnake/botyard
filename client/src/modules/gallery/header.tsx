@@ -1,10 +1,7 @@
-import { ActionIcon, Box, Container, useMantineColorScheme } from "@mantine/core";
-import { IconMoonStars, IconSun } from "@tabler/icons-react";
+import { Box, Container, Flex } from "@mantine/core";
+import { SettingsModal } from "../settings/settings-modal";
 
 export const Header = () => {
-    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-    const dark = colorScheme === "dark";
-
     return (
         <Box
             pos="sticky"
@@ -16,9 +13,9 @@ export const Header = () => {
             })}
         >
             <Container size="md">
-                <ActionIcon variant="outline" onClick={() => toggleColorScheme()} title="Toggle color scheme">
-                    {dark ? <IconSun size="1.1rem" /> : <IconMoonStars size="1.1rem" />}
-                </ActionIcon>
+                <Flex justify="end">
+                    <SettingsModal />
+                </Flex>
             </Container>
         </Box>
     );

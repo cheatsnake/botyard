@@ -1,12 +1,12 @@
-import { ActionIcon, Box, Container, Flex, useMantineColorScheme } from "@mantine/core";
-import { IconArrowNarrowLeft, IconSettings } from "@tabler/icons-react";
+import { ActionIcon, Box, Container, Flex } from "@mantine/core";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { BotInfoModal } from "./bot-info-modal";
 import { FC } from "react";
 import { Bot } from "./types";
+import { SettingsModal } from "../settings/settings-modal";
 
 export const ChatHeader: FC<{ bot: Bot }> = ({ bot }) => {
-    const { toggleColorScheme } = useMantineColorScheme();
     const navigate = useNavigate();
 
     return (
@@ -40,9 +40,7 @@ export const ChatHeader: FC<{ bot: Bot }> = ({ bot }) => {
 
                     <BotInfoModal bot={bot} />
 
-                    <ActionIcon variant="subtle" size="md" onClick={() => toggleColorScheme()}>
-                        <IconSettings />
-                    </ActionIcon>
+                    <SettingsModal />
                 </Flex>
             </Container>
         </Box>

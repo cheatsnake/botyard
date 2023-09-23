@@ -1,4 +1,4 @@
-import { Avatar, Box, CopyButton, Flex, Modal, Text } from "@mantine/core";
+import { Avatar, Box, CopyButton, Divider, Flex, Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { FC } from "react";
 import { abbreviateName } from "../../helpers/test.helpers";
@@ -10,7 +10,7 @@ export const BotInfoModal: FC<{ bot: Bot }> = ({ bot }) => {
     return (
         <>
             <Modal opened={opened} onClose={close} title={<Text size="lg">Bot info</Text>}>
-                <Box py="sm">
+                <Modal.Body p={0} py="sm">
                     <Flex gap="md" align="center">
                         <Avatar color="primary" size="xl" src={bot.avatar ?? null}>
                             {!bot.avatar ? abbreviateName(bot.name) : null}
@@ -32,15 +32,12 @@ export const BotInfoModal: FC<{ bot: Bot }> = ({ bot }) => {
                         </Box>
                     </Flex>
 
-                    <Text
-                        component="pre"
-                        pt="lg"
-                        ta="justify"
-                        sx={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}
-                    >
+                    <Divider mt="lg" />
+
+                    <Text component="pre" ta="justify" sx={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
                         {bot.description}
                     </Text>
-                </Box>
+                </Modal.Body>
             </Modal>
             <Text
                 component="button"
