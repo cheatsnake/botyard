@@ -1,6 +1,7 @@
 import { Avatar, Badge, Box, Container, Divider, Flex, Grid, Text, Title } from "@mantine/core";
 import { abbreviateName } from "../../helpers/test.helpers";
 import { Header } from "./header";
+import { useNavigate } from "react-router-dom";
 
 const SOCIAL_LINKS = [
     { title: "Website", url: "https://example.com" },
@@ -27,6 +28,8 @@ const BOTS = [
 ];
 
 export const GalleryPage = () => {
+    const navigator = useNavigate();
+
     const openNewTab = (url: string) => {
         window.open(url, "_blank")?.focus();
     };
@@ -46,6 +49,7 @@ export const GalleryPage = () => {
                         {SOCIAL_LINKS.map((link) => (
                             <Badge
                                 key={link.title}
+                                component="button"
                                 radius="xs"
                                 size="lg"
                                 onClick={() => openNewTab(link.url)}
@@ -71,6 +75,7 @@ export const GalleryPage = () => {
                                 span={4}
                                 miw={300}
                                 display="flex"
+                                onClick={() => navigator("/bot/1")}
                                 sx={(theme) => ({
                                     backgroundColor:
                                         theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
