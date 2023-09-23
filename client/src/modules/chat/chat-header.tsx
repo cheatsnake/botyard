@@ -11,7 +11,7 @@ export const ChatHeader: FC<{ bot: Bot }> = ({ bot }) => {
 
     return (
         <Box
-            pos="sticky"
+            pos="fixed"
             w="100%"
             py="sm"
             sx={(theme) => ({

@@ -24,6 +24,7 @@ export const SettingsModal = () => {
                     <Flex py="lg" align="center" justify="space-between">
                         <Text>Global theme</Text>
                         <Select
+                            maw={120}
                             placeholder="Pick one"
                             defaultValue={colorScheme}
                             data={[

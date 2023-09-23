@@ -1,8 +1,9 @@
-import { Avatar, Box, CopyButton, Divider, Flex, Modal, Text } from "@mantine/core";
+import { Avatar, Box, Divider, Flex, Modal, Text, Tooltip } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { FC } from "react";
 import { abbreviateName } from "../../helpers/test.helpers";
 import { Bot } from "./types";
+import { CopyBtn } from "../../components/CopyBtn";
 
 export const BotInfoModal: FC<{ bot: Bot }> = ({ bot }) => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -11,24 +12,28 @@ export const BotInfoModal: FC<{ bot: Bot }> = ({ bot }) => {
         <>
             <Modal opened={opened} onClose={close} title={<Text size="lg">Bot info</Text>}>
                 <Modal.Body p={0} py="sm">
-                    <Flex gap="md" align="center">
+                    <Flex gap="md" align="start">
                         <Avatar color="primary" size="xl" src={bot.avatar ?? null}>
                             {!bot.avatar ? abbreviateName(bot.name) : null}
                         </Avatar>
 
                         <Box>
-                            <Text size="xl" fw={600}>
-                                {bot.name}
-                            </Text>
+                            <Flex gap="sm">
+                                <Text size="xl" fw={600}>
+                                    {bot.name}
+                                </Text>
+
+                                <CopyBtn value={window.location.href} thing="Link" />
+                            </Flex>
 
                             <Text opacity={0.7}>{`ID: ${bot.id}`}</Text>
-                            <CopyButton value={window.location.href}>
+                            {/* <CopyButton value={window.location.href}>
                                 {({ copied, copy }) => (
                                     <Text td={copied ? "none" : "underline"} onClick={copy} sx={{ cursor: "pointer" }}>
                                         {copied ? "Link copied" : "Copy link"}
                                     </Text>
                                 )}
-                            </CopyButton>
+                            </CopyButton> */}
                         </Box>
                     </Flex>
 
@@ -39,16 +44,18 @@ export const BotInfoModal: FC<{ bot: Bot }> = ({ bot }) => {
                     </Text>
                 </Modal.Body>
             </Modal>
-            <Text
-                component="button"
-                onClick={open}
-                size="lg"
-                fw={600}
-                bg="transparent"
-                sx={{ border: "none", cursor: "pointer" }}
-            >
-                {bot.name}
-            </Text>
+            <Tooltip label="Show bot info" openDelay={700}>
+                <Text
+                    component="button"
+                    onClick={open}
+                    size="lg"
+                    fw={600}
+                    bg="transparent"
+                    sx={{ border: "none", cursor: "pointer" }}
+                >
+                    {bot.name}
+                </Text>
+            </Tooltip>
         </>
     );
 };

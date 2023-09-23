@@ -1,4 +1,4 @@
-import { Avatar, Badge, Box, Container, Divider, Flex, Grid, Text, Title } from "@mantine/core";
+import { Avatar, Badge, Box, Container, Divider, Flex, Grid, Space, Text, Title } from "@mantine/core";
 import { abbreviateName } from "../../helpers/test.helpers";
 import { Header } from "./header";
 import { useNavigate } from "react-router-dom";
@@ -71,6 +71,7 @@ export const GalleryPage = () => {
                     <Grid grow gutter="sm" justify="center" sx={{ gap: "1rem" }}>
                         {BOTS.map((bot) => (
                             <Grid.Col
+                                p={window.innerWidth > 730 ? "lg" : "sm"}
                                 key={bot.name}
                                 span={4}
                                 miw={300}
@@ -106,12 +107,16 @@ export const GalleryPage = () => {
                                     <Title order={3} size="h4">
                                         {bot.name}
                                     </Title>
-                                    <Text>{bot.description}</Text>
+                                    <Text ta="justify" opacity={0.7}>
+                                        {bot.description}
+                                    </Text>
                                 </Box>
                             </Grid.Col>
                         ))}
                     </Grid>
                 </Box>
+
+                <Space h="xl" />
 
                 <Text my="xl" ta="center" color="gray">
                     Made with Botyard

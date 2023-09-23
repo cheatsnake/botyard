@@ -1,9 +1,10 @@
-import { Flex, Box, Text } from "@mantine/core";
+import { Flex, Box, Text, Kbd } from "@mantine/core";
 
 export const EmptyChatLabel = () => {
     return (
         <Flex direction="column" justify="center" align="center" w="100%" h="100%">
             <Box
+                maw={280}
                 p="md"
                 py="xl"
                 sx={(theme) => ({
@@ -14,7 +15,9 @@ export const EmptyChatLabel = () => {
                 <Text ta="center" opacity={0.5} size="lg" fw={500}>
                     Message history is empty
                 </Text>
-                <Text opacity={0.5}>Start typing "/" to view list of commands.</Text>
+                <Text ta="center" mt="md" opacity={0.5}>
+                    Start typing <Kbd>/</Kbd> or press <Kbd>Ctrl</Kbd>+<Kbd>K</Kbd> to view list of bot commands
+                </Text>
             </Box>
         </Flex>
     );

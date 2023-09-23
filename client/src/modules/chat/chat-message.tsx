@@ -2,6 +2,7 @@ import { Box, Flex, Avatar, TypographyStylesProvider, Text, MantineTheme } from 
 import { FC } from "react";
 import { Message } from "./types";
 import { abbreviateName } from "../../helpers/test.helpers";
+import { BOT_COMMAND_REGEX } from "./const";
 
 type ChatMessageTypes = "bot" | "user";
 
@@ -53,7 +54,10 @@ export const ChatMessage: FC<ChatMessageProps> = (props) => {
             >
                 <div
                     dangerouslySetInnerHTML={{
-                        __html: props.message.body.replaceAll("\n", "<br>").replaceAll("\t", "&emsp;"),
+                        __html: props.message.body
+                            .replaceAll("\n", "<br>")
+                            .replaceAll("\t", "&emsp;")
+                            .replaceAll(BOT_COMMAND_REGEX, (s) => `<a>${s}</a>`),
                     }}
                 />
             </TypographyStylesProvider>

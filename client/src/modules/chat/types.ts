@@ -10,3 +10,8 @@ export interface Bot {
     description?: string;
     avatar?: string;
 }
+
+export interface Command {
+    alias: string;
+    description: string;
+}
