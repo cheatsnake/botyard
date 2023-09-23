@@ -27,13 +27,6 @@ export const BotInfoModal: FC<{ bot: Bot }> = ({ bot }) => {
                             </Flex>
 
                             <Text opacity={0.7}>{`ID: ${bot.id}`}</Text>
-                            {/* <CopyButton value={window.location.href}>
-                                {({ copied, copy }) => (
-                                    <Text td={copied ? "none" : "underline"} onClick={copy} sx={{ cursor: "pointer" }}>
-                                        {copied ? "Link copied" : "Copy link"}
-                                    </Text>
-                                )}
-                            </CopyButton> */}
                         </Box>
                     </Flex>
 

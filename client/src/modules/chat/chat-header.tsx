@@ -9,6 +9,17 @@ import { SettingsModal } from "../settings/settings-modal";
 export const ChatHeader: FC<{ bot: Bot }> = ({ bot }) => {
     const navigate = useNavigate();
 
+    const backToMainPage = () => {
+        if ("startViewTransition" in document) {
+            //@ts-ignore
+            return document.startViewTransition(() => {
+                navigate("/");
+            });
+        }
+
+        return navigate("/");
+    };
+
     return (
         <Box
             pos="fixed"
@@ -21,20 +32,7 @@ export const ChatHeader: FC<{ bot: Bot }> = ({ bot }) => {
         >
             <Container size="md">
                 <Flex justify="space-between">
-                    <ActionIcon
-                        variant="subtle"
-                        size="md"
-                        onClick={() => {
-                            if ("startViewTransition" in document) {
-                                //@ts-ignore
-                                return document.startViewTransition(() => {
-                                    navigate("/");
-                                });
-                            }
-
-                            return navigate("/");
-                        }}
-                    >
+                    <ActionIcon variant="subtle" size="md" onClick={backToMainPage}>
                         <IconArrowNarrowLeft />
                     </ActionIcon>
 

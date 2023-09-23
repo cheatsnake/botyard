@@ -63,7 +63,6 @@ export const ChatInput: FC<ChatInputProps> = ({ commands, body, setBody, sendMes
                     minRows={2}
                     maxRows={6}
                     autosize
-                    // disabled
                 />
                 <Flex direction="column" gap="5px" h="100%">
                     <Tooltip openDelay={700} withArrow label="Send message">
