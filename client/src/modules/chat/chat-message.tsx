@@ -33,21 +33,27 @@ export const ChatMessage: FC<ChatMessageProps> = (props) => {
                 <Avatar color={props.type === "user" ? "gray" : "primary"} size="md" src={props.avatar ?? null}>
                     {props.type === "bot" && !props.avatar ? abbreviateName(props.senderName) : null}
                 </Avatar>
+
                 <Flex direction="column">
                     <Text size="md" fw={600}>
                         {props.senderName}
                     </Text>
+
                     <Text opacity={0.5} size="xs">
                         {props.message.timestamp.toLocaleString()}
                     </Text>
                 </Flex>
             </Flex>
             <TypographyStylesProvider
-                sx={{ textAlign: "justify", fontSize: window.innerWidth > 600 ? "1.1rem" : "1rem" }}
+                sx={{
+                    textAlign: "justify",
+                    fontSize: window.innerWidth > 600 ? "1.1rem" : "1rem",
+                    overflowWrap: "anywhere",
+                }}
             >
                 <div
                     dangerouslySetInnerHTML={{
-                        __html: props.message.body.replaceAll("\n", "<br>").replaceAll("\t", "&#9;"),
+                        __html: props.message.body.replaceAll("\n", "<br>").replaceAll("\t", "&emsp;"),
                     }}
                 />
             </TypographyStylesProvider>

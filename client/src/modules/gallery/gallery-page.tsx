@@ -28,7 +28,7 @@ const BOTS = [
 ];
 
 export const GalleryPage = () => {
-    const navigator = useNavigate();
+    const navigate = useNavigate();
 
     const openNewTab = (url: string) => {
         window.open(url, "_blank")?.focus();
@@ -75,7 +75,16 @@ export const GalleryPage = () => {
                                 span={4}
                                 miw={300}
                                 display="flex"
-                                onClick={() => navigator("/bot/1")}
+                                onClick={() => {
+                                    if ("startViewTransition" in document) {
+                                        //@ts-ignore
+                                        return document.startViewTransition(() => {
+                                            navigate("/bot/1");
+                                        });
+                                    }
+
+                                    return navigate("/bot/1");
+                                }}
                                 sx={(theme) => ({
                                     backgroundColor:
                                         theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],

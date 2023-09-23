@@ -5,6 +5,7 @@ export const EmptyChatLabel = () => {
         <Flex direction="column" justify="center" align="center" w="100%" h="100%">
             <Box
                 p="md"
+                py="xl"
                 sx={(theme) => ({
                     background: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[2],
                     borderRadius: "0.25rem",

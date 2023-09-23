@@ -31,24 +31,27 @@ export const ChatInput: FC<ChatInputProps> = ({ body, setBody, sendMessage }) =>
                     }
                 }}
                 w="100%"
+                size={window.innerWidth > 600 ? "md" : "sm"}
                 placeholder="Your message..."
                 minRows={2}
                 maxRows={6}
                 autosize
             />
             <Flex direction="column" gap="5px" h="100%">
-                <Tooltip openDelay={700} offset={15} label="Send message">
+                <Tooltip openDelay={700} withArrow label="Send message">
                     <ActionIcon disabled={body.length === 0} size="lg" h="50%" onClick={sendMessage}>
                         <IconSend />
                     </ActionIcon>
                 </Tooltip>
 
-                <Tooltip openDelay={700} offset={15} label="Attach files">
+                <Tooltip openDelay={700} label="Attach files">
                     <FileButton onChange={() => {}} multiple>
                         {(props) => (
-                            <ActionIcon {...props} c="gray" size="lg" h="50%">
-                                <IconLink />
-                            </ActionIcon>
+                            <Tooltip openDelay={700} withArrow label="Attach files">
+                                <ActionIcon {...props} c="gray" size="lg" h="50%">
+                                    <IconLink />
+                                </ActionIcon>
+                            </Tooltip>
                         )}
                     </FileButton>
                 </Tooltip>

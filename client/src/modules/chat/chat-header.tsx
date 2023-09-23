@@ -1,8 +1,11 @@
-import { ActionIcon, Box, Container, Flex, Text, useMantineColorScheme } from "@mantine/core";
+import { ActionIcon, Box, Container, Flex, useMantineColorScheme } from "@mantine/core";
 import { IconArrowNarrowLeft, IconSettings } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import { BotInfoModal } from "./bot-info-modal";
+import { FC } from "react";
+import { Bot } from "./types";
 
-export const ChatHeader = () => {
+export const ChatHeader: FC<{ bot: Bot }> = ({ bot }) => {
     const { toggleColorScheme } = useMantineColorScheme();
     const navigate = useNavigate();
 
@@ -18,12 +21,25 @@ export const ChatHeader = () => {
         >
             <Container size="md">
                 <Flex justify="space-between">
-                    <ActionIcon variant="subtle" size="md" onClick={() => navigate("/")}>
+                    <ActionIcon
+                        variant="subtle"
+                        size="md"
+                        onClick={() => {
+                            if ("startViewTransition" in document) {
+                                //@ts-ignore
+                                return document.startViewTransition(() => {
+                                    navigate("/");
+                                });
+                            }
+
+                            return navigate("/");
+                        }}
+                    >
                         <IconArrowNarrowLeft />
                     </ActionIcon>
-                    <Text size="lg" fw={600}>
-                        Bot calculator
-                    </Text>
+
+                    <BotInfoModal bot={bot} />
+
                     <ActionIcon variant="subtle" size="md" onClick={() => toggleColorScheme()}>
                         <IconSettings />
                     </ActionIcon>

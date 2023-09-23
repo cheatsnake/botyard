@@ -3,3 +3,10 @@ export interface Message {
     body: string;
     timestamp: Date;
 }
+
+export interface Bot {
+    id: string;
+    name: string;
+    description?: string;
+    avatar?: string;
+}
