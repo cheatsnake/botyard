@@ -45,3 +45,10 @@ func ErrorNotFound(message string) *ExtendedError {
 		Message: message,
 	}
 }
+
+func ErrorInternalServer(message string) *ExtendedError {
+	return &ExtendedError{
+		Code:    http.StatusInternalServerError,
+		Message: message,
+	}
+}
