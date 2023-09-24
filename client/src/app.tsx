@@ -1,8 +1,8 @@
 import { ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { GalleryPage } from "./modules/gallery/gallery-page";
-import { ChatPage } from "./modules/chat/chat-page";
 import { useHotkeys, useLocalStorage } from "@mantine/hooks";
+import GalleryPage from "./modules/gallery/gallery-page";
+import ChatPage from "./modules/chat/chat-page";
 
 const router = createBrowserRouter([
     {

@@ -27,7 +27,7 @@ const BOTS = [
     { name: "Testing", avatar: "", description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit." },
 ];
 
-export const GalleryPage = () => {
+const GalleryPage = () => {
     const navigate = useNavigate();
 
     const openNewTab = (url: string) => {
@@ -125,3 +125,5 @@ export const GalleryPage = () => {
         </>
     );
 };
+
+export default GalleryPage;

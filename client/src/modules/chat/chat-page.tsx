@@ -20,7 +20,7 @@ const COMMANDS: Command[] = [
     { alias: "ping", description: "Send pong message." },
 ];
 
-export const ChatPage = () => {
+const ChatPage = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [body, setBody] = useState("");
 
@@ -76,3 +76,5 @@ export const ChatPage = () => {
         </>
     );
 };
+
+export default ChatPage;
