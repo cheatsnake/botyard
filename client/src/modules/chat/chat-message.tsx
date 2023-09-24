@@ -1,7 +1,7 @@
 import { Box, Flex, Avatar, TypographyStylesProvider, Text, MantineTheme } from "@mantine/core";
 import { FC } from "react";
 import { Message } from "./types";
-import { abbreviateName } from "../../helpers/test.helpers";
+import { abbreviateName } from "../../helpers/text";
 import { BOT_COMMAND_REGEX, NOT_HTML_NEWLINE_REXEG } from "./const";
 
 type ChatMessageTypes = "bot" | "user";

@@ -1,7 +1,7 @@
 import { Avatar, Box, Divider, Flex, Modal, Text, Tooltip } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { FC } from "react";
-import { abbreviateName } from "../../helpers/test.helpers";
+import { abbreviateName } from "../../helpers/text";
 import { Bot } from "./types";
 import { CopyBtn } from "../../components/CopyBtn";
 
