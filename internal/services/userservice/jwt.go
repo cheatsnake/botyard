@@ -1,6 +1,7 @@
 package userservice
 
 import (
+	"botyard/internal/entities/user"
 	"botyard/pkg/exterr"
 	"os"
 	"time"
@@ -9,16 +10,19 @@ import (
 )
 
 type userTokenClaims struct {
-	UserId string `json:"userId"`
+	user.User
 	jwt.RegisteredClaims
 }
 
 var jwtSecretKey = []byte(os.Getenv("JWT_SECRET_KEY"))
 
-func GenerateUserToken(userId string) (string, time.Time, error) {
+func GenerateUserToken(userId, nick string) (string, time.Time, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := userTokenClaims{
-		userId,
+		user.User{
+			Id:       userId,
+			Nickname: nick,
+		},
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -35,7 +39,7 @@ func GenerateUserToken(userId string) (string, time.Time, error) {
 	return tokenString, expirationTime, nil
 }
 
-func VerifyUserToken(tokenString string) (string, error) {
+func VerifyUserToken(tokenString string) (*userTokenClaims, error) {
 	utc := &userTokenClaims{}
 	token, err := jwt.ParseWithClaims(tokenString, utc, func(token *jwt.Token) (any, error) {
 		return jwtSecretKey, nil
@@ -43,8 +47,8 @@ func VerifyUserToken(tokenString string) (string, error) {
 
 	if err != nil || !token.Valid {
 		// TODO logs
-		return "", exterr.ErrorUnauthorized("user is unauthorized")
+		return nil, exterr.ErrorUnauthorized("user is unauthorized")
 	}
 
-	return utc.UserId, nil
+	return utc, nil
 }

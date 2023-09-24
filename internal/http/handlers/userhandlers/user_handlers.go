@@ -29,7 +29,7 @@ func (h *Handlers) Create(c *fiber.Ctx) error {
 		return err
 	}
 
-	token, expires, err := userservice.GenerateUserToken(newUser.Id)
+	token, expires, err := userservice.GenerateUserToken(newUser.Id, newUser.Nickname)
 	if err != nil {
 		return err
 	}

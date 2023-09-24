@@ -13,13 +13,13 @@ func UserAuth(c *fiber.Ctx) error {
 		return exterr.ErrorUnauthorized("user is unauthorized")
 	}
 
-	userId, err := userservice.VerifyUserToken(token)
+	userClaims, err := userservice.VerifyUserToken(token)
 	if err != nil {
 		return err
 	}
 
 	// Refresh token
-	token, expires, err := userservice.GenerateUserToken(userId)
+	token, expires, err := userservice.GenerateUserToken(userClaims.Id, userClaims.Nickname)
 	if err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func UserAuth(c *fiber.Ctx) error {
 	}
 
 	c.Cookie(cookie)
-	c.Locals("userId", userId)
+	c.Locals("userId", userClaims.Id)
 
 	return c.Next()
 }

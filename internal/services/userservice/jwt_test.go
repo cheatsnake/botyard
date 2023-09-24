@@ -1,25 +1,29 @@
 package userservice
 
 import (
-	"botyard/internal/tools/ulid"
+	"botyard/internal/entities/user"
 	"testing"
 )
 
 func TestUserToken(t *testing.T) {
 	t.Run("valid token", func(t *testing.T) {
-		userId := ulid.New()
-		token, _, err := GenerateUserToken(userId)
+		newUser, err := user.New("test")
+		if err != nil {
+			t.Errorf("got: %v,\nexpected: %v\n", err.Error(), nil)
+		}
+
+		token, _, err := GenerateUserToken(newUser.Id, newUser.Id)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpected: %v\n", token, err.Error(), nil)
 		}
 
-		gotUserId, err := VerifyUserToken(token)
+		userClaims, err := VerifyUserToken(token)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpected: %v\n", token, err.Error(), nil)
 		}
 
-		if gotUserId != userId {
-			t.Errorf("%#v\ngot: %v,\nexpected: %v\n", token, gotUserId, userId)
+		if userClaims.Id != newUser.Id {
+			t.Errorf("%#v\ngot: %v,\nexpected: %v\n", token, userClaims.Id, newUser.Id)
 		}
 	})
 

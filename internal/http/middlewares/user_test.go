@@ -1,9 +1,9 @@
 package middlewares
 
 import (
+	"botyard/internal/entities/user"
 	"botyard/internal/http/helpers"
 	"botyard/internal/services/userservice"
-	"botyard/internal/tools/ulid"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -21,8 +21,12 @@ func TestUserAuth(t *testing.T) {
 	})
 
 	t.Run("with valid cookie", func(t *testing.T) {
-		userId := ulid.New()
-		token, _, err := userservice.GenerateUserToken(userId)
+		newUser, err := user.New("test")
+		if err != nil {
+			t.Errorf("got: %v,\nexpected: %v\n", err.Error(), nil)
+
+		}
+		token, _, err := userservice.GenerateUserToken(newUser.Id, newUser.Nickname)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpected: %v\n", token, err.Error(), nil)
 		}
