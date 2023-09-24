@@ -5,13 +5,18 @@ import { FC } from "react";
 import { Command } from "./types";
 
 interface ChatInputProps {
-    commands: Command[];
     body: string;
     setBody: (value: React.SetStateAction<string>) => void;
     sendMessage: (value?: string) => void;
 }
 
-export const ChatInput: FC<ChatInputProps> = ({ commands, body, setBody, sendMessage }) => {
+const COMMANDS: Command[] = [
+    { alias: "start", description: "Init a new bot conversation." },
+    { alias: "help", description: "Print some instructions." },
+    { alias: "ping", description: "Send pong message." },
+];
+
+export const ChatInput: FC<ChatInputProps> = ({ body, setBody, sendMessage }) => {
     const commandTrigger = (alias: string) => {
         sendMessage("/" + alias);
     };
@@ -43,7 +48,7 @@ export const ChatInput: FC<ChatInputProps> = ({ commands, body, setBody, sendMes
     return (
         <SpotlightProvider
             centered
-            actions={commands.map((cmd) => ({
+            actions={COMMANDS.map((cmd) => ({
                 title: cmd.alias,
                 description: cmd.description,
                 onTrigger: () => commandTrigger(cmd.alias),
