@@ -12,6 +12,8 @@ import (
 	"botyard/internal/services/fileservice"
 	"botyard/internal/services/userservice"
 	"botyard/internal/storage"
+	"os"
+	"path"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -98,4 +100,6 @@ func (s *Server) InitRoutes() {
 
 	clientApiV1.Post("/files", middlewares.UserAuth, fileHands.LoadMany)
 	//-------------------------------------------------------------------------
+
+	s.App.Static("/static", path.Join(".", os.Getenv("FILES_FOLDER")))
 }
