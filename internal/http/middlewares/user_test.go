@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"botyard/internal/http/helpers"
+	"botyard/internal/services/userservice"
 	"botyard/internal/tools/ulid"
 	"net/http"
 	"net/http/httptest"
@@ -19,9 +20,15 @@ func TestUserAuth(t *testing.T) {
 		return c.SendStatus(fiber.StatusOK)
 	})
 
-	t.Run("with user cookie", func(t *testing.T) {
+	t.Run("with valid cookie", func(t *testing.T) {
+		userId := ulid.New()
+		token, _, err := userservice.GenerateUserToken(userId)
+		if err != nil {
+			t.Errorf("%#v\ngot: %v,\nexpected: %v\n", token, err.Error(), nil)
+		}
+
 		req := httptest.NewRequest("GET", testPath, nil)
-		req.AddCookie(&http.Cookie{Name: "userId", Value: ulid.New()})
+		req.AddCookie(&http.Cookie{Name: "token", Value: token})
 
 		resp, err := testApp.Test(req)
 		if err != nil {
@@ -35,7 +42,25 @@ func TestUserAuth(t *testing.T) {
 		}
 	})
 
-	t.Run("without user cookie", func(t *testing.T) {
+	t.Run("with invalid cookie", func(t *testing.T) {
+		token := "jwt malformed"
+
+		req := httptest.NewRequest("GET", testPath, nil)
+		req.AddCookie(&http.Cookie{Name: "token", Value: token})
+
+		resp, err := testApp.Test(req)
+		if err != nil {
+			t.Errorf("%#v\ngot: %v,\nexpected: %v\n", req, err.Error(), nil)
+		}
+
+		expect := fiber.StatusUnauthorized
+		got := resp.StatusCode
+		if got != expect {
+			t.Errorf("%#v\ngot: %v,\nexpected: %v\n", resp, got, expect)
+		}
+	})
+
+	t.Run("without cookie", func(t *testing.T) {
 		req := httptest.NewRequest("GET", testPath, nil)
 
 		resp, err := testApp.Test(req)

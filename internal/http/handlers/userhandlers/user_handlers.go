@@ -3,7 +3,6 @@ package userhandlers
 import (
 	"botyard/internal/services/userservice"
 	"botyard/pkg/exterr"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -30,10 +29,15 @@ func (h *Handlers) Create(c *fiber.Ctx) error {
 		return err
 	}
 
+	token, expires, err := userservice.GenerateUserToken(newUser.Id)
+	if err != nil {
+		return err
+	}
+
 	cookie := &fiber.Cookie{
-		Name:    "userId",
-		Value:   newUser.Id,
-		Expires: time.Now().Add(24 * time.Hour),
+		Name:    "token",
+		Value:   token,
+		Expires: expires,
 	}
 
 	c.Cookie(cookie)
