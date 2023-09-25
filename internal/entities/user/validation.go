@@ -1,16 +1,17 @@
 package user
 
 import (
+	"botyard/internal/config"
 	"errors"
 )
 
 func validateNickname(nick string) error {
-	if len(nick) < minNicknameLen {
-		return errors.New(errNicknameTooShort)
+	if len(nick) < config.Global.Limits.User.MinNicknameLength {
+		return errors.New(errNicknameTooShort(config.Global.Limits.User.MinNicknameLength))
 	}
 
-	if len(nick) > maxNicknameLen {
-		return errors.New(errNicknameTooLong)
+	if len(nick) > config.Global.Limits.User.MaxNicknameLength {
+		return errors.New(errNicknameTooLong(config.Global.Limits.User.MaxNicknameLength))
 	}
 
 	if !regexNickname.MatchString(nick) {

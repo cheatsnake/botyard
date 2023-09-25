@@ -1,15 +1,19 @@
 package user
 
 import (
+	"botyard/internal/config"
 	"strings"
 	"testing"
 )
 
 func TestNew(t *testing.T) {
-	correctNicknames := []string{"Tom", "Rob_Pike", "-_-", strings.Repeat("x", maxNicknameLen)}
+	minNickLen := config.Global.Limits.User.MinNicknameLength
+	maxNickLen := config.Global.Limits.User.MaxNicknameLength
+
+	correctNicknames := []string{"Tom", "Rob_Pike", "-_-", strings.Repeat("x", maxNickLen)}
 	incorrectNicknames := []string{"Rob Pike", "No%name", "ma$ter"}
 	tooShortNicknames := []string{"", "x", "Xx"}
-	tooLongNicknames := []string{strings.Repeat("x", maxNicknameLen+1), strings.Repeat("X", maxNicknameLen*2)}
+	tooLongNicknames := []string{strings.Repeat("x", maxNickLen+1), strings.Repeat("X", maxNickLen*2)}
 
 	t.Run("check correct nicknames", func(t *testing.T) {
 		for _, n := range correctNicknames {
@@ -31,7 +35,7 @@ func TestNew(t *testing.T) {
 	})
 
 	t.Run("check too short nicknames", func(t *testing.T) {
-		expect := errNicknameTooShort
+		expect := errNicknameTooShort(minNickLen)
 		for _, n := range tooShortNicknames {
 			user, err := New(n)
 			if err.Error() != expect {
@@ -41,7 +45,7 @@ func TestNew(t *testing.T) {
 	})
 
 	t.Run("check too long nicknames", func(t *testing.T) {
-		expect := errNicknameTooLong
+		expect := errNicknameTooLong(maxNickLen)
 		for _, n := range tooLongNicknames {
 			user, err := New(n)
 			if err.Error() != expect {

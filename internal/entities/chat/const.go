@@ -2,17 +2,17 @@ package chat
 
 import "fmt"
 
-const (
-	maxBodyLen = 4096
-	maxFiles   = 10
-)
-
 var (
-	errBodyTooLong     = fmt.Sprintf("maximum allowed body length is %d characters", maxBodyLen)
+	errBodyTooLong = func(maxBodyLen int) string {
+		return fmt.Sprintf("maximum allowed body length is %d characters", maxBodyLen)
+	}
+	errTooManyFiles = func(maxFiles int) string {
+		return fmt.Sprintf("maximum number of files allowed is %d", maxFiles)
+	}
+
 	errChatIdIsEmpty   = "message chat id must not be empty"
 	errUserIdIsEmpty   = "user id must not be empty"
 	errBotIdIsEmpty    = "bot id must not be empty"
 	errSenderIdIsEmpty = "message sender id must not be empty"
 	errBodyIsEmpty     = "message body must not be empty"
-	errTooManyFiles    = fmt.Sprintf("maximum number of files allowed is %d", maxFiles)
 )

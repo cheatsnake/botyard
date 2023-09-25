@@ -10,23 +10,23 @@ import (
 
 type Config struct {
 	Service service `json:"service"`
-
-	Limits struct {
-		User    userLimits    `json:"user,omitempty"`
-		Message messageLimits `json:"message,omitempty"`
-		File    fileLimits    `json:"file,omitempty"`
-	} `json:"limits,omitempty"`
+	Limits  limits  `json:"limits,omitempty"`
 }
 
 type service struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Avatar      string `json:"avatar,omitempty"`
-
-	Socials []struct {
+	Socials     []struct {
 		Title string `json:"title"`
 		URL   string `json:"url"`
 	} `json:"socials"`
+}
+
+type limits struct {
+	User    userLimits    `json:"user,omitempty"`
+	Message messageLimits `json:"message,omitempty"`
+	File    fileLimits    `json:"file,omitempty"`
 }
 
 type userLimits struct {
@@ -46,7 +46,13 @@ type fileLimits struct {
 	MaxFileSize  int `json:"maxFileSize,omitempty"`
 }
 
-var GlobalConfig Config
+var Global Config = Config{
+	Limits: limits{
+		User:    *defaultUserLimits,
+		Message: *defaultMessageLimits,
+		File:    *defaultFileLimits,
+	},
+}
 
 // Load main app config
 func Load() {
@@ -96,7 +102,7 @@ func Load() {
 		conf.Limits.File.MaxFileSize = defaultFileLimits.MaxFileSize
 	}
 
-	GlobalConfig = conf
+	Global = conf
 }
 
 // Load environment variables from .env file

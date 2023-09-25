@@ -1,29 +1,21 @@
 package filehandlers
 
 import (
+	"botyard/internal/config"
 	"botyard/internal/entities/file"
 	"botyard/internal/services/fileservice"
 	"botyard/internal/tools/ulid"
 	"botyard/pkg/exterr"
 	"botyard/pkg/extlib"
-	"errors"
 	"fmt"
 	"mime/multipart"
+	"os"
 	"path"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-const filesFolder = "stock"
-const maxFiles = 10
-const fileFieldName = "file"
-
-var maxFileSizes = map[string]int64{
-	"images": 2 * 1024 * 1024,  // 2 MB
-	"audios": 5 * 1024 * 1024,  // 5 MB
-	"videos": 25 * 1024 * 1024, // 25 MB
-	"files":  10 * 1024 * 1024, // 10 MB
-}
+const fileTag = "file"
 
 var knownContentTypes = map[string]string{
 	"image/gif":     "images",
@@ -60,11 +52,14 @@ func (h *Handlers) LoadMany(c *fiber.Ctx) error {
 		return exterr.ErrorBadRequest(err.Error())
 	}
 
-	files := form.File[fileFieldName]
+	files := form.File[fileTag]
 
-	if len(files) > maxFiles {
+	if len(files) > config.Global.Limits.Message.MaxAttachedFiles {
 		return exterr.ErrorBadRequest(
-			fmt.Sprintf("too many files, max allowed amount is %d", maxFiles),
+			fmt.Sprintf(
+				"too many files, max allowed amount is %d",
+				config.Global.Limits.Message.MaxAttachedFiles,
+			),
 		)
 	}
 
@@ -100,10 +95,7 @@ func fileSaver(c *fiber.Ctx, file *multipart.FileHeader) (string, string, error)
 		fileType = "files"
 	}
 
-	maxFileSize, ok := maxFileSizes[fileType]
-	if !ok {
-		return "", "", errors.New("failed to recognize the file type")
-	}
+	maxFileSize := defineMaxFileSize(fileType)
 
 	if file.Size > maxFileSize {
 		return "", "", fmt.Errorf(
@@ -112,10 +104,26 @@ func fileSaver(c *fiber.Ctx, file *multipart.FileHeader) (string, string, error)
 		)
 	}
 
-	filePath := path.Join(".", filesFolder, fileType, ulid.New()+ext)
+	filePath := path.Join(".", os.Getenv("FILES_FOLDER"), fileType, ulid.New()+ext)
 	if err := c.SaveFile(file, filePath); err != nil {
 		return filePath, contentType, err
 	}
 
 	return filePath, contentType, nil
+}
+
+func defineMaxFileSize(fileType string) int64 {
+	if fileType == "images" {
+		return int64(config.Global.Limits.File.MaxImageSize)
+	}
+
+	if fileType == "audios" {
+		return int64(config.Global.Limits.File.MaxAudioSize)
+	}
+
+	if fileType == "videos" {
+		return int64(config.Global.Limits.File.MaxVideoSize)
+	}
+
+	return int64(config.Global.Limits.File.MaxFileSize)
 }
