@@ -1,6 +1,8 @@
 package http
 
 import (
+	"botyard/internal/config"
+	"botyard/internal/http/handlers/adminhandlers"
 	"botyard/internal/http/handlers/bothandlers"
 	"botyard/internal/http/handlers/chathandlers"
 	"botyard/internal/http/handlers/filehandlers"
@@ -34,7 +36,11 @@ func New(store storage.Storage) *Server {
 	return &Server{
 		App: fiber.New(fiber.Config{
 			ErrorHandler: helpers.CursomErrorHandler,
-			BodyLimit:    25 * 1024 * 1024, // 25 MB
+			BodyLimit: max(config.Global.Limits.File.MaxImageSize,
+				config.Global.Limits.File.MaxAudioSize,
+				config.Global.Limits.File.MaxVideoSize,
+				config.Global.Limits.File.MaxFileSize,
+			),
 		}),
 		store: store,
 	}
@@ -59,6 +65,8 @@ func (s *Server) InitRoutes() {
 
 	adminApiV1.Get("/bot/:id/key", middlewares.AdminAuth, botHands.GetKey)
 	adminApiV1.Put("/bot/:id/key", middlewares.AdminAuth, botHands.RefreshKey)
+
+	adminApiV1.Put("/config", middlewares.AdminAuth, adminhandlers.ReloadGlobalConfig)
 	// ------------------------------------------------------------------------
 
 	// Bot API ----------------------------------------------------------------

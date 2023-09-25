@@ -55,19 +55,19 @@ var Global Config = Config{
 }
 
 // Load main app config
-func Load() {
+func Load() error {
 	var conf Config
 
 	confFile, err := os.Open(configFilename)
 	if err != nil {
-		panic(fmt.Sprintf("failed reading config file: %s", err.Error()))
+		return fmt.Errorf(fmt.Sprintf("failed reading config file: %s", err.Error()))
 	}
 
 	defer confFile.Close()
 
 	jsonParser := json.NewDecoder(confFile)
 	if err := jsonParser.Decode(&conf); err != nil {
-		panic(fmt.Sprintf("failed parsing config file: %s", err.Error()))
+		return fmt.Errorf(fmt.Sprintf("failed parsing config file: %s", err.Error()))
 	}
 
 	if conf.Limits.User.MinNicknameLength == 0 {
@@ -103,6 +103,8 @@ func Load() {
 	}
 
 	Global = conf
+
+	return nil
 }
 
 // Load environment variables from .env file

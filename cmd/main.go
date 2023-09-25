@@ -12,7 +12,11 @@ import (
 )
 
 func main() {
-	config.Load()
+	err := config.Load()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
 	config.LoadEnv()
 	initDirsForFiles()
 
