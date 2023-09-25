@@ -63,7 +63,7 @@ const ChatPage = () => {
                     <ScrollArea
                         pt="sm"
                         viewportRef={chatViewport}
-                        h="auto"
+                        // h="auto"
                         sx={{ display: "flex", flexDirection: "column-reverse", justifyContent: "end" }}
                     >
                         {messages.map((msg, i) =>

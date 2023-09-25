@@ -11,3 +11,7 @@ export const abbreviateName = (name: string): string => {
 
     return abbreviation;
 };
+
+export const truncString = (str: string, maxLen: number) => {
+    return str.length > maxLen ? str.slice(0, maxLen) + "..." : str;
+};

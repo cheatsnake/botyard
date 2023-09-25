@@ -1,8 +1,9 @@
-import { Flex, Textarea, Tooltip, ActionIcon, FileButton } from "@mantine/core";
+import { Flex, Textarea, Tooltip, ActionIcon, FileButton, Box } from "@mantine/core";
 import { SpotlightProvider, spotlight } from "@mantine/spotlight";
 import { IconSend, IconLink } from "@tabler/icons-react";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Command } from "./types";
+import { AttachmentList } from "./attachment-list";
 
 interface ChatInputProps {
     body: string;
@@ -17,6 +18,8 @@ const COMMANDS: Command[] = [
 ];
 
 export const ChatInput: FC<ChatInputProps> = ({ body, setBody, sendMessage }) => {
+    const [attachments, setAttachments] = useState<File[]>([]);
+
     const commandTrigger = (alias: string) => {
         sendMessage("/" + alias);
     };
@@ -45,6 +48,10 @@ export const ChatInput: FC<ChatInputProps> = ({ body, setBody, sendMessage }) =>
         }
     };
 
+    const removeAttachment = (index: number) => {
+        setAttachments([...attachments.slice(0, index), ...attachments.slice(index + 1)]);
+    };
+
     return (
         <SpotlightProvider
             centered
@@ -58,6 +65,8 @@ export const ChatInput: FC<ChatInputProps> = ({ body, setBody, sendMessage }) =>
             overlayProps={{ blur: "none" }}
             limit={100}
         >
+            {attachments.length > 0 ? <AttachmentList files={attachments} remover={removeAttachment} /> : null}
+
             <Flex align="center" gap="sm" p="sm" pt="lg">
                 <Textarea
                     value={body}
@@ -78,7 +87,7 @@ export const ChatInput: FC<ChatInputProps> = ({ body, setBody, sendMessage }) =>
                     </Tooltip>
 
                     <Tooltip openDelay={700} label="Attach files">
-                        <FileButton onChange={() => {}} multiple>
+                        <FileButton onChange={setAttachments} multiple>
                             {(props) => (
                                 <Tooltip openDelay={700} withArrow label="Attach files">
                                     <ActionIcon {...props} c="gray" size="lg" h="50%">
