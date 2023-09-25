@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestCreate(t *testing.T) {
+func TestCreateChat(t *testing.T) {
 	fs := fileservice.New(mock.FileStore())
 	cs := New(mock.ChatStore(), fs)
 
@@ -39,12 +39,24 @@ func TestGetChats(t *testing.T) {
 	})
 }
 
-func TestDelete(t *testing.T) {
+func TestDeleteChat(t *testing.T) {
 	fs := fileservice.New(mock.FileStore())
 	cs := New(mock.ChatStore(), fs)
 
 	t.Run("delete chat", func(t *testing.T) {
 		err := cs.DeleteChat(ulid.New())
+		if err != nil {
+			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
+		}
+	})
+}
+
+func TestCheckChatAccess(t *testing.T) {
+	fs := fileservice.New(mock.FileStore())
+	cs := New(mock.ChatStore(), fs)
+
+	t.Run("check chat access", func(t *testing.T) {
+		_, err := cs.CheckChatAccess(ulid.New(), "", "")
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}

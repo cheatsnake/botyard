@@ -85,6 +85,23 @@ func (s *Service) DeleteChat(id string) error {
 	return nil
 }
 
+func (s *Service) CheckChatAccess(chatId, botId, userId string) (*chat.Chat, error) {
+	chat, err := s.GetChat(chatId)
+	if err != nil {
+		return nil, err
+	}
+
+	if chat.UserId != userId {
+		return nil, exterr.ErrorForbidden("chat is not related to current user")
+	}
+
+	if chat.BotId != botId {
+		return nil, exterr.ErrorForbidden("chat is not related to current bot")
+	}
+
+	return chat, nil
+}
+
 func (ms *Service) AddMessage(body *CreateBody) (*chat.Message, error) {
 	msg, err := chat.NewMessage(body.ChatId, body.SenderId, body.Body, body.FileIds)
 	if err != nil {
