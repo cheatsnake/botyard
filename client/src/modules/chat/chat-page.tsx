@@ -29,7 +29,16 @@ const ChatPage = () => {
     };
 
     const sendMessage = (value?: string) => {
-        setMessages((prev) => [...prev, { id: Math.random(), body: value ?? body, timestamp: new Date() }]);
+        setMessages((prev) => [
+            ...prev,
+            {
+                id: Math.random().toFixed(5),
+                chatId: Math.random().toFixed(5),
+                senderId: Math.random().toFixed(5),
+                body: value ?? body,
+                timestamp: new Date(),
+            },
+        ]);
         scrollToBottom();
         setBody("");
     };
@@ -63,7 +72,6 @@ const ChatPage = () => {
                     <ScrollArea
                         pt="sm"
                         viewportRef={chatViewport}
-                        // h="auto"
                         sx={{ display: "flex", flexDirection: "column-reverse", justifyContent: "end" }}
                     >
                         {messages.map((msg, i) =>

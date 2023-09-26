@@ -2,27 +2,7 @@ import { Box, CloseButton, Flex, ScrollArea, Text } from "@mantine/core";
 import { IconFile, IconMusic, IconPhoto, IconVideo } from "@tabler/icons-react";
 import { FC } from "react";
 import { truncString } from "../../helpers/text";
-
-type FileType = "image" | "video" | "audio";
-
-const KNOWN_FILE_TYPES: { [key: string]: FileType } = {
-    "image/gif": "image",
-    "image/jpeg": "image",
-    "image/png": "image",
-    "image/svg+xml": "image",
-    "image/webp": "image",
-
-    "video/mp4": "video",
-    "video/webm": "video",
-    "video/ogg": "video",
-    "video/quicktime": "video",
-    "video/x-flv": "video",
-
-    "audio/mpeg": "audio",
-    "audio/ogg": "audio",
-    "audio/wav": "audio",
-    "audio/aac": "audio",
-};
+import { KNOWN_MIME_TYPES } from "./const";
 
 interface AttachmentListProps {
     files: File[];
@@ -66,9 +46,9 @@ export const AttachmentList: FC<AttachmentListProps> = (props) => {
 };
 
 const defineFileIcon = (type: string) => {
-    if (KNOWN_FILE_TYPES[type] === "image") return <IconPhoto size={32} />;
-    if (KNOWN_FILE_TYPES[type] === "video") return <IconVideo size={32} />;
-    if (KNOWN_FILE_TYPES[type] === "audio") return <IconMusic size={32} />;
+    if (KNOWN_MIME_TYPES[type] === "image") return <IconPhoto size={32} />;
+    if (KNOWN_MIME_TYPES[type] === "video") return <IconVideo size={32} />;
+    if (KNOWN_MIME_TYPES[type] === "audio") return <IconMusic size={32} />;
 
     return <IconFile size={32} />;
 };

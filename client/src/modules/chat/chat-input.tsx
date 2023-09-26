@@ -1,4 +1,4 @@
-import { Flex, Textarea, Tooltip, ActionIcon, FileButton, Box } from "@mantine/core";
+import { Flex, Textarea, Tooltip, ActionIcon, FileButton } from "@mantine/core";
 import { SpotlightProvider, spotlight } from "@mantine/spotlight";
 import { IconSend, IconLink } from "@tabler/icons-react";
 import { FC, useState } from "react";

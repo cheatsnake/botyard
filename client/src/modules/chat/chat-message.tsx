@@ -1,8 +1,18 @@
-import { Box, Flex, Avatar, TypographyStylesProvider, Text, MantineTheme } from "@mantine/core";
+import { Box, Flex, Avatar, TypographyStylesProvider, Text, MantineTheme, Space } from "@mantine/core";
 import { FC } from "react";
-import { Message } from "./types";
+import { File, Message } from "./types";
 import { abbreviateName } from "../../helpers/text";
 import { BOT_COMMAND_REGEX, NOT_HTML_NEWLINE_REXEG } from "./const";
+import { ImageGroup } from "./image-group";
+
+const mockFiles: File[] = [
+    { id: Math.random().toFixed(7), path: "https://placehold.co/600x400/orange/white", mimeType: "image/svg+xml" },
+    { id: Math.random().toFixed(7), path: "https://placehold.co/700x400/blue/white", mimeType: "image/svg+xml" },
+    { id: Math.random().toFixed(7), path: "https://placehold.co/400x400/green/white", mimeType: "image/svg+xml" },
+    { id: Math.random().toFixed(7), path: "https://placehold.co/200x800/aqua/white", mimeType: "image/svg+xml" },
+    { id: Math.random().toFixed(7), path: "https://placehold.co/100x200/pink/white", mimeType: "image/svg+xml" },
+    { id: Math.random().toFixed(7), path: "https://placehold.co/1920x1080/black/white", mimeType: "image/svg+xml" },
+];
 
 type ChatMessageTypes = "bot" | "user";
 
@@ -61,6 +71,12 @@ export const ChatMessage: FC<ChatMessageProps> = (props) => {
                     }}
                 />
             </TypographyStylesProvider>
+            {mockFiles.length > 0 ? (
+                <>
+                    <Space h="sm" />
+                    <ImageGroup files={mockFiles} />
+                </>
+            ) : null}
         </Box>
     );
 };
