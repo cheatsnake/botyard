@@ -2,16 +2,26 @@ import { Box, Flex, Avatar, TypographyStylesProvider, Text, MantineTheme, Space 
 import { FC } from "react";
 import { File, Message } from "./types";
 import { abbreviateName } from "../../helpers/text";
-import { BOT_COMMAND_REGEX, NOT_HTML_NEWLINE_REXEG } from "./const";
-import { ImageGroup } from "./image-group";
+import { BOT_COMMAND_REGEX, KNOWN_MIME_TYPES, NOT_HTML_NEWLINE_REXEG } from "./const";
+import { AudioGroup, ImageGroup } from "./file-groups";
 
 const mockFiles: File[] = [
-    { id: Math.random().toFixed(7), path: "https://placehold.co/600x400/orange/white", mimeType: "image/svg+xml" },
+    { id: Math.random().toFixed(7), path: "https://placehold.co/900x400/orange/white", mimeType: "image/svg+xml" },
     { id: Math.random().toFixed(7), path: "https://placehold.co/700x400/blue/white", mimeType: "image/svg+xml" },
     { id: Math.random().toFixed(7), path: "https://placehold.co/400x400/green/white", mimeType: "image/svg+xml" },
     { id: Math.random().toFixed(7), path: "https://placehold.co/200x800/aqua/white", mimeType: "image/svg+xml" },
     { id: Math.random().toFixed(7), path: "https://placehold.co/100x200/pink/white", mimeType: "image/svg+xml" },
     { id: Math.random().toFixed(7), path: "https://placehold.co/1920x1080/black/white", mimeType: "image/svg+xml" },
+    {
+        id: Math.random().toFixed(7),
+        path: "https://diviextended.com/wp-content/uploads/2021/10/sound-of-waves-marine-drive-mumbai.mp3",
+        mimeType: "audio/mpeg",
+    },
+    {
+        id: Math.random().toFixed(7),
+        path: "https://diviextended.com/wp-content/uploads/2021/10/sound-of-waves-marine-drive-mumbai.mp3",
+        mimeType: "audio/mpeg",
+    },
 ];
 
 type ChatMessageTypes = "bot" | "user";
@@ -74,7 +84,9 @@ export const ChatMessage: FC<ChatMessageProps> = (props) => {
             {mockFiles.length > 0 ? (
                 <>
                     <Space h="sm" />
-                    <ImageGroup files={mockFiles} />
+                    <ImageGroup files={mockFiles.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "image")} />
+                    <Space h="sm" />
+                    <AudioGroup files={mockFiles.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "audio")} />
                 </>
             ) : null}
         </Box>
