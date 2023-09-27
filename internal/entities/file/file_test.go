@@ -5,11 +5,13 @@ import (
 )
 
 func TestNew(t *testing.T) {
+	testName := "test.txt"
+	testSize := 13
 	testPath := "/test/file"
 	testMimeType := "text/plain"
 
 	t.Run("check path", func(t *testing.T) {
-		testFile, err := New(testPath, testMimeType)
+		testFile, err := New(testPath, testName, testMimeType, testSize)
 		if err != nil {
 			t.Errorf("%#v\ngot: %s,\nexpect: %v\n", testFile, err.Error(), nil)
 		}
@@ -23,7 +25,7 @@ func TestNew(t *testing.T) {
 
 	t.Run("check empty path", func(t *testing.T) {
 		expect := errPathIsEmpty
-		testFile, err := New("", testMimeType)
+		testFile, err := New("", testName, testMimeType, testSize)
 		if err == nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFile, nil, expect)
 		}
@@ -35,7 +37,7 @@ func TestNew(t *testing.T) {
 	})
 
 	t.Run("check mime type", func(t *testing.T) {
-		testFile, err := New(testPath, testMimeType)
+		testFile, err := New(testPath, testName, testMimeType, testSize)
 		if err != nil {
 			t.Errorf("%#v\ngot: %s,\nexpect: %v\n", testFile, err.Error(), nil)
 		}
@@ -49,7 +51,7 @@ func TestNew(t *testing.T) {
 
 	t.Run("check invalid mime type", func(t *testing.T) {
 		expect := errInvalidMimeType
-		testFile, err := New(testPath, "test")
+		testFile, err := New(testPath, testName, "test", testSize)
 		if err == nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFile, nil, expect)
 		}

@@ -16,8 +16,8 @@ func New(s storage.FileStore) *Service {
 	}
 }
 
-func (fs *Service) AddFile(path, mime string) (*file.File, error) {
-	newFile, err := file.New(path, mime)
+func (fs *Service) AddFile(path, name, mime string, size int) (*file.File, error) {
+	newFile, err := file.New(path, name, mime, size)
 	if err != nil {
 		return nil, exterr.ErrorBadRequest(err.Error())
 	}

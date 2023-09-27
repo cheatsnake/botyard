@@ -67,12 +67,12 @@ func (h *Handlers) LoadMany(c *fiber.Ctx) error {
 
 	// TODO parallel upload
 	for _, f := range files {
-		filePath, contentType, err := fileSaver(c, f)
+		filePath, contentType, fileName, fileSize, err := fileSaver(c, f)
 		if err != nil {
 			return exterr.ErrorBadRequest(err.Error())
 		}
 
-		newFile, err := h.service.AddFile(filePath, contentType)
+		newFile, err := h.service.AddFile(filePath, fileName, contentType, fileSize)
 		if err != nil {
 			return exterr.ErrorBadRequest(err.Error())
 		}
@@ -83,11 +83,11 @@ func (h *Handlers) LoadMany(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 
-func fileSaver(c *fiber.Ctx, file *multipart.FileHeader) (string, string, error) {
+func fileSaver(c *fiber.Ctx, file *multipart.FileHeader) (string, string, string, int, error) {
 	contentType := file.Header["Content-Type"][0]
 	ext, err := extlib.ExtensionFromContentType(contentType)
 	if err != nil {
-		return "", "", err
+		return "", "", "", 0, err
 	}
 
 	fileType, ok := knownContentTypes[contentType]
@@ -98,7 +98,7 @@ func fileSaver(c *fiber.Ctx, file *multipart.FileHeader) (string, string, error)
 	maxFileSize := defineMaxFileSize(fileType)
 
 	if file.Size > maxFileSize {
-		return "", "", fmt.Errorf(
+		return "", "", "", 0, fmt.Errorf(
 			"max allowed size for %s are %d bytes, but got %d",
 			fileType, maxFileSize, file.Size,
 		)
@@ -106,10 +106,10 @@ func fileSaver(c *fiber.Ctx, file *multipart.FileHeader) (string, string, error)
 
 	filePath := path.Join(".", os.Getenv("FILES_FOLDER"), fileType, ulid.New()+ext)
 	if err := c.SaveFile(file, filePath); err != nil {
-		return filePath, contentType, err
+		return filePath, contentType, file.Filename, int(file.Size), err
 	}
 
-	return filePath, contentType, nil
+	return filePath, file.Filename, contentType, int(file.Size), nil
 }
 
 func defineMaxFileSize(fileType string) int64 {

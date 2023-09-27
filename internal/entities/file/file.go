@@ -8,10 +8,12 @@ import (
 type File struct {
 	Id       string `json:"id"`
 	Path     string `json:"path"`
+	Name     string `json:"name"`
+	Size     int    `json:"size"`
 	MimeType string `json:"mimeType"`
 }
 
-func New(path, mime string) (*File, error) {
+func New(path, name, mime string, size int) (*File, error) {
 	if len(path) == 0 {
 		return nil, errors.New(errPathIsEmpty)
 	}

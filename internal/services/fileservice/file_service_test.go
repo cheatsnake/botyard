@@ -11,14 +11,14 @@ func TestAddFile(t *testing.T) {
 	fs := New(mock.FileStore())
 
 	t.Run("add a new file", func(t *testing.T) {
-		testFile, err := fs.AddFile("/test", "text/plain")
+		testFile, err := fs.AddFile("/test", "test.txt", "text/plain", 13)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFile, err, nil)
 		}
 	})
 
 	t.Run("add a new file with invalid data", func(t *testing.T) {
-		testFile, err := fs.AddFile("/test", "invalid type")
+		testFile, err := fs.AddFile("/test", "test.txt", "invalid type", 13)
 		if err == nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFile, err, "error")
 		}
