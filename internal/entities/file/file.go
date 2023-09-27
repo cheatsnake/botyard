@@ -26,6 +26,8 @@ func New(path, name, mime string, size int) (*File, error) {
 	return &File{
 		Id:       ulid.New(),
 		Path:     path,
+		Name:     name,
+		Size:     size,
 		MimeType: mime,
 	}, nil
 }

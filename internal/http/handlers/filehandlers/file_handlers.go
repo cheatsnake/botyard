@@ -67,7 +67,7 @@ func (h *Handlers) LoadMany(c *fiber.Ctx) error {
 
 	// TODO parallel upload
 	for _, f := range files {
-		filePath, contentType, fileName, fileSize, err := fileSaver(c, f)
+		filePath, fileName, contentType, fileSize, err := fileSaver(c, f)
 		if err != nil {
 			return exterr.ErrorBadRequest(err.Error())
 		}
@@ -106,7 +106,7 @@ func fileSaver(c *fiber.Ctx, file *multipart.FileHeader) (string, string, string
 
 	filePath := path.Join(".", os.Getenv("FILES_FOLDER"), fileType, ulid.New()+ext)
 	if err := c.SaveFile(file, filePath); err != nil {
-		return filePath, contentType, file.Filename, int(file.Size), err
+		return filePath, file.Filename, contentType, int(file.Size), err
 	}
 
 	return filePath, file.Filename, contentType, int(file.Size), nil
