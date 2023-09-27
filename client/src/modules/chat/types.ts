@@ -16,6 +16,8 @@ export interface Message {
 export interface File {
     id: string;
     path: string;
+    name: string;
+    size: number;
     mimeType: string;
 }
 

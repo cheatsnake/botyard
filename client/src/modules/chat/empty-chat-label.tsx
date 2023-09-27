@@ -9,7 +9,7 @@ export const EmptyChatLabel = () => {
                 py="xl"
                 sx={(theme) => ({
                     background: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[2],
-                    borderRadius: "0.25rem",
+                    borderRadius: "0.3rem",
                 })}
             >
                 <Text ta="center" opacity={0.5} size="lg" fw={500}>

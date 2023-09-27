@@ -21,10 +21,13 @@ export const AttachmentList: FC<AttachmentListProps> = (props) => {
                             direction="column"
                             align="center"
                             gap="sm"
-                            bg="dark"
                             p="sm"
                             miw={96}
-                            sx={{ borderRadius: "0.3rem" }}
+                            sx={(theme) => ({
+                                borderRadius: "0.3rem",
+                                backgroundColor:
+                                    theme.colorScheme === "dark" ? theme.colors.dark : theme.colors.gray[3],
+                            })}
                         >
                             <CloseButton
                                 pos="absolute"
@@ -35,7 +38,7 @@ export const AttachmentList: FC<AttachmentListProps> = (props) => {
                             />
                             {defineFileIcon(file.type)}
                             <Text size="sm" sx={{ whiteSpace: "nowrap" }}>
-                                {truncString(file.name, 10)}
+                                {truncString(file.name, 12)}
                             </Text>
                         </Flex>
                     ))}

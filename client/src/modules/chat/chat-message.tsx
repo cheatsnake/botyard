@@ -3,24 +3,92 @@ import { FC } from "react";
 import { File, Message } from "./types";
 import { abbreviateName } from "../../helpers/text";
 import { BOT_COMMAND_REGEX, KNOWN_MIME_TYPES, NOT_HTML_NEWLINE_REXEG } from "./const";
-import { AudioGroup, ImageGroup } from "./file-groups";
+import { AudioGroup, FileGroup, ImageGroup } from "./attachment-groups";
 
 const mockFiles: File[] = [
-    { id: Math.random().toFixed(7), path: "https://placehold.co/900x400/orange/white", mimeType: "image/svg+xml" },
-    { id: Math.random().toFixed(7), path: "https://placehold.co/700x400/blue/white", mimeType: "image/svg+xml" },
-    { id: Math.random().toFixed(7), path: "https://placehold.co/400x400/green/white", mimeType: "image/svg+xml" },
-    { id: Math.random().toFixed(7), path: "https://placehold.co/200x800/aqua/white", mimeType: "image/svg+xml" },
-    { id: Math.random().toFixed(7), path: "https://placehold.co/100x200/pink/white", mimeType: "image/svg+xml" },
-    { id: Math.random().toFixed(7), path: "https://placehold.co/1920x1080/black/white", mimeType: "image/svg+xml" },
     {
         id: Math.random().toFixed(7),
+        name: "image.svg",
+        path: "https://placehold.co/900x400/orange/white",
+        size: 1,
+        mimeType: "image/svg+xml",
+    },
+    {
+        id: Math.random().toFixed(7),
+        name: "image.svg",
+        path: "https://placehold.co/700x400/blue/white",
+        size: 1,
+        mimeType: "image/svg+xml",
+    },
+    {
+        id: Math.random().toFixed(7),
+        name: "image.svg",
+        path: "https://placehold.co/400x400/green/white",
+        size: 1,
+        mimeType: "image/svg+xml",
+    },
+    {
+        id: Math.random().toFixed(7),
+        name: "image.svg",
+        path: "https://placehold.co/200x800/aqua/white",
+        size: 1,
+        mimeType: "image/svg+xml",
+    },
+    {
+        id: Math.random().toFixed(7),
+        name: "image.svg",
+        path: "https://placehold.co/100x200/pink/white",
+        size: 1,
+        mimeType: "image/svg+xml",
+    },
+    {
+        id: Math.random().toFixed(7),
+        name: "image.svg",
+        path: "https://placehold.co/1920x1080/black/white",
+        size: 1,
+        mimeType: "image/svg+xml",
+    },
+    {
+        id: Math.random().toFixed(7),
+        name: "audio.mp3",
         path: "https://diviextended.com/wp-content/uploads/2021/10/sound-of-waves-marine-drive-mumbai.mp3",
+        size: 1,
         mimeType: "audio/mpeg",
     },
     {
         id: Math.random().toFixed(7),
+        name: "audio.mp3",
         path: "https://diviextended.com/wp-content/uploads/2021/10/sound-of-waves-marine-drive-mumbai.mp3",
+        size: 1,
         mimeType: "audio/mpeg",
+    },
+    {
+        id: Math.random().toFixed(7),
+        name: "tglog.zip",
+        path: "https://github.com/cheatsnake/tglog/archive/refs/heads/master.zip",
+        size: 12333653,
+        mimeType: "application/zip",
+    },
+    {
+        id: Math.random().toFixed(7),
+        name: "cyrillic-doctor.zip",
+        path: "https://github.com/cheatsnake/cyrillic-doctor/archive/refs/heads/master.zip",
+        size: 56232345,
+        mimeType: "application/zip",
+    },
+    {
+        id: Math.random().toFixed(7),
+        name: "tglog.zip",
+        path: "https://github.com/cheatsnake/tglog/archive/refs/heads/master.zip",
+        size: 12333653,
+        mimeType: "application/zip",
+    },
+    {
+        id: Math.random().toFixed(7),
+        name: "cyrillic-doctor.zip",
+        path: "https://github.com/cheatsnake/cyrillic-doctor/archive/refs/heads/master.zip",
+        size: 56232345,
+        mimeType: "application/zip",
     },
 ];
 
@@ -83,10 +151,12 @@ export const ChatMessage: FC<ChatMessageProps> = (props) => {
             </TypographyStylesProvider>
             {mockFiles.length > 0 ? (
                 <>
-                    <Space h="sm" />
+                    <Space h="xl" />
                     <ImageGroup files={mockFiles.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "image")} />
-                    <Space h="sm" />
+                    <Space h="xl" />
                     <AudioGroup files={mockFiles.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "audio")} />
+                    <Space h="xl" />
+                    <FileGroup files={mockFiles.filter((file) => !KNOWN_MIME_TYPES[file.mimeType])} />
                 </>
             ) : null}
         </Box>
