@@ -9,7 +9,7 @@ export interface Message {
     chatId: string;
     senderId: string;
     body: string;
-    fileIds?: File[];
+    files?: File[];
     timestamp: Date;
 }
 
