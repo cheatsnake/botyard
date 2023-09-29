@@ -12,9 +12,7 @@ export const ChatHeader: FC<{ bot: Bot }> = ({ bot }) => {
     const backToMainPage = () => {
         if ("startViewTransition" in document) {
             //@ts-ignore
-            return document.startViewTransition(() => {
-                navigate("/");
-            });
+            return document.startViewTransition(() => navigate("/"));
         }
 
         return navigate("/");

@@ -4,6 +4,7 @@ import { useHotkeys, useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import GalleryPage from "./modules/gallery/gallery-page";
 import ChatPage from "./modules/chat/chat-page";
+import { AuthGuard } from "./components/auth-guard";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -11,7 +12,11 @@ const router = createBrowserRouter([
     },
     {
         path: "/bot/:id",
-        element: <ChatPage />,
+        element: (
+            <AuthGuard>
+                <ChatPage />
+            </AuthGuard>
+        ),
     },
 ]);
 
