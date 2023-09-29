@@ -3,7 +3,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { FC } from "react";
 import { abbreviateName } from "../../helpers/text";
 import { Bot } from "./types";
-import { CopyBtn } from "../../components/CopyBtn";
+import { CopyBtn } from "../../components/copy-btn";
 
 export const BotInfoModal: FC<{ bot: Bot }> = ({ bot }) => {
     const [opened, { open, close }] = useDisclosure(false);
