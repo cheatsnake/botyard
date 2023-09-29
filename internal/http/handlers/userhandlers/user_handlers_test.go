@@ -21,7 +21,7 @@ func TestCreate(t *testing.T) {
 		ErrorHandler: helpers.CursomErrorHandler,
 	})
 	testPath := "/test"
-	testApp.Post(testPath, userHandlers.Create)
+	testApp.Post(testPath, userHandlers.CreateUser)
 
 	t.Run("create new user with valid body", func(t *testing.T) {
 		jsonBody, err := json.Marshal(userservice.CreateBody{

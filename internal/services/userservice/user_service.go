@@ -21,7 +21,7 @@ func New(s storage.UserStore) *Service {
 	}
 }
 
-func (s *Service) Create(body *CreateBody) (*user.User, error) {
+func (s *Service) CreateUser(body *CreateBody) (*user.User, error) {
 	newUser, err := user.New(body.Nickname)
 	if err != nil {
 		return nil, exterr.ErrorBadRequest(err.Error())
@@ -33,4 +33,13 @@ func (s *Service) Create(body *CreateBody) (*user.User, error) {
 	}
 
 	return newUser, nil
+}
+
+func (s *Service) GetUserById(id string) (*user.User, error) {
+	user, err := s.store.GetUser(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

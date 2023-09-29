@@ -17,7 +17,7 @@ func TestCreate(t *testing.T) {
 			},
 		}
 
-		user, err := us.Create(testBody)
+		user, err := us.CreateUser(testBody)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", user, err, nil)
 		}
@@ -35,7 +35,7 @@ func TestCreate(t *testing.T) {
 		}
 
 		var extErr *exterr.ExtendedError
-		user, err := us.Create(testBody)
+		user, err := us.CreateUser(testBody)
 
 		if err == nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", user, err, extErr)

@@ -3,6 +3,7 @@ package userhandlers
 import (
 	"botyard/internal/services/userservice"
 	"botyard/pkg/exterr"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -17,14 +18,14 @@ func New(s *userservice.Service) *Handlers {
 	}
 }
 
-func (h *Handlers) Create(c *fiber.Ctx) error {
+func (h *Handlers) CreateUser(c *fiber.Ctx) error {
 	body := new(userservice.CreateBody)
 
 	if err := c.BodyParser(body); err != nil {
 		return exterr.ErrorBadRequest(err.Error())
 	}
 
-	newUser, err := h.service.Create(body)
+	newUser, err := h.service.CreateUser(body)
 	if err != nil {
 		return err
 	}
@@ -42,4 +43,15 @@ func (h *Handlers) Create(c *fiber.Ctx) error {
 
 	c.Cookie(cookie)
 	return c.Status(fiber.StatusCreated).JSON(newUser)
+}
+
+func (h *Handlers) GetCurrentUser(c *fiber.Ctx) error {
+	userId := fmt.Sprintf("%s", c.Locals("userId"))
+
+	user, err := h.service.GetUserById(userId)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(user)
 }
