@@ -84,7 +84,7 @@ func (s *Server) InitRoutes() {
 	botApiV1.Put("/bot/webhook", botMiddlewares.Auth, botHands.EditWebhook)
 	botApiV1.Delete("/bot/webhook", botMiddlewares.Auth, botHands.DeleteWebhook)
 
-	botApiV1.Get("/chats/:userId", middlewares.UserAuth, chatHands.GetChatsByUser)
+	botApiV1.Get("/chats", middlewares.UserAuth, chatHands.GetChatsByUser)
 	botApiV1.Get("/chat/:id/messages", botMiddlewares.Auth, chatHands.GetMessagesByChat)
 	botApiV1.Post("/chat/message", botMiddlewares.Auth, chatHands.SendBotMessage)
 
@@ -100,7 +100,7 @@ func (s *Server) InitRoutes() {
 	clientApiV1.Get("/bot/:id", botHands.GetBotById)
 	clientApiV1.Get("/bot/:id/commands", middlewares.UserAuth, botHands.GetCommands)
 
-	clientApiV1.Get("/chats/:botId", middlewares.UserAuth, chatHands.GetChatsByBot)
+	clientApiV1.Get("/chats", middlewares.UserAuth, chatHands.GetChatsByBot)
 	clientApiV1.Get("/chat/:id/messages", middlewares.UserAuth, chatHands.GetMessagesByChat)
 	clientApiV1.Post("/chat", middlewares.UserAuth, chatHands.CreateChat)
 	clientApiV1.Post("/chat/message", middlewares.UserAuth, chatHands.SendUserMessage)

@@ -45,7 +45,11 @@ func (h *Handlers) CreateChat(c *fiber.Ctx) error {
 
 func (h *Handlers) GetChatsByBot(c *fiber.Ctx) error {
 	userId := fmt.Sprintf("%v", c.Locals("userId"))
-	botId := c.Params("botId", "")
+	botId := c.Query("bot_id", "")
+
+	if botId == "" {
+		return exterr.ErrorBadRequest("bot id is required")
+	}
 
 	chats, err := h.service.GetChats(userId, botId)
 	if err != nil {
@@ -57,7 +61,11 @@ func (h *Handlers) GetChatsByBot(c *fiber.Ctx) error {
 
 func (h *Handlers) GetChatsByUser(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%v", c.Locals("botId"))
-	userId := c.Params("userId", "")
+	userId := c.Query("user_id", "")
+
+	if userId == "" {
+		return exterr.ErrorBadRequest("user id is required")
+	}
 
 	chats, err := h.service.GetChats(userId, botId)
 	if err != nil {
