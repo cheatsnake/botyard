@@ -18,6 +18,10 @@ func New(path, name, mime string, size int) (*File, error) {
 		return nil, errors.New(errPathIsEmpty)
 	}
 
+	if len(name) == 0 {
+		return nil, errors.New(errNameIsEmpty)
+	}
+
 	err := validateMimeType(mime)
 	if err != nil {
 		return nil, err

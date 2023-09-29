@@ -36,6 +36,19 @@ func TestNew(t *testing.T) {
 		}
 	})
 
+	t.Run("check empty name", func(t *testing.T) {
+		expect := errNameIsEmpty
+		testFile, err := New(testPath, "", testMimeType, testSize)
+		if err == nil {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFile, nil, expect)
+		}
+
+		got := err.Error()
+		if got != expect {
+			t.Errorf("%#v\ngot: %s,\nexpect: %s\n", testFile, got, expect)
+		}
+	})
+
 	t.Run("check mime type", func(t *testing.T) {
 		testFile, err := New(testPath, testName, testMimeType, testSize)
 		if err != nil {
