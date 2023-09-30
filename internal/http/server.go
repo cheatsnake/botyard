@@ -94,7 +94,7 @@ func (s *Server) InitRoutes() {
 	// Client API -------------------------------------------------------------
 	clientApiV1 := s.App.Group(clientApiV1Prefix)
 
-	clientApiV1.Get("/user", userHands.GetCurrentUser)
+	clientApiV1.Get("/user", middlewares.UserAuth, userHands.GetCurrentUser)
 	clientApiV1.Post("/user", userHands.CreateUser)
 
 	clientApiV1.Get("/bots", botHands.GetAllBots)
