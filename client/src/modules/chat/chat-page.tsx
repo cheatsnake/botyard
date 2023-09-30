@@ -1,7 +1,7 @@
 import { Container, Flex, ScrollArea } from "@mantine/core";
 import { ChatHeader } from "./chat-header";
 import { useEffect, useRef, useState } from "react";
-import { Bot, File, Message } from "./types";
+import { Bot, Attachment, Message } from "../../api/types";
 import { ChatInput } from "./chat-input";
 import { EmptyChatLabel } from "./empty-chat-label";
 import { ChatMessage } from "./chat-message";
@@ -19,7 +19,7 @@ const BOT: Bot = {
 const ChatPage = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [body, setBody] = useState("");
-    const [files, setFiles] = useState<File[]>([]);
+    const [attachments, setAttachments] = useState<Attachment[]>([]);
 
     const chatViewport = useRef<HTMLDivElement>(null);
     const pageViewport = useRef<HTMLDivElement>(null);
@@ -37,7 +37,7 @@ const ChatPage = () => {
                 chatId: Math.random().toFixed(5),
                 senderId: Math.random().toFixed(5),
                 body: value ?? body,
-                files: files,
+                files: attachments,
                 timestamp: new Date(),
             },
         ]);
@@ -84,7 +84,7 @@ const ChatPage = () => {
                                     type="bot"
                                     senderName={BOT.name}
                                     senderAvatar={BOT.avatar}
-                                    files={msg.files || []}
+                                    attachments={msg.files || []}
                                 />
                             ) : (
                                 <ChatMessage
@@ -92,7 +92,7 @@ const ChatPage = () => {
                                     message={msg}
                                     type="user"
                                     senderName="You"
-                                    files={msg.files || []}
+                                    attachments={msg.files || []}
                                 />
                             )
                         )}

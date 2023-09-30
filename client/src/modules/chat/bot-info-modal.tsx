@@ -2,7 +2,7 @@ import { Avatar, Box, Divider, Flex, Modal, Text, Tooltip } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks";
 import { FC } from "react";
 import { abbreviateName } from "../../helpers/text";
-import { Bot } from "./types";
+import { Bot } from "../../api/types";
 import { CopyBtn } from "../../components/copy-btn";
 
 export const BotInfoModal: FC<{ bot: Bot }> = ({ bot }) => {

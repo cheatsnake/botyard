@@ -1,5 +1,5 @@
 import { Carousel } from "@mantine/carousel";
-import { File } from "./types";
+import { Attachment } from "../../api/types";
 import { FC, useState } from "react";
 import { Box, Flex, Image, Loader, Paper, Space, Text } from "@mantine/core";
 import { openNewTab } from "../../helpers/link";
@@ -9,42 +9,48 @@ import { parseByteSize } from "../../helpers/size";
 import { KNOWN_MIME_TYPES } from "./const";
 
 interface AttachmentGroupProps {
-    files: File[];
+    attachments: Attachment[];
 }
 
 export const AttachmentGroups: FC<AttachmentGroupProps> = (props) => {
-    const images = props.files.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "image");
-    const videos = props.files.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "video");
-    const audios = props.files.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "audio");
-    const files = props.files.filter((file) => !KNOWN_MIME_TYPES[file.mimeType]);
+    const images = props.attachments.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "image");
+    const videos = props.attachments.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "video");
+    const audios = props.attachments.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "audio");
+    const files = props.attachments.filter((file) => !KNOWN_MIME_TYPES[file.mimeType]);
 
     return (
         <>
             {images.length > 0 ? (
                 <>
                     <Space h="xl" />
-                    <ImageGroup files={props.files.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "image")} />
+                    <ImageGroup
+                        attachments={props.attachments.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "image")}
+                    />
                 </>
             ) : null}
 
             {videos.length > 0 ? (
                 <>
                     <Space h="xl" />
-                    <VideoGroup files={props.files.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "video")} />
+                    <VideoGroup
+                        attachments={props.attachments.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "video")}
+                    />
                 </>
             ) : null}
 
             {audios.length > 0 ? (
                 <>
                     <Space h="xl" />
-                    <AudioGroup files={props.files.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "audio")} />
+                    <AudioGroup
+                        attachments={props.attachments.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "audio")}
+                    />
                 </>
             ) : null}
 
             {files.length > 0 ? (
                 <>
                     <Space h="xl" />
-                    <FileGroup files={props.files.filter((file) => !KNOWN_MIME_TYPES[file.mimeType])} />
+                    <FileGroup attachments={props.attachments.filter((file) => !KNOWN_MIME_TYPES[file.mimeType])} />
                 </>
             ) : null}
         </>
@@ -59,17 +65,17 @@ const ImageGroup: FC<AttachmentGroupProps> = (props) => {
             align="start"
             controlsOffset="xs"
             controlSize={20}
-            withControls={props.files.length > 1}
-            withIndicators={props.files.length > 1}
-            slideSize={props.files.length > 1 ? "50%" : "auto"}
+            withControls={props.attachments.length > 1}
+            withIndicators={props.attachments.length > 1}
+            slideSize={props.attachments.length > 1 ? "50%" : "auto"}
             breakpoints={[
                 { maxWidth: "md", slideSize: "50%" },
                 { maxWidth: "sm", slideSize: "100%", slideGap: 0 },
             ]}
         >
-            {props.files.map((file) => (
-                <Carousel.Slide key={file.id}>
-                    <ImageWithPlaceholder path={file.path} />
+            {props.attachments.map((img) => (
+                <Carousel.Slide key={img.id}>
+                    <ImageWithPlaceholder path={img.path} />
                 </Carousel.Slide>
             ))}
         </Carousel>
@@ -101,8 +107,8 @@ const ImageWithPlaceholder: FC<{ path: string }> = ({ path }) => {
 const VideoGroup: FC<AttachmentGroupProps> = (props) => {
     return (
         <>
-            {props.files.map((file) => (
-                <video width={"100%"} controls src={file.path} style={{ borderRadius: "0.3rem" }} />
+            {props.attachments.map((video) => (
+                <video width={"100%"} controls src={video.path} style={{ borderRadius: "0.3rem" }} />
             ))}
         </>
     );
@@ -111,8 +117,8 @@ const VideoGroup: FC<AttachmentGroupProps> = (props) => {
 const AudioGroup: FC<AttachmentGroupProps> = (props) => {
     return (
         <Flex wrap="wrap" gap="sm">
-            {props.files.map((file) => (
-                <audio key={file.id} src={file.path} controls />
+            {props.attachments.map((audio) => (
+                <audio key={audio.id} src={audio.path} controls />
             ))}
         </Flex>
     );
@@ -121,7 +127,7 @@ const AudioGroup: FC<AttachmentGroupProps> = (props) => {
 const FileGroup: FC<AttachmentGroupProps> = (props) => {
     return (
         <Flex wrap="wrap" gap="sm">
-            {props.files.map((file) => (
+            {props.attachments.map((file) => (
                 <Paper
                     key={file.id}
                     p="sm"

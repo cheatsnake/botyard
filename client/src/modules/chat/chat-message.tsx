@@ -1,6 +1,6 @@
 import { Box, Flex, Avatar, TypographyStylesProvider, Text, MantineTheme } from "@mantine/core";
 import { FC } from "react";
-import { File, Message } from "./types";
+import { Attachment, Message } from "../../api/types";
 import { abbreviateName } from "../../helpers/text";
 import { BOT_COMMAND_REGEX, NOT_HTML_NEWLINE_REXEG } from "./const";
 import { AttachmentGroups } from "./attachment-groups";
@@ -11,7 +11,7 @@ interface ChatMessageProps {
     message: Message;
     type: ChatMessageTypes;
     senderName: string;
-    files: File[];
+    attachments: Attachment[];
     senderAvatar?: string;
 }
 
@@ -64,7 +64,7 @@ export const ChatMessage: FC<ChatMessageProps> = (props) => {
                 />
             </TypographyStylesProvider>
 
-            {props.files?.length > 0 ? <AttachmentGroups files={props.files} /> : null}
+            {props.attachments?.length > 0 ? <AttachmentGroups attachments={props.attachments} /> : null}
         </Box>
     );
 };

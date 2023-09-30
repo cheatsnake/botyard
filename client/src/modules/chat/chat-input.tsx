@@ -2,7 +2,7 @@ import { Flex, Textarea, Tooltip, ActionIcon, FileButton } from "@mantine/core";
 import { SpotlightProvider, spotlight } from "@mantine/spotlight";
 import { IconSend, IconLink } from "@tabler/icons-react";
 import { FC, useState } from "react";
-import { Command } from "./types";
+import { BotCommand } from "../../api/types";
 import { AttachmentList } from "./attachment-list";
 
 interface ChatInputProps {
@@ -11,7 +11,7 @@ interface ChatInputProps {
     sendMessage: (value?: string) => void;
 }
 
-const COMMANDS: Command[] = [
+const COMMANDS: BotCommand[] = [
     { alias: "start", description: "Init a new bot conversation." },
     { alias: "help", description: "Print some instructions." },
     { alias: "ping", description: "Send pong message." },

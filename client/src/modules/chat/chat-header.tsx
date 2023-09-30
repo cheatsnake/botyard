@@ -3,7 +3,7 @@ import { IconArrowNarrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { BotInfoModal } from "./bot-info-modal";
 import { FC } from "react";
-import { Bot } from "./types";
+import { Bot } from "../../api/types";
 import { SettingsModal } from "../settings/settings-modal";
 
 export const ChatHeader: FC<{ bot: Bot }> = ({ bot }) => {
