@@ -44,7 +44,7 @@ const AuthModal = () => {
             try {
                 setIsLoad(true);
                 const currentUser = await ClientAPI.getCurrentUser();
-                setUser(currentUser);
+                if (currentUser) setUser(currentUser);
             } finally {
                 setIsLoad(false);
             }

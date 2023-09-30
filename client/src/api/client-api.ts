@@ -10,6 +10,7 @@ import {
     User,
     Attachment,
     ServiceInfo,
+    MessagePage,
 } from "./types";
 
 const CLIENT_API_PREFIX = "/v1/client-api";
@@ -35,8 +36,7 @@ class ClientAPI {
         const resp = await fetch(this.prefix + "/user");
 
         if (!resp.ok) {
-            const body: ResponseErr = await resp.json();
-            throw new Error(body.message);
+            return;
         }
 
         const user: User = await resp.json();
@@ -111,7 +111,7 @@ class ClientAPI {
             throw new Error(body.message);
         }
 
-        const msgs: Message[] = await resp.json();
+        const msgs: MessagePage = await resp.json();
         return msgs;
     }
 

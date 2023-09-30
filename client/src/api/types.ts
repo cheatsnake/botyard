@@ -48,6 +48,14 @@ export interface Message {
     attachments?: Attachment[];
 }
 
+export interface MessagePage {
+    chatId: string;
+    page: number;
+    limit: number;
+    total: number;
+    messages: Message[];
+}
+
 export interface CreateMessageBody {
     chatId: string;
     senderId: string;

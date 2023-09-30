@@ -1,100 +1,119 @@
 import { Container, Flex, ScrollArea } from "@mantine/core";
 import { ChatHeader } from "./chat-header";
 import { useEffect, useRef, useState } from "react";
-import { Bot, Message } from "../../api/types";
+import { Bot, Chat, Message } from "../../api/types";
 import { ChatInput } from "./chat-input";
 import { EmptyChatLabel } from "./empty-chat-label";
 import { ChatMessage } from "./chat-message";
-import { notifications } from "@mantine/notifications";
 import { debounce } from "../../helpers/debounce";
 import { useLoaderContext } from "../../contexts/loader-context";
 import { errNotify } from "../../helpers/notifications";
 import { useStorageContext } from "../../contexts/storage-context";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../contexts/user-context";
+import ClientAPI from "../../api/client-api";
 
 const ChatPage = () => {
     const [currentBot, setCurrentBot] = useState<Bot>({ id: "", name: "" });
+    const [currentChat, setCurrentChat] = useState<Chat>();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hasOldMessages, setHasOldMessages] = useState(true);
+    const [isBlockInput, setIsBlockInput] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
+    const [attachments, setAttachments] = useState<File[]>([]);
     const [body, setBody] = useState("");
 
     const navigate = useNavigate();
-    const { setIsLoad } = useLoaderContext();
+    const { isLoad, setIsLoad } = useLoaderContext();
     const { loadBots } = useStorageContext();
     const { user } = useUserContext();
 
     const chatViewport = useRef<HTMLDivElement>(null);
-    const pageViewport = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
         chatViewport.current!.scrollTo({ top: chatViewport.current!.scrollHeight, behavior: "smooth" });
-        pageViewport.current!.scrollTo({ top: chatViewport.current!.scrollHeight });
     };
 
-    const sendMessage = (value?: string) => {
-        setMessages((prev) => [
-            ...prev,
-            {
-                id: Math.random().toFixed(5),
-                chatId: Math.random().toFixed(5),
-                senderId: user?.id || "",
+    const sendMessage = async (value?: string) => {
+        try {
+            if (!currentChat || !user?.id) return;
+            setIsBlockInput(true);
+
+            const newMsg = await ClientAPI.sendUserMessage({
+                chatId: currentChat.id,
+                senderId: user.id,
                 body: value ?? body,
-                attachments: [],
-                timestamp: new Date(),
-            },
-        ]);
-        scrollToBottom();
-        setBody("");
+                attachmentIds: [],
+            });
+
+            setMessages((prev) => [...prev, newMsg]);
+            setBody("");
+        } catch (error) {
+            errNotify((error as Error).message);
+        } finally {
+            setIsBlockInput(false);
+            setTimeout(scrollToBottom, 1);
+        }
     };
 
-    const loadOldMessages = () => {
-        if (chatViewport.current!.scrollTop < 200) {
-            notifications.show({
-                withBorder: true,
-                title: "Loading older messages...",
-                color: "green",
-                loading: true,
-                autoClose: 5000,
-                message: "",
-            });
+    const loadMessages = async (chatId: string) => {
+        try {
+            const msgPage = await ClientAPI.getMessagesByChat(chatId, currentPage);
+
+            if (msgPage.messages.length > 0) {
+                setMessages([...msgPage.messages, ...messages]);
+                setCurrentPage((cp) => cp + 1);
+                return;
+            }
+
+            setHasOldMessages(false);
+        } catch (error) {
+            errNotify((error as Error).message);
         }
     };
 
     useEffect(() => {
-        chatViewport.current?.addEventListener("scroll", debounce(loadOldMessages));
-
         (async () => {
             try {
                 setIsLoad(true);
-                const bots = await loadBots();
 
+                const bots = await loadBots();
                 const parts = window.location.pathname.split("/");
                 const botId = parts[parts.length - 1];
                 const cb = bots?.find((b) => b.id === botId);
 
-                if (!cb) {
-                    navigate("/");
-                    return;
+                if (!cb) return navigate("/");
+
+                let chats = await ClientAPI.getChatsByBot(cb.id);
+                if (chats.length === 0) {
+                    const newChat = await ClientAPI.createChat(cb.id);
+                    chats = [newChat];
                 }
 
+                await loadMessages(chats[0].id);
                 setCurrentBot(cb);
+                setCurrentChat(chats[0]);
             } catch (error) {
                 errNotify((error as Error).message);
             } finally {
                 setIsLoad(false);
+                setTimeout(scrollToBottom, 1);
             }
         })();
     }, []);
 
-    useEffect(scrollToBottom, [messages]);
-
     return (
         <>
             <ChatHeader bot={currentBot} />
-            <Container pos="relative" p={0} pt={54} size="md" h="100vh" ref={pageViewport}>
+            <Container pos="relative" p={0} pt={54} size="md" h="100vh">
                 <Flex direction="column" justify="end" w="100%" h="100%">
                     <ScrollArea
                         pt="sm"
+                        onScrollPositionChange={debounce((pos) => {
+                            if (pos.y < 200 && hasOldMessages && currentChat) {
+                                loadMessages(currentChat.id);
+                            }
+                        })}
                         viewportRef={chatViewport}
                         sx={{ display: "flex", flexDirection: "column-reverse", justifyContent: "end" }}
                     >
@@ -110,9 +129,16 @@ const ChatPage = () => {
                         ))}
                     </ScrollArea>
 
-                    {messages.length === 0 ? <EmptyChatLabel /> : null}
+                    {messages.length === 0 && !isLoad ? <EmptyChatLabel /> : null}
 
-                    <ChatInput body={body} setBody={setBody} sendMessage={sendMessage} />
+                    <ChatInput
+                        body={body}
+                        attachments={attachments}
+                        isBlockInput={isBlockInput}
+                        setAttachments={setAttachments}
+                        setBody={setBody}
+                        sendMessage={sendMessage}
+                    />
                 </Flex>
             </Container>
         </>

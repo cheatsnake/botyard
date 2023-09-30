@@ -5,7 +5,17 @@ export const errNotify = (message: string) => {
         withBorder: true,
         title: "Error",
         color: "red",
-        autoClose: 7000,
+        autoClose: 9000,
+        message,
+    });
+};
+
+export const successNotify = (message: string) => {
+    notifications.show({
+        withBorder: true,
+        title: "Success",
+        color: "green",
+        autoClose: 6000,
         message,
     });
 };

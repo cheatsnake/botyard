@@ -44,7 +44,7 @@ export const ChatMessage: FC<ChatMessageProps> = (props) => {
                     </Text>
 
                     <Text opacity={0.5} size="xs">
-                        {props.message.timestamp.toLocaleString()}
+                        {new Date(props.message.timestamp).toLocaleString()}
                     </Text>
                 </Flex>
             </Flex>

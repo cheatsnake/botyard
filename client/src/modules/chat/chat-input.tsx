@@ -1,12 +1,15 @@
-import { Flex, Textarea, Tooltip, ActionIcon, FileButton } from "@mantine/core";
+import { Flex, Textarea, Tooltip, ActionIcon, FileButton, LoadingOverlay, useMantineTheme } from "@mantine/core";
 import { SpotlightProvider, spotlight } from "@mantine/spotlight";
 import { IconSend, IconLink } from "@tabler/icons-react";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { BotCommand } from "../../api/types";
 import { AttachmentList } from "./attachment-list";
 
 interface ChatInputProps {
     body: string;
+    attachments: File[];
+    isBlockInput: boolean;
+    setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
     setBody: (value: React.SetStateAction<string>) => void;
     sendMessage: (value?: string) => void;
 }
@@ -17,8 +20,9 @@ const COMMANDS: BotCommand[] = [
     { alias: "ping", description: "Send pong message." },
 ];
 
-export const ChatInput: FC<ChatInputProps> = ({ body, setBody, sendMessage }) => {
-    const [attachments, setAttachments] = useState<File[]>([]);
+export const ChatInput: FC<ChatInputProps> = (props) => {
+    const { body, attachments, isBlockInput, setAttachments, setBody, sendMessage } = props;
+    const { colors, colorScheme } = useMantineTheme();
 
     const commandTrigger = (alias: string) => {
         sendMessage("/" + alias);
@@ -72,7 +76,12 @@ export const ChatInput: FC<ChatInputProps> = ({ body, setBody, sendMessage }) =>
         >
             {attachments.length > 0 ? <AttachmentList files={attachments} remover={removeAttachment} /> : null}
 
-            <Flex align="center" gap="sm" p="sm" pt="lg">
+            <Flex align="center" gap="sm" p="sm" pt="lg" pos="relative">
+                <LoadingOverlay
+                    visible={isBlockInput}
+                    overlayColor={colorScheme === "dark" ? colors.dark[7] : colors.gray[0]}
+                    loaderProps={{ variant: "dots" }}
+                />
                 <Textarea
                     value={body}
                     onChange={handleInput}
