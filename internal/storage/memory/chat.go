@@ -27,7 +27,7 @@ func (s *Storage) GetChat(id string) (*chat.Chat, error) {
 }
 
 func (s *Storage) GetChats(userId, botId string) ([]*chat.Chat, error) {
-	var chats []*chat.Chat
+	chats := []*chat.Chat{}
 
 	for _, chat := range s.chats {
 		if chat.UserId == userId && chat.BotId == botId {
@@ -81,7 +81,7 @@ func (s *Storage) GetMessagesByChat(chatId string, page, limit int) (int, []*cha
 		return len(chatMsgs), chatMsgs, nil
 	}
 
-	return len(chatMsgs), extlib.SlicePaginate(chatMsgs, page, limit), nil
+	return len(chatMsgs), extlib.SliceReverse(extlib.SlicePaginate(chatMsgs, page, limit)), nil
 }
 
 func (s *Storage) DeleteMessagesByChat(chatId string) error {

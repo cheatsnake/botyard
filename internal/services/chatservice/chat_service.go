@@ -91,11 +91,15 @@ func (s *Service) CheckChatAccess(chatId, botId, userId string) (*chat.Chat, err
 		return nil, err
 	}
 
-	if chat.UserId != userId {
+	if len(userId) == 0 && len(botId) == 0 {
+		return nil, exterr.ErrorForbidden("user id or bot id is required")
+	}
+
+	if len(userId) > 0 && chat.UserId != userId {
 		return nil, exterr.ErrorForbidden("chat is not related to current user")
 	}
 
-	if chat.BotId != botId {
+	if len(botId) > 0 && chat.BotId != botId {
 		return nil, exterr.ErrorForbidden("chat is not related to current bot")
 	}
 
