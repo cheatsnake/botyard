@@ -6,6 +6,16 @@ export interface ResponseOK {
     message: string;
 }
 
+export interface ServiceInfo {
+    name: string;
+    description: string;
+    avatar?: string;
+    socials: {
+        title: string;
+        url: string;
+    }[];
+}
+
 export interface User {
     id: string;
     nickname: string;

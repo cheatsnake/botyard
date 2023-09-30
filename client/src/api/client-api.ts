@@ -1,11 +1,34 @@
 import { jsonRequestParams, queryParams } from "./helpers";
-import { Bot, BotCommand, Chat, CreateMessageBody, ResponseErr, Message, ResponseOK, User, Attachment } from "./types";
+import {
+    Bot,
+    BotCommand,
+    Chat,
+    CreateMessageBody,
+    ResponseErr,
+    Message,
+    ResponseOK,
+    User,
+    Attachment,
+    ServiceInfo,
+} from "./types";
 
 const CLIENT_API_PREFIX = "/v1/client-api";
 
 class ClientAPI {
     constructor(private prefix: string) {
         this.prefix = prefix;
+    }
+
+    async getServiceInfo() {
+        const resp = await fetch(this.prefix + "/service-info");
+
+        if (!resp.ok) {
+            const body: ResponseErr = await resp.json();
+            throw new Error(body.message);
+        }
+
+        const info: ServiceInfo = await resp.json();
+        return info;
     }
 
     async getCurrentUser() {

@@ -1,5 +1,4 @@
-import { Container, Divider, Space } from "@mantine/core";
-import { Header } from "./header";
+import { Container, Flex } from "@mantine/core";
 import { Watermark } from "./watermark";
 import { OrganizationInfo } from "./organization-info";
 import { BotList } from "./bot-list";
@@ -7,13 +6,12 @@ import { BotList } from "./bot-list";
 const GalleryPage = () => {
     return (
         <>
-            <Header />
             <Container size="md">
-                <OrganizationInfo />
-                <Divider p="md" />
-                <BotList />
-                <Space h="xl" p="xl" />
-                <Watermark />
+                <Flex direction="column" mih="100vh" justify="center" py="2.4rem" gap="md">
+                    <OrganizationInfo />
+                    <BotList />
+                    <Watermark />
+                </Flex>
             </Container>
         </>
     );

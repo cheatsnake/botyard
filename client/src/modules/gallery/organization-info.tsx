@@ -1,52 +1,66 @@
-import { Flex, Avatar, Title, Badge, Text } from "@mantine/core";
+import { Flex, Avatar, Title, Badge, Text, Divider } from "@mantine/core";
 import { openNewTab } from "../../helpers/link";
 import { abbreviateName } from "../../helpers/text";
-import { FC } from "react";
-
-const CONFIG = {
-    serviceName: "Botyard showcase",
-    description: `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Provident, sequi molestias dolorem
-    voluptatibus aut, ullam tempora distinctio, a enim ratione quidem accusamus fugit cupiditate.
-    Quisquam deserunt natus delectus soluta iste? Lorem ipsum dolor sit amet consectetur adipisicing
-    elit. Beatae quod hic cumque.`,
-    avatar: "",
-    socials: [
-        { title: "Website", url: "https://example.com" },
-        { title: "GitHub", url: "https://example.com" },
-        { title: "Discord", url: "https://example.com" },
-        { title: "Twitter", url: "https://example.com" },
-    ],
-};
+import { FC, useEffect, useState } from "react";
+import ClientAPI from "../../api/client-api";
+import { useLoaderContext } from "../../contexts/loader-context";
+import { ServiceInfo } from "../../api/types";
+import { errNotify } from "../../helpers/notifications";
 
 export const OrganizationInfo: FC = () => {
+    const [serviceInfo, setServiceInfo] = useState<ServiceInfo>();
+    const { setIsLoad } = useLoaderContext();
+
+    useEffect(() => {
+        (async () => {
+            try {
+                setIsLoad(true);
+                const info = await ClientAPI.getServiceInfo();
+                setServiceInfo(info);
+            } catch (error) {
+                errNotify((error as Error).message);
+            } finally {
+                setIsLoad(false);
+            }
+        })();
+    }, []);
+
     return (
-        <Flex gap="1rem" direction="column" sx={{ padding: "1rem 0" }}>
-            <Flex justify="center" direction="column" align="center">
-                <Avatar size="xl" radius="xl" src={CONFIG.avatar}>
-                    {CONFIG.avatar ? null : abbreviateName(CONFIG.serviceName)}
-                </Avatar>
+        <>
+            {serviceInfo ? (
+                <Flex gap="md" direction="column">
+                    <Flex justify="center" direction="column" align="center" gap="md">
+                        <Avatar size="xl" radius="xl" src={serviceInfo.avatar}>
+                            {serviceInfo.avatar ? null : abbreviateName(serviceInfo.name)}
+                        </Avatar>
 
-                <Title mt="sm" order={1} size="h2">
-                    {CONFIG.serviceName}
-                </Title>
-            </Flex>
+                        <Title order={1} size="h2">
+                            {serviceInfo.name}
+                        </Title>
+                    </Flex>
 
-            <Flex wrap="wrap" justify="center" gap="xs">
-                {CONFIG.socials.map((link) => (
-                    <Badge
-                        key={link.title}
-                        component="button"
-                        radius="xs"
-                        size="lg"
-                        onClick={() => openNewTab(link.url)}
-                        sx={{ cursor: "pointer" }}
-                    >
-                        {link.title}
-                    </Badge>
-                ))}
-            </Flex>
+                    <Flex wrap="wrap" justify="center" gap="xs">
+                        {serviceInfo.socials.map((link) => (
+                            <Badge
+                                key={link.title}
+                                component="button"
+                                radius="xs"
+                                size="lg"
+                                onClick={() => openNewTab(link.url)}
+                                sx={{ cursor: "pointer" }}
+                            >
+                                {link.title}
+                            </Badge>
+                        ))}
+                    </Flex>
 
-            <Text align="justify">{CONFIG.description}</Text>
-        </Flex>
+                    <Text mt="md" align={serviceInfo.description.length > 64 ? "justify" : "center"}>
+                        {serviceInfo.description}
+                    </Text>
+
+                    <Divider />
+                </Flex>
+            ) : null}
+        </>
     );
 };

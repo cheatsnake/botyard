@@ -3,8 +3,8 @@ import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/user-context";
 import ClientAPI from "../api/client-api";
-import { notifications } from "@mantine/notifications";
 import { useLoaderContext } from "../contexts/loader-context";
+import { errNotify } from "../helpers/notifications";
 
 export const AuthGuard: FC<{ children: JSX.Element }> = (props) => {
     const { user } = useUserContext();
@@ -13,9 +13,9 @@ export const AuthGuard: FC<{ children: JSX.Element }> = (props) => {
 };
 
 const AuthModal = () => {
-    const { isLoad, setIsLoad } = useLoaderContext();
     const [nickname, setNickname] = useState("");
     const { setUser } = useUserContext();
+    const { isLoad, setIsLoad } = useLoaderContext();
     const navigate = useNavigate();
 
     const backToMainPage = () => {
@@ -33,13 +33,7 @@ const AuthModal = () => {
             const newUser = await ClientAPI.createUser(nickname);
             setUser(newUser);
         } catch (error) {
-            notifications.show({
-                withBorder: true,
-                title: "Error",
-                color: "red",
-                autoClose: 7000,
-                message: (error as Error).message,
-            });
+            errNotify((error as Error).message);
         } finally {
             setIsLoad(false);
         }
@@ -51,8 +45,6 @@ const AuthModal = () => {
                 setIsLoad(true);
                 const currentUser = await ClientAPI.getCurrentUser();
                 setUser(currentUser);
-            } catch (error) {
-                return;
             } finally {
                 setIsLoad(false);
             }
