@@ -1,14 +1,21 @@
 import { Button, Group, Modal, Text, TextInput } from "@mantine/core";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../contexts/user-context";
+import ClientAPI from "../api/client-api";
+import { notifications } from "@mantine/notifications";
+import { useLoaderContext } from "../contexts/loader-context";
 
 export const AuthGuard: FC<{ children: JSX.Element }> = (props) => {
-    const [isAuth, setIsAuth] = useState(false);
+    const { user } = useUserContext();
 
-    return <>{isAuth ? props.children : <AuthModal setIsAuth={setIsAuth} />}</>;
+    return <>{user ? props.children : <AuthModal />}</>;
 };
 
-const AuthModal: FC<{ setIsAuth: React.Dispatch<React.SetStateAction<boolean>> }> = (props) => {
+const AuthModal = () => {
+    const { isLoad, setIsLoad } = useLoaderContext();
+    const [nickname, setNickname] = useState("");
+    const { setUser } = useUserContext();
     const navigate = useNavigate();
 
     const backToMainPage = () => {
@@ -20,29 +27,71 @@ const AuthModal: FC<{ setIsAuth: React.Dispatch<React.SetStateAction<boolean>> }
         return navigate("/");
     };
 
+    const login = async () => {
+        try {
+            setIsLoad(true);
+            const newUser = await ClientAPI.createUser(nickname);
+            setUser(newUser);
+        } catch (error) {
+            notifications.show({
+                withBorder: true,
+                title: "Error",
+                color: "red",
+                autoClose: 7000,
+                message: (error as Error).message,
+            });
+        } finally {
+            setIsLoad(false);
+        }
+    };
+
+    useEffect(() => {
+        (async () => {
+            try {
+                setIsLoad(true);
+                const currentUser = await ClientAPI.getCurrentUser();
+                setUser(currentUser);
+            } catch (error) {
+                return;
+            } finally {
+                setIsLoad(false);
+            }
+        })();
+    }, []);
+
     return (
         <>
-            <Modal centered opened={true} onClose={close} withCloseButton={false}>
-                <Modal.Header p={0}>
-                    <Text fw={600} size="lg">
-                        👋 Welcome!
-                    </Text>
-                </Modal.Header>
-                <Modal.Body p={0} mt="md">
-                    <Text>
-                        Before you start communicating with the bot, you need to make up a nickname for yourself:
-                    </Text>
-                    <TextInput mt="md" size="md" placeholder="Your nickname..." />
+            {!isLoad ? (
+                <Modal centered opened={true} onClose={() => {}} withCloseButton={false}>
+                    <Modal.Header p={0}>
+                        <Text fw={600} size="lg">
+                            👋 Welcome!
+                        </Text>
+                    </Modal.Header>
+                    <Modal.Body p={0} mt="md">
+                        <Text>
+                            Before you start communicating with the bot, you need to make up a nickname for yourself:
+                        </Text>
+                        <TextInput
+                            value={nickname}
+                            onChange={(event) => setNickname(event.currentTarget.value)}
+                            mt="md"
+                            size="md"
+                            placeholder="Your nickname..."
+                        />
 
-                    <Group mt="lg" position="right" spacing="sm">
-                        <Button variant="subtle" color="gray" onClick={backToMainPage}>
-                            Cancel
-                        </Button>
+                        <Group mt="lg" position="right" spacing="xs">
+                            <Button variant="subtle" color="gray" opacity={0.7} onClick={backToMainPage}>
+                                Cancel
+                            </Button>
 
-                        <Button onClick={() => props.setIsAuth(true)}>Submit</Button>
-                    </Group>
-                </Modal.Body>
-            </Modal>
+                            <Button disabled={nickname.length === 0} onClick={login}>
+                                Submit
+                            </Button>
+                        </Group>
+                    </Modal.Body>
+                </Modal>
+            ) : null}
         </>
     );
 };

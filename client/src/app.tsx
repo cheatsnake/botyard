@@ -5,6 +5,10 @@ import { Notifications } from "@mantine/notifications";
 import GalleryPage from "./modules/gallery/gallery-page";
 import ChatPage from "./modules/chat/chat-page";
 import { AuthGuard } from "./components/auth-guard";
+import { UserProvider } from "./contexts/user-context";
+import { LoaderProvider } from "./contexts/loader-context";
+import { Loader } from "./components/loader";
+
 const router = createBrowserRouter([
     {
         path: "/",
@@ -36,7 +40,12 @@ function App() {
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
             <MantineProvider theme={{ colorScheme, primaryColor: "green" }} withGlobalStyles withNormalizeCSS>
                 <Notifications limit={3} position="top-center" />
-                <RouterProvider router={router} />
+                <LoaderProvider>
+                    <Loader />
+                    <UserProvider>
+                        <RouterProvider router={router} />
+                    </UserProvider>
+                </LoaderProvider>
             </MantineProvider>
         </ColorSchemeProvider>
     );
