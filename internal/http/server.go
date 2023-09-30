@@ -94,6 +94,10 @@ func (s *Server) InitRoutes() {
 	// Client API -------------------------------------------------------------
 	clientApiV1 := s.App.Group(clientApiV1Prefix)
 
+	clientApiV1.Get("/service-info", func(c *fiber.Ctx) error {
+		return c.JSON(config.Global.Service)
+	})
+
 	clientApiV1.Get("/user", middlewares.UserAuth, userHands.GetCurrentUser)
 	clientApiV1.Post("/user", userHands.CreateUser)
 
