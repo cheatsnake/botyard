@@ -7,15 +7,15 @@ import (
 )
 
 type Message struct {
-	Id        string    `json:"id"`
-	ChatId    string    `json:"chatId"`
-	SenderId  string    `json:"senderId"`
-	Body      string    `json:"body"`
-	FileIds   []string  `json:"fileIds,omitempty"`
-	Timestamp time.Time `json:"timestamp"`
+	Id            string    `json:"id"`
+	ChatId        string    `json:"chatId"`
+	SenderId      string    `json:"senderId"`
+	Body          string    `json:"body"`
+	AttachmentIds []string  `json:"attachmentIds,omitempty"`
+	Timestamp     time.Time `json:"timestamp"`
 }
 
-func NewMessage(chatId, senderId, body string, fileIds []string) (*Message, error) {
+func NewMessage(chatId, senderId, body string, attachmentIds []string) (*Message, error) {
 	if len(chatId) == 0 {
 		return nil, errors.New(errChatIdIsEmpty)
 	}
@@ -29,17 +29,17 @@ func NewMessage(chatId, senderId, body string, fileIds []string) (*Message, erro
 		return nil, err
 	}
 
-	err = validateFileIds(fileIds)
+	err = validateAttachmentIds(attachmentIds)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Message{
-		Id:        ulid.New(),
-		ChatId:    chatId,
-		SenderId:  senderId,
-		Body:      body,
-		FileIds:   fileIds,
-		Timestamp: time.Now(),
+		Id:            ulid.New(),
+		ChatId:        chatId,
+		SenderId:      senderId,
+		Body:          body,
+		AttachmentIds: attachmentIds,
+		Timestamp:     time.Now(),
 	}, nil
 }

@@ -17,8 +17,8 @@ func validateBody(body string) error {
 	return nil
 }
 
-func validateFileIds(fileIds []string) error {
-	if len(fileIds) > config.Global.Limits.Message.MaxAttachedFiles {
+func validateAttachmentIds(ids []string) error {
+	if len(ids) > config.Global.Limits.Message.MaxAttachedFiles {
 		return errors.New(errTooManyFiles(config.Global.Limits.Message.MaxAttachedFiles))
 	}
 

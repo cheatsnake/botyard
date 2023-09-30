@@ -37,7 +37,7 @@ const ChatPage = () => {
                 chatId: Math.random().toFixed(5),
                 senderId: Math.random().toFixed(5),
                 body: value ?? body,
-                files: attachments,
+                attachments: attachments,
                 timestamp: new Date(),
             },
         ]);
@@ -84,7 +84,7 @@ const ChatPage = () => {
                                     type="bot"
                                     senderName={BOT.name}
                                     senderAvatar={BOT.avatar}
-                                    attachments={msg.files || []}
+                                    attachments={msg.attachments || []}
                                 />
                             ) : (
                                 <ChatMessage
@@ -92,7 +92,7 @@ const ChatPage = () => {
                                     message={msg}
                                     type="user"
                                     senderName="You"
-                                    attachments={msg.files || []}
+                                    attachments={msg.attachments || []}
                                 />
                             )
                         )}

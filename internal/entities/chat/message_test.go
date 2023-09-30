@@ -12,10 +12,10 @@ func TestNewMessage(t *testing.T) {
 	testChatId := ulid.New()
 	testSenderId := ulid.New()
 	testBody := "test"
-	testFileIds := []string{ulid.New(), ulid.New()}
+	testAttachmentIds := []string{ulid.New(), ulid.New()}
 
 	t.Run("check id", func(t *testing.T) {
-		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testAttachmentIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
@@ -26,7 +26,7 @@ func TestNewMessage(t *testing.T) {
 	})
 
 	t.Run("check chat id", func(t *testing.T) {
-		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testAttachmentIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
@@ -41,7 +41,7 @@ func TestNewMessage(t *testing.T) {
 
 	t.Run("check empty chat id", func(t *testing.T) {
 		expect := errChatIdIsEmpty
-		testMsg, err := NewMessage("", testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage("", testSenderId, testBody, testAttachmentIds)
 		if err == nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, nil, expect)
 		}
@@ -54,7 +54,7 @@ func TestNewMessage(t *testing.T) {
 	})
 
 	t.Run("check sender id", func(t *testing.T) {
-		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testAttachmentIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
@@ -69,7 +69,7 @@ func TestNewMessage(t *testing.T) {
 
 	t.Run("check empty sender id", func(t *testing.T) {
 		expect := errSenderIdIsEmpty
-		testMsg, err := NewMessage(testChatId, "", testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, "", testBody, testAttachmentIds)
 		if err == nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, nil, expect)
 		}
@@ -82,7 +82,7 @@ func TestNewMessage(t *testing.T) {
 	})
 
 	t.Run("check body", func(t *testing.T) {
-		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testAttachmentIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
@@ -97,7 +97,7 @@ func TestNewMessage(t *testing.T) {
 
 	t.Run("check empty body", func(t *testing.T) {
 		expect := errBodyIsEmpty
-		testMsg, err := NewMessage(testChatId, testSenderId, "", testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, "", testAttachmentIds)
 		if err == nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, nil, expect)
 		}
@@ -116,7 +116,7 @@ func TestNewMessage(t *testing.T) {
 		}
 
 		for _, b := range bodies {
-			testMsg, err := NewMessage(testChatId, testSenderId, b, testFileIds)
+			testMsg, err := NewMessage(testChatId, testSenderId, b, testAttachmentIds)
 			expect := errBodyTooLong(config.Global.Limits.Message.MaxBodyLength)
 			got := err.Error()
 
@@ -127,11 +127,11 @@ func TestNewMessage(t *testing.T) {
 	})
 
 	t.Run("check too many files", func(t *testing.T) {
-		fileIds := [][]string{
+		attachamentIds := [][]string{
 			strings.Split(strings.Repeat("a", config.Global.Limits.Message.MaxAttachedFiles+1), ""),
 			strings.Split(strings.Repeat("a", config.Global.Limits.Message.MaxAttachedFiles*2), ""),
 		}
-		for _, fi := range fileIds {
+		for _, fi := range attachamentIds {
 			testMsg, err := NewMessage(testChatId, testSenderId, testBody, fi)
 			expect := errTooManyFiles(config.Global.Limits.Message.MaxAttachedFiles)
 			got := err.Error()
@@ -143,14 +143,14 @@ func TestNewMessage(t *testing.T) {
 	})
 
 	t.Run("check file ids", func(t *testing.T) {
-		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testAttachmentIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
 
-		for i, fileId := range testFileIds {
+		for i, fileId := range testAttachmentIds {
 			expect := fileId
-			got := testMsg.FileIds[i]
+			got := testMsg.AttachmentIds[i]
 			if got != expect {
 				t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
 			}
@@ -159,7 +159,7 @@ func TestNewMessage(t *testing.T) {
 
 	t.Run("check timestamp", func(t *testing.T) {
 		testTimestamp := time.Now()
-		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testFileIds)
+		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testAttachmentIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}

@@ -29,8 +29,8 @@ func TestGetFiles(t *testing.T) {
 	fs := New(mock.FileStore())
 
 	t.Run("get files", func(t *testing.T) {
-		testFileIds := []string{ulid.New(), ulid.New()}
-		testFiles, err := fs.GetFiles(testFileIds)
+		testAttachmentIds := []string{ulid.New(), ulid.New()}
+		testFiles, err := fs.GetFiles(testAttachmentIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testFiles, err, nil)
 		}

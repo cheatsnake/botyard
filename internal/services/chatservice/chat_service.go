@@ -21,19 +21,19 @@ type CreateBody struct {
 }
 
 type PreparedMessage struct {
-	Id        string       `json:"id"`
-	SenderId  string       `json:"senderId"`
-	Body      string       `json:"body"`
-	Files     []*file.File `json:"files,omitempty"`
-	Timestamp time.Time    `json:"timestamp"`
+	Id          string       `json:"id"`
+	SenderId    string       `json:"senderId"`
+	Body        string       `json:"body"`
+	Attachments []*file.File `json:"attachments,omitempty"`
+	Timestamp   time.Time    `json:"timestamp"`
 }
 
 type MessagesPage struct {
 	ChatId   string             `json:"chatId"`
-	Messages []*PreparedMessage `json:"messages"`
 	Total    int                `json:"total"`
 	Page     int                `json:"page"`
 	Limit    int                `json:"limit"`
+	Messages []*PreparedMessage `json:"messages"`
 }
 
 func New(s storage.ChatStore, fs *fileservice.Service) *Service {
@@ -103,7 +103,7 @@ func (s *Service) CheckChatAccess(chatId, botId, userId string) (*chat.Chat, err
 }
 
 func (ms *Service) AddMessage(body *CreateBody) (*chat.Message, error) {
-	msg, err := chat.NewMessage(body.ChatId, body.SenderId, body.Body, body.FileIds)
+	msg, err := chat.NewMessage(body.ChatId, body.SenderId, body.Body, body.AttachmentIds)
 	if err != nil {
 		return nil, exterr.ErrorBadRequest(err.Error())
 	}
@@ -122,30 +122,30 @@ func (ms *Service) GetMessagesByChat(chatId string, page, limit int) (*MessagesP
 		return nil, err
 	}
 
-	msgsWithFiles := make([]*PreparedMessage, len(msgs))
+	msgsWithAttachments := make([]*PreparedMessage, len(msgs))
 
 	for i, msg := range msgs {
-		var files []*file.File
+		var attachments []*file.File
 
-		if len(msg.FileIds) > 0 {
-			files, err = ms.fileService.GetFiles(msg.FileIds)
+		if len(msg.AttachmentIds) > 0 {
+			attachments, err = ms.fileService.GetFiles(msg.AttachmentIds)
 			if err != nil {
 				return nil, err
 			}
 		}
 
-		msgsWithFiles[i] = &PreparedMessage{
-			Id:        msg.Id,
-			SenderId:  msg.SenderId,
-			Body:      msg.Body,
-			Files:     files,
-			Timestamp: msg.Timestamp,
+		msgsWithAttachments[i] = &PreparedMessage{
+			Id:          msg.Id,
+			SenderId:    msg.SenderId,
+			Body:        msg.Body,
+			Attachments: attachments,
+			Timestamp:   msg.Timestamp,
 		}
 	}
 
 	return &MessagesPage{
 		ChatId:   chatId,
-		Messages: msgsWithFiles,
+		Messages: msgsWithAttachments,
 		Total:    total,
 		Page:     page,
 		Limit:    limit,

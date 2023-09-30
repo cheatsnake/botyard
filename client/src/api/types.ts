@@ -35,14 +35,14 @@ export interface Message {
     senderId: string;
     body: string;
     timestamp: Date;
-    files?: Attachment[];
+    attachments?: Attachment[];
 }
 
 export interface CreateMessageBody {
     chatId: string;
     senderId: string;
     body: string;
-    fileIds?: string[];
+    attachmentIds?: string[];
 }
 
 export interface Attachment {
