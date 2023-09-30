@@ -8,6 +8,7 @@ import { AuthGuard } from "./components/auth-guard";
 import { UserProvider } from "./contexts/user-context";
 import { LoaderProvider } from "./contexts/loader-context";
 import { Loader } from "./components/loader";
+import { StorageProvider } from "./contexts/storage-context";
 
 const router = createBrowserRouter([
     {
@@ -43,7 +44,9 @@ function App() {
                 <LoaderProvider>
                     <Loader />
                     <UserProvider>
-                        <RouterProvider router={router} />
+                        <StorageProvider>
+                            <RouterProvider router={router} />
+                        </StorageProvider>
                     </UserProvider>
                 </LoaderProvider>
             </MantineProvider>

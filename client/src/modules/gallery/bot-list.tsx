@@ -1,14 +1,13 @@
 import { Grid, Avatar, Box, Title, Text } from "@mantine/core";
 import { abbreviateName } from "../../helpers/text";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Bot } from "../../api/types";
+import { useEffect } from "react";
 import { useLoaderContext } from "../../contexts/loader-context";
-import ClientAPI from "../../api/client-api";
 import { errNotify } from "../../helpers/notifications";
+import { useStorageContext } from "../../contexts/storage-context";
 
 export const BotList = () => {
-    const [bots, setBots] = useState<Bot[]>([]);
+    const { bots, loadBots } = useStorageContext();
     const { setIsLoad } = useLoaderContext();
     const navigate = useNavigate();
 
@@ -16,8 +15,7 @@ export const BotList = () => {
         (async () => {
             try {
                 setIsLoad(true);
-                const allBots = await ClientAPI.getAllBots();
-                setBots(allBots);
+                await loadBots();
             } catch (error) {
                 errNotify((error as Error).message);
             } finally {

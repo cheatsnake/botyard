@@ -1,25 +1,27 @@
 import { Container, Flex, ScrollArea } from "@mantine/core";
 import { ChatHeader } from "./chat-header";
 import { useEffect, useRef, useState } from "react";
-import { Bot, Attachment, Message } from "../../api/types";
+import { Bot, Message } from "../../api/types";
 import { ChatInput } from "./chat-input";
 import { EmptyChatLabel } from "./empty-chat-label";
 import { ChatMessage } from "./chat-message";
 import { notifications } from "@mantine/notifications";
 import { debounce } from "../../helpers/debounce";
-
-const BOT: Bot = {
-    id: "52h7GxjB2pd56pJqaDrsq3pZ5I",
-    name: "Bot calculator",
-    description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem ratione neque mollitia labore consequatur officiis at ut molestias eos, saepe dolorem culpa harum veritatis, velit aut qui repudiandae maxime! Iure! Lorem ipsum dolor sit amet consectetur adipisicing elit.\n\nExercitationem ratione neque mollitia labore consequatur officiis at ut molestias eos, saepe dolorem culpa harum veritatis, velit aut qui repudiandae maxime! Iure!",
-    avatar: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIiB3aWR0aD0iMjUwIiBoZWlnaHQ9IjI1MCI+CiAgPHJlY3Qgd2lkdGg9IjI1MCIgaGVpZ2h0PSIyNTAiIGZpbGw9IiMwMDAwMDBGRiI+PC9yZWN0PgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjQ4cHgiIGZpbGw9IiNGRkZGRkZGRiI+Qk9UPC90ZXh0PiAgIAo8L3N2Zz4=",
-};
+import { useLoaderContext } from "../../contexts/loader-context";
+import { errNotify } from "../../helpers/notifications";
+import { useStorageContext } from "../../contexts/storage-context";
+import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../../contexts/user-context";
 
 const ChatPage = () => {
+    const [currentBot, setCurrentBot] = useState<Bot>({ id: "", name: "" });
     const [messages, setMessages] = useState<Message[]>([]);
     const [body, setBody] = useState("");
-    const [attachments, setAttachments] = useState<Attachment[]>([]);
+
+    const navigate = useNavigate();
+    const { setIsLoad } = useLoaderContext();
+    const { loadBots } = useStorageContext();
+    const { user } = useUserContext();
 
     const chatViewport = useRef<HTMLDivElement>(null);
     const pageViewport = useRef<HTMLDivElement>(null);
@@ -35,9 +37,9 @@ const ChatPage = () => {
             {
                 id: Math.random().toFixed(5),
                 chatId: Math.random().toFixed(5),
-                senderId: Math.random().toFixed(5),
+                senderId: user?.id || "",
                 body: value ?? body,
-                attachments: attachments,
+                attachments: [],
                 timestamp: new Date(),
             },
         ]);
@@ -59,16 +61,36 @@ const ChatPage = () => {
     };
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
-    useEffect(() => {
         chatViewport.current?.addEventListener("scroll", debounce(loadOldMessages));
+
+        (async () => {
+            try {
+                setIsLoad(true);
+                const bots = await loadBots();
+
+                const parts = window.location.pathname.split("/");
+                const botId = parts[parts.length - 1];
+                const cb = bots?.find((b) => b.id === botId);
+
+                if (!cb) {
+                    navigate("/");
+                    return;
+                }
+
+                setCurrentBot(cb);
+            } catch (error) {
+                errNotify((error as Error).message);
+            } finally {
+                setIsLoad(false);
+            }
+        })();
     }, []);
+
+    useEffect(scrollToBottom, [messages]);
 
     return (
         <>
-            <ChatHeader bot={BOT} />
+            <ChatHeader bot={currentBot} />
             <Container pos="relative" p={0} pt={54} size="md" h="100vh" ref={pageViewport}>
                 <Flex direction="column" justify="end" w="100%" h="100%">
                     <ScrollArea
@@ -76,26 +98,16 @@ const ChatPage = () => {
                         viewportRef={chatViewport}
                         sx={{ display: "flex", flexDirection: "column-reverse", justifyContent: "end" }}
                     >
-                        {messages.map((msg, i) =>
-                            i % 2 !== 0 ? (
-                                <ChatMessage
-                                    key={msg.id}
-                                    message={msg}
-                                    type="bot"
-                                    senderName={BOT.name}
-                                    senderAvatar={BOT.avatar}
-                                    attachments={msg.attachments || []}
-                                />
-                            ) : (
-                                <ChatMessage
-                                    key={msg.id}
-                                    message={msg}
-                                    type="user"
-                                    senderName="You"
-                                    attachments={msg.attachments || []}
-                                />
-                            )
-                        )}
+                        {messages.map((msg) => (
+                            <ChatMessage
+                                key={msg.id}
+                                message={msg}
+                                type={msg.senderId === user?.id ? "user" : "bot"}
+                                senderName={msg.senderId === user?.id ? user.nickname : currentBot.name}
+                                senderAvatar={msg.senderId === user?.id ? "" : currentBot.avatar}
+                                attachments={msg.attachments || []}
+                            />
+                        ))}
                     </ScrollArea>
 
                     {messages.length === 0 ? <EmptyChatLabel /> : null}

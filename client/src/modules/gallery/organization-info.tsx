@@ -1,19 +1,20 @@
 import { Flex, Avatar, Title, Badge, Text, Divider } from "@mantine/core";
 import { openNewTab } from "../../helpers/link";
 import { abbreviateName } from "../../helpers/text";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import ClientAPI from "../../api/client-api";
 import { useLoaderContext } from "../../contexts/loader-context";
-import { ServiceInfo } from "../../api/types";
 import { errNotify } from "../../helpers/notifications";
+import { useStorageContext } from "../../contexts/storage-context";
 
 export const OrganizationInfo: FC = () => {
-    const [serviceInfo, setServiceInfo] = useState<ServiceInfo>();
+    const { serviceInfo, setServiceInfo } = useStorageContext();
     const { setIsLoad } = useLoaderContext();
 
     useEffect(() => {
         (async () => {
             try {
+                if (serviceInfo) return;
                 setIsLoad(true);
                 const info = await ClientAPI.getServiceInfo();
                 setServiceInfo(info);

@@ -27,6 +27,7 @@ export const ChatMessage: FC<ChatMessageProps> = (props) => {
     return (
         <Box
             p={window.innerWidth > 960 ? "md" : "sm"}
+            mt="sm"
             sx={(theme) => ({
                 borderRadius: window.innerWidth > 960 ? "0.4rem" : "none",
                 background: defineBg(theme),
