@@ -1,4 +1,4 @@
-import { Box, CloseButton, Flex, ScrollArea, Text } from "@mantine/core";
+import { Box, CloseButton, Flex, ScrollArea, Text, Tooltip } from "@mantine/core";
 import { IconFile, IconMusic, IconPhoto, IconVideo } from "@tabler/icons-react";
 import { FC } from "react";
 import { truncString } from "../../helpers/text";
@@ -37,9 +37,11 @@ export const AttachmentList: FC<AttachmentListProps> = (props) => {
                                 onClick={() => props.remover(idx)}
                             />
                             {defineFileIcon(file.type)}
-                            <Text size="sm" sx={{ whiteSpace: "nowrap" }}>
-                                {truncString(file.name, 12)}
-                            </Text>
+                            <Tooltip label={file.name}>
+                                <Text size="sm" sx={{ whiteSpace: "nowrap", cursor: "pointer" }}>
+                                    {truncString(file.name, 12)}
+                                </Text>
+                            </Tooltip>
                         </Flex>
                     ))}
                 </Flex>

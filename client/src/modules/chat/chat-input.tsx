@@ -48,6 +48,11 @@ export const ChatInput: FC<ChatInputProps> = ({ body, setBody, sendMessage }) =>
         }
     };
 
+    const addAttachments = (files: File[]) => {
+        const attached = attachments.map(({ name }) => name);
+        setAttachments([...attachments, ...files.filter(({ name }) => !attached.includes(name))]);
+    };
+
     const removeAttachment = (index: number) => {
         setAttachments([...attachments.slice(0, index), ...attachments.slice(index + 1)]);
     };
@@ -87,7 +92,7 @@ export const ChatInput: FC<ChatInputProps> = ({ body, setBody, sendMessage }) =>
                     </Tooltip>
 
                     <Tooltip openDelay={700} label="Attach files">
-                        <FileButton onChange={setAttachments} multiple>
+                        <FileButton onChange={addAttachments} multiple>
                             {(props) => (
                                 <Tooltip openDelay={700} withArrow label="Attach files">
                                     <ActionIcon {...props} c="gray" size="lg" h="50%">
