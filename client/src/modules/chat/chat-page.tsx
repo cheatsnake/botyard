@@ -1,33 +1,35 @@
-import { Container, Flex, ScrollArea } from "@mantine/core";
+import { Button, Container, Flex, ScrollArea } from "@mantine/core";
 import { ChatHeader } from "./chat-header";
 import { useEffect, useRef, useState } from "react";
 import { Bot, Chat, Message } from "../../api/types";
 import { ChatInput } from "./chat-input";
 import { EmptyChatLabel } from "./empty-chat-label";
 import { ChatMessage } from "./chat-message";
-import { debounce } from "../../helpers/debounce";
 import { useLoaderContext } from "../../contexts/loader-context";
 import { errNotify } from "../../helpers/notifications";
 import { useStorageContext } from "../../contexts/storage-context";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../contexts/user-context";
 import ClientAPI from "../../api/client-api";
+import { debounce } from "../../helpers/debounce";
+import { defineNextPageLimit } from "../../helpers/pagination";
+
+const MAX_PAGE_LIMIT = 20;
 
 const ChatPage = () => {
     const [currentBot, setCurrentBot] = useState<Bot>({ id: "", name: "" });
     const [currentChat, setCurrentChat] = useState<Chat>();
-    const [currentPage, setCurrentPage] = useState(1);
-    const [hasOldMessages, setHasOldMessages] = useState(true);
-    const [isBlockInput, setIsBlockInput] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [attachments, setAttachments] = useState<File[]>([]);
     const [body, setBody] = useState("");
+    const [hasOldMessages, setHasOldMessages] = useState(true);
+    const [hasScroll, setHasScroll] = useState(false);
+    const [isBlockInput, setIsBlockInput] = useState(false);
 
-    const navigate = useNavigate();
     const { isLoad, setIsLoad } = useLoaderContext();
     const { loadBots } = useStorageContext();
     const { user } = useUserContext();
-
+    const navigate = useNavigate();
     const chatViewport = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -58,18 +60,32 @@ const ChatPage = () => {
 
     const loadMessages = async (chatId: string) => {
         try {
-            const msgPage = await ClientAPI.getMessagesByChat(chatId, currentPage);
+            if (!hasOldMessages) return;
 
-            if (msgPage.messages.length > 0) {
-                setMessages([...msgPage.messages, ...messages]);
-                setCurrentPage((cp) => cp + 1);
-                return;
-            }
+            setIsLoad(true);
+            const { page, limit } = defineNextPageLimit(messages.length, MAX_PAGE_LIMIT);
+            const msgPage = await ClientAPI.getMessagesByChat(chatId, page, limit);
 
-            setHasOldMessages(false);
+            if (msgPage.total <= messages.length + msgPage.messages.length) setHasOldMessages(false);
+            if (msgPage.messages.length > 0) setMessages([...msgPage.messages, ...messages]);
         } catch (error) {
             errNotify((error as Error).message);
+        } finally {
+            setIsLoad(false);
         }
+    };
+
+    const loadNewPage = async () => {
+        if (!currentChat?.id) return;
+        const prev = chatViewport.current!.scrollHeight;
+
+        await loadMessages(currentChat.id);
+
+        setTimeout(() => {
+            chatViewport.current!.scrollTo({
+                top: chatViewport.current!.scrollHeight - prev,
+            });
+        }, 1);
     };
 
     useEffect(() => {
@@ -109,14 +125,20 @@ const ChatPage = () => {
                 <Flex direction="column" justify="end" w="100%" h="100%">
                     <ScrollArea
                         pt="sm"
-                        onScrollPositionChange={debounce((pos) => {
-                            if (pos.y < 200 && hasOldMessages && currentChat) {
-                                loadMessages(currentChat.id);
-                            }
-                        })}
+                        onScrollPositionChange={debounce(() => {
+                            if (!hasScroll) setHasScroll(true);
+                        }, 100)}
                         viewportRef={chatViewport}
                         sx={{ display: "flex", flexDirection: "column-reverse", justifyContent: "end" }}
                     >
+                        {hasScroll && hasOldMessages ? (
+                            <Flex py="sm" justify="center">
+                                <Button onClick={loadNewPage} variant="light" size="xs" color="gray">
+                                    Load more
+                                </Button>
+                            </Flex>
+                        ) : null}
+
                         {messages.map((msg) => (
                             <ChatMessage
                                 key={msg.id}

@@ -15,9 +15,9 @@ interface ChatInputProps {
 }
 
 const COMMANDS: BotCommand[] = [
-    { alias: "start", description: "Init a new bot conversation." },
-    { alias: "help", description: "Print some instructions." },
-    { alias: "ping", description: "Send pong message." },
+    // { alias: "start", description: "Init a new bot conversation." },
+    // { alias: "help", description: "Print some instructions." },
+    // { alias: "ping", description: "Send pong message." },
 ];
 
 export const ChatInput: FC<ChatInputProps> = (props) => {
@@ -38,7 +38,7 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
     const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
-            if (body) sendMessage();
+            if (body.length > 0 && !isBlockInput) sendMessage();
         }
 
         if (event.key === "Tab") {

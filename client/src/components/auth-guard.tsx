@@ -30,7 +30,7 @@ const AuthModal = () => {
     const login = async () => {
         try {
             setIsLoad(true);
-            const newUser = await ClientAPI.createUser(nickname);
+            const newUser = await ClientAPI.createUser(nickname.toLowerCase());
             setUser(newUser);
         } catch (error) {
             errNotify((error as Error).message);
