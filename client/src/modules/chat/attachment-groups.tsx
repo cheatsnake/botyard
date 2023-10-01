@@ -7,13 +7,12 @@ import { IconFile } from "@tabler/icons-react";
 import { truncString } from "../../helpers/text";
 import { parseByteSize } from "../../helpers/size";
 import { KNOWN_MIME_TYPES } from "./const";
-import { SERVER_HOST } from "../../consts/url";
 
 interface AttachmentGroupProps {
     attachments: Attachment[];
 }
 
-const getFullFilePath = (path: string) => `${SERVER_HOST}/${path}`;
+const getFullFilePath = (path: string) => `/${path}`;
 
 export const AttachmentGroups: FC<AttachmentGroupProps> = (props) => {
     const images = props.attachments.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "image");
