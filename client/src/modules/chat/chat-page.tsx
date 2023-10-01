@@ -36,35 +36,6 @@ const ChatPage = () => {
         chatViewport.current!.scrollTo({ top: chatViewport.current!.scrollHeight, behavior: "smooth" });
     };
 
-    const sendMessage = async (value?: string) => {
-        try {
-            if (!currentChat || !user?.id) return;
-            setIsBlockInput(true);
-
-            let attachmentIds;
-            if (attachments.length > 0) {
-                const attachs = await ClientAPI.uploadFiles(attachments);
-                attachmentIds = attachs.map(({ id }) => id);
-            }
-
-            const newMsg = await ClientAPI.sendUserMessage({
-                chatId: currentChat.id,
-                senderId: user.id,
-                body: value ?? body,
-                attachmentIds,
-            });
-
-            setMessages((prev) => [...prev, newMsg]);
-            setBody("");
-            setAttachments([]);
-        } catch (error) {
-            errNotify((error as Error).message);
-        } finally {
-            setIsBlockInput(false);
-            setTimeout(scrollToBottom, 1);
-        }
-    };
-
     const loadMessages = async (chatId: string) => {
         try {
             if (!hasOldMessages) return;
@@ -163,10 +134,13 @@ const ChatPage = () => {
                     <ChatInput
                         body={body}
                         attachments={attachments}
+                        currentChat={currentChat}
                         isBlockInput={isBlockInput}
-                        setAttachments={setAttachments}
                         setBody={setBody}
-                        sendMessage={sendMessage}
+                        setMessages={setMessages}
+                        setAttachments={setAttachments}
+                        setIsBlockInput={setIsBlockInput}
+                        scrollToBottom={scrollToBottom}
                     />
                 </Flex>
             </Container>

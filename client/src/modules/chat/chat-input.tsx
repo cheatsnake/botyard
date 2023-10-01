@@ -2,27 +2,73 @@ import { Flex, Textarea, Tooltip, ActionIcon, FileButton, LoadingOverlay, useMan
 import { SpotlightProvider, spotlight } from "@mantine/spotlight";
 import { IconSend, IconLink } from "@tabler/icons-react";
 import { FC } from "react";
-import { BotCommand } from "../../api/types";
+import { BotCommand, Chat, Message } from "../../api/types";
 import { AttachmentList } from "./attachment-list";
+import ClientAPI from "../../api/client-api";
+import { useUserContext } from "../../contexts/user-context";
+import { errNotify } from "../../helpers/notifications";
 
 interface ChatInputProps {
     body: string;
     attachments: File[];
     isBlockInput: boolean;
-    setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
+    currentChat?: Chat;
     setBody: (value: React.SetStateAction<string>) => void;
-    sendMessage: (value?: string) => Promise<void>;
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+    setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
+    setIsBlockInput: React.Dispatch<React.SetStateAction<boolean>>;
+    scrollToBottom: () => void;
 }
 
 const COMMANDS: BotCommand[] = [
-    // { alias: "start", description: "Init a new bot conversation." },
-    // { alias: "help", description: "Print some instructions." },
-    // { alias: "ping", description: "Send pong message." },
+    { alias: "start", description: "Init a new bot conversation." },
+    { alias: "help", description: "Print some instructions." },
+    { alias: "ping", description: "Send pong message." },
 ];
 
 export const ChatInput: FC<ChatInputProps> = (props) => {
-    const { body, attachments, isBlockInput, setAttachments, setBody, sendMessage } = props;
+    const {
+        body,
+        attachments,
+        currentChat,
+        isBlockInput,
+        setBody,
+        setMessages,
+        setAttachments,
+        setIsBlockInput,
+        scrollToBottom,
+    } = props;
     const { colors, colorScheme } = useMantineTheme();
+    const { user } = useUserContext();
+
+    const sendMessage = async (value?: string) => {
+        try {
+            if (!currentChat || !user?.id) return;
+            setIsBlockInput(true);
+
+            let attachmentIds;
+            if (attachments.length > 0) {
+                const attachs = await ClientAPI.uploadFiles(attachments);
+                attachmentIds = attachs.map(({ id }) => id);
+            }
+
+            const newMsg = await ClientAPI.sendUserMessage({
+                chatId: currentChat.id,
+                senderId: user.id,
+                body: value ?? body,
+                attachmentIds,
+            });
+
+            setMessages((prev) => [...prev, newMsg]);
+            setBody("");
+            setAttachments([]);
+        } catch (error) {
+            errNotify((error as Error).message);
+        } finally {
+            setIsBlockInput(false);
+            setTimeout(scrollToBottom, 1);
+        }
+    };
 
     const commandTrigger = (alias: string) => {
         sendMessage("/" + alias);
