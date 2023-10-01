@@ -103,8 +103,10 @@ class ClientAPI {
         return chats;
     }
 
-    async getMessagesByChat(chatId: string, page = 1, limit = 20) {
-        const resp = await fetch(this.prefix + `/chat/${chatId}/messages?${queryParams({ page, limit })}`);
+    async getMessagesByChat(chatId: string, senderId = "", page = 1, limit = 20) {
+        const resp = await fetch(
+            this.prefix + `/chat/${chatId}/messages?${queryParams({ sender_id: senderId, page, limit })}`
+        );
 
         if (!resp.ok) {
             const body: ResponseErr = await resp.json();
