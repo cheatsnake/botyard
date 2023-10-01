@@ -94,6 +94,7 @@ const ImageWithPlaceholder: FC<{ path: string }> = ({ path }) => {
                 onLoad={() => setIsLoad(false)}
                 src={path}
                 height={300}
+                fit="contain"
                 onClick={() => openNewTab(path)}
                 radius="sm"
             />

@@ -11,7 +11,7 @@ interface ChatInputProps {
     isBlockInput: boolean;
     setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
     setBody: (value: React.SetStateAction<string>) => void;
-    sendMessage: (value?: string) => void;
+    sendMessage: (value?: string) => Promise<void>;
 }
 
 const COMMANDS: BotCommand[] = [
@@ -38,7 +38,7 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
     const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
-            if (body.length > 0 && !isBlockInput) sendMessage();
+            if ((body.length > 0 || attachments.length > 0) && !isBlockInput) sendMessage();
         }
 
         if (event.key === "Tab") {
@@ -95,7 +95,12 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
                 />
                 <Flex direction="column" gap="5px" h="100%">
                     <Tooltip openDelay={700} withArrow label="Send message">
-                        <ActionIcon disabled={body.length === 0} size="lg" h="50%" onClick={() => sendMessage()}>
+                        <ActionIcon
+                            disabled={body.length === 0 && attachments.length === 0}
+                            size="lg"
+                            h="50%"
+                            onClick={() => sendMessage()}
+                        >
                             <IconSend />
                         </ActionIcon>
                     </Tooltip>

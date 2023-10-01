@@ -41,15 +41,22 @@ const ChatPage = () => {
             if (!currentChat || !user?.id) return;
             setIsBlockInput(true);
 
+            let attachmentIds;
+            if (attachments.length > 0) {
+                const attachs = await ClientAPI.uploadFiles(attachments);
+                attachmentIds = attachs.map(({ id }) => id);
+            }
+
             const newMsg = await ClientAPI.sendUserMessage({
                 chatId: currentChat.id,
                 senderId: user.id,
                 body: value ?? body,
-                attachmentIds: [],
+                attachmentIds,
             });
 
             setMessages((prev) => [...prev, newMsg]);
             setBody("");
+            setAttachments([]);
         } catch (error) {
             errNotify((error as Error).message);
         } finally {
