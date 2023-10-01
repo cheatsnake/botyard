@@ -3,7 +3,7 @@ package config
 const (
 	configFilename     = "botyard.config.json"
 	defaultPort        = "4000"
-	defaultFilesFolder = "stock"
+	defaultFilesFolder = "static"
 )
 
 var (

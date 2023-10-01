@@ -1,16 +1,19 @@
 import { Carousel } from "@mantine/carousel";
 import { Attachment } from "../../api/types";
 import { FC, useState } from "react";
-import { Box, Flex, Image, Loader, Paper, Space, Text } from "@mantine/core";
+import { Box, Flex, Image, Loader, Paper, Space, Text, Tooltip } from "@mantine/core";
 import { openNewTab } from "../../helpers/link";
 import { IconFile } from "@tabler/icons-react";
 import { truncString } from "../../helpers/text";
 import { parseByteSize } from "../../helpers/size";
 import { KNOWN_MIME_TYPES } from "./const";
+import { SERVER_HOST } from "../../consts/url";
 
 interface AttachmentGroupProps {
     attachments: Attachment[];
 }
+
+const getFullFilePath = (path: string) => `${SERVER_HOST}/${path}`;
 
 export const AttachmentGroups: FC<AttachmentGroupProps> = (props) => {
     const images = props.attachments.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "image");
@@ -22,7 +25,7 @@ export const AttachmentGroups: FC<AttachmentGroupProps> = (props) => {
         <>
             {images.length > 0 ? (
                 <>
-                    <Space h="xl" />
+                    <Space h="md" />
                     <ImageGroup
                         attachments={props.attachments.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "image")}
                     />
@@ -31,7 +34,7 @@ export const AttachmentGroups: FC<AttachmentGroupProps> = (props) => {
 
             {videos.length > 0 ? (
                 <>
-                    <Space h="xl" />
+                    <Space h="md" />
                     <VideoGroup
                         attachments={props.attachments.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "video")}
                     />
@@ -40,7 +43,7 @@ export const AttachmentGroups: FC<AttachmentGroupProps> = (props) => {
 
             {audios.length > 0 ? (
                 <>
-                    <Space h="xl" />
+                    <Space h="md" />
                     <AudioGroup
                         attachments={props.attachments.filter((file) => KNOWN_MIME_TYPES[file.mimeType] === "audio")}
                     />
@@ -49,7 +52,7 @@ export const AttachmentGroups: FC<AttachmentGroupProps> = (props) => {
 
             {files.length > 0 ? (
                 <>
-                    <Space h="xl" />
+                    <Space h="md" />
                     <FileGroup attachments={props.attachments.filter((file) => !KNOWN_MIME_TYPES[file.mimeType])} />
                 </>
             ) : null}
@@ -75,7 +78,7 @@ const ImageGroup: FC<AttachmentGroupProps> = (props) => {
         >
             {props.attachments.map((img) => (
                 <Carousel.Slide key={img.id}>
-                    <ImageWithPlaceholder path={img.path} />
+                    <ImageWithPlaceholder path={getFullFilePath(img.path)} />
                 </Carousel.Slide>
             ))}
         </Carousel>
@@ -108,7 +111,7 @@ const VideoGroup: FC<AttachmentGroupProps> = (props) => {
     return (
         <>
             {props.attachments.map((video) => (
-                <video width={"100%"} controls src={video.path} style={{ borderRadius: "0.3rem" }} />
+                <video width={"100%"} controls src={getFullFilePath(video.path)} style={{ borderRadius: "0.3rem" }} />
             ))}
         </>
     );
@@ -118,7 +121,7 @@ const AudioGroup: FC<AttachmentGroupProps> = (props) => {
     return (
         <Flex wrap="wrap" gap="sm">
             {props.attachments.map((audio) => (
-                <audio key={audio.id} src={audio.path} controls />
+                <audio key={audio.id} src={getFullFilePath(audio.path)} controls />
             ))}
         </Flex>
     );
@@ -142,13 +145,15 @@ const FileGroup: FC<AttachmentGroupProps> = (props) => {
                 >
                     <IconFile color="gray" size={40} />
                     <Box>
-                        <Text
-                            component="a"
-                            href={file.path}
-                            sx={{ cursor: "pointer", ":hover": { textDecoration: "underline" } }}
-                        >
-                            {truncString(file.name, 20)}
-                        </Text>
+                        <Tooltip label={file.name}>
+                            <Text
+                                component="a"
+                                href={getFullFilePath(file.path)}
+                                sx={{ cursor: "pointer", ":hover": { textDecoration: "underline" } }}
+                            >
+                                {truncString(file.name, 20)}
+                            </Text>
+                        </Tooltip>
                         <Text size="xs" opacity={0.7}>
                             {parseByteSize(file.size)}
                         </Text>
