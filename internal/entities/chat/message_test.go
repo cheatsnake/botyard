@@ -95,20 +95,6 @@ func TestNewMessage(t *testing.T) {
 		}
 	})
 
-	t.Run("check empty body", func(t *testing.T) {
-		expect := errBodyIsEmpty
-		testMsg, err := NewMessage(testChatId, testSenderId, "", testAttachmentIds)
-		if err == nil {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, nil, expect)
-		}
-
-		got := err.Error()
-
-		if got != expect {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
-		}
-	})
-
 	t.Run("check too long body", func(t *testing.T) {
 		bodies := []string{
 			strings.Repeat("a", config.Global.Limits.Message.MaxBodyLength+1),

@@ -6,10 +6,6 @@ import (
 )
 
 func validateBody(body string) error {
-	if len(body) < 1 {
-		return errors.New(errBodyIsEmpty)
-	}
-
 	if len(body) > config.Global.Limits.Message.MaxBodyLength {
 		return errors.New(errBodyTooLong(config.Global.Limits.Message.MaxBodyLength))
 	}

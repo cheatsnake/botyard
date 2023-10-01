@@ -14,5 +14,4 @@ var (
 	errUserIdIsEmpty   = "user id must not be empty"
 	errBotIdIsEmpty    = "bot id must not be empty"
 	errSenderIdIsEmpty = "message sender id must not be empty"
-	errBodyIsEmpty     = "message body must not be empty"
 )
