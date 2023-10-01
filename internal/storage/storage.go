@@ -41,7 +41,7 @@ type ChatStore interface {
 	DeleteChat(id string) error
 
 	AddMessage(msg *chat.Message) error
-	GetMessagesByChat(chatId string, page, limit int) (int, []*chat.Message, error)
+	GetMessagesByChat(chatId, senderId string, page, limit int) (int, []*chat.Message, error)
 	DeleteMessagesByChat(chatId string) error
 }
 

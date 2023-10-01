@@ -153,15 +153,16 @@ func (h *Handlers) GetMessagesByChat(c *fiber.Ctx) error {
 	}
 
 	id := c.Params("id", "")
-	page := c.QueryInt("page", 1)
-	limit := c.QueryInt("limit", 20)
-
 	_, err := h.service.CheckChatAccess(id, botId, userId)
 	if err != nil {
 		return err
 	}
 
-	result, err := h.service.GetMessagesByChat(id, page, limit)
+	page := c.QueryInt("page", 1)
+	limit := c.QueryInt("limit", 20)
+	senderId := c.Query("sender_id", "")
+
+	result, err := h.service.GetMessagesByChat(id, senderId, page, limit)
 	if err != nil {
 		return err
 	}

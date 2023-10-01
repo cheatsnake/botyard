@@ -94,7 +94,7 @@ func TestGetMessagesByChat(t *testing.T) {
 	cs := New(mock.ChatStore(), fs)
 
 	t.Run("get messages by chat", func(t *testing.T) {
-		_, err := cs.GetMessagesByChat(ulid.New(), 1, 1)
+		_, err := cs.GetMessagesByChat(ulid.New(), "", 1, 1)
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
