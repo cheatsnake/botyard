@@ -57,8 +57,8 @@ func TestCheckChatAccess(t *testing.T) {
 
 	t.Run("check chat access", func(t *testing.T) {
 		_, err := cs.CheckChatAccess(ulid.New(), "", "")
-		if err != nil {
-			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
+		if err == nil {
+			t.Errorf("got: %v,\nexpect: %v\n", err, "error")
 		}
 	})
 }

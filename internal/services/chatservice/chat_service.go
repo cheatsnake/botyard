@@ -106,10 +106,15 @@ func (s *Service) CheckChatAccess(chatId, botId, userId string) (*chat.Chat, err
 	return chat, nil
 }
 
-func (ms *Service) AddMessage(body *CreateBody) (*chat.Message, error) {
+func (ms *Service) AddMessage(body *CreateBody) (*PreparedMessage, error) {
 	msg, err := chat.NewMessage(body.ChatId, body.SenderId, body.Body, body.AttachmentIds)
 	if err != nil {
 		return nil, exterr.ErrorBadRequest(err.Error())
+	}
+
+	files, err := ms.fileService.GetFiles(body.AttachmentIds)
+	if err != nil {
+		return nil, err
 	}
 
 	err = ms.store.AddMessage(msg)
@@ -117,7 +122,13 @@ func (ms *Service) AddMessage(body *CreateBody) (*chat.Message, error) {
 		return nil, err
 	}
 
-	return msg, nil
+	return &PreparedMessage{
+		Id:          msg.Id,
+		SenderId:    msg.SenderId,
+		Body:        msg.Body,
+		Attachments: files,
+		Timestamp:   msg.Timestamp,
+	}, nil
 }
 
 func (ms *Service) GetMessagesByChat(chatId string, page, limit int) (*MessagesPage, error) {
