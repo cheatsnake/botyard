@@ -68,9 +68,11 @@ func (s *Storage) GetMessagesByChat(chatId string, page, limit int) (int, []*cha
 		return 0, nil, nil
 	}
 
-	chatMsgs := extlib.SliceFilter(extlib.SliceReverse(s.messages), 10, func(m *chat.Message) bool {
+	chatMsgs := extlib.SliceFilterBackwards(s.messages, 10, func(m *chat.Message) bool {
 		return m.ChatId == chatId
 	})
+
+	chatMsgs = extlib.SliceReverse(chatMsgs)
 
 	if page == 1 && limit >= len(chatMsgs) {
 		msgs := make([]chat.Message, len(chatMsgs))
@@ -81,7 +83,7 @@ func (s *Storage) GetMessagesByChat(chatId string, page, limit int) (int, []*cha
 		return len(chatMsgs), chatMsgs, nil
 	}
 
-	return len(chatMsgs), extlib.SliceReverse(extlib.SlicePaginate(chatMsgs, page, limit)), nil
+	return len(chatMsgs), extlib.SlicePaginate(chatMsgs, page, limit), nil
 }
 
 func (s *Storage) DeleteMessagesByChat(chatId string) error {

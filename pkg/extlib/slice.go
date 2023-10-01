@@ -12,6 +12,19 @@ func SliceFilter[T any](slice []T, cap int, predicate func(T) bool) []T {
 	return filteredSlice
 }
 
+func SliceFilterBackwards[T any](slice []T, cap int, predicate func(T) bool) []T {
+	filteredSlice := make([]T, 0, cap)
+
+	last := len(slice) - 1
+	for i := range slice {
+		if predicate(slice[last-i]) {
+			filteredSlice = append(filteredSlice, slice[last-i])
+		}
+	}
+
+	return filteredSlice
+}
+
 func SliceReverse[T any](slice []T) []T {
 	length := len(slice)
 	reversed := make([]T, length)
@@ -24,15 +37,24 @@ func SliceReverse[T any](slice []T) []T {
 }
 
 func SlicePaginate[T any](slice []T, page, limit int) []T {
-	startIndex := (page - 1) * limit
-	endIndex := page * limit
+	totalItems := len(slice)
+	startIndex := totalItems - (page * limit)
+	endIndex := totalItems - ((page - 1) * limit)
 
-	if startIndex >= len(slice) {
-		return nil
+	if startIndex < 0 {
+		startIndex = 0
 	}
 
-	if endIndex > len(slice) {
-		endIndex = len(slice)
+	if endIndex > totalItems {
+		endIndex = totalItems
+	}
+
+	if startIndex > totalItems {
+		startIndex = totalItems
+	}
+
+	if endIndex < 0 {
+		endIndex = 0
 	}
 
 	returnSlice := make([]T, endIndex-startIndex)
