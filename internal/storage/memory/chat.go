@@ -63,18 +63,24 @@ func (s *Storage) AddMessage(msg *chat.Message) error {
 	return nil
 }
 
-func (s *Storage) GetMessagesByChat(chatId, senderId string, page, limit int) (int, []*chat.Message, error) {
+func (s *Storage) GetMessagesByChat(chatId, senderId string, page, limit int, since int64) (int, []*chat.Message, error) {
 	if page <= 0 || limit <= 0 {
 		return 0, nil, nil
 	}
 
 	chatMsgs := extlib.SliceFilterBackwards(s.messages, 10, func(m *chat.Message) bool {
 		isSenderSuits := true
+		isTimeSuits := true
+
 		if len(senderId) > 0 {
 			isSenderSuits = m.SenderId == senderId
 		}
 
-		return m.ChatId == chatId && isSenderSuits
+		if since != 0 {
+			isTimeSuits = m.Timestamp >= since
+		}
+
+		return m.ChatId == chatId && isSenderSuits && isTimeSuits
 	})
 
 	chatMsgs = extlib.SliceReverse(chatMsgs)

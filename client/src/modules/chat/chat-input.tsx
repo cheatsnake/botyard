@@ -62,8 +62,7 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
             setBody("");
             setAttachments([]);
 
-            const startDate = new Date();
-            await botPooling(startDate);
+            await botPooling(newMsg.timestamp);
         } catch (error) {
             errNotify((error as Error).message);
         } finally {
@@ -76,7 +75,7 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
         sendMessage("/" + alias);
     };
 
-    const botPooling = async (start: Date) => {
+    const botPooling = async (since: number) => {
         try {
             let isFinish = false;
             let poolsCount = 0;
@@ -84,9 +83,15 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
             await delay(START_POOLING_DELAY);
 
             while (!isFinish && poolsCount < MAX_POOLS) {
-                const msgPage = await ClientAPI.getMessagesByChat(currentChat?.id as string, currentBot.id, 1, 1);
+                const msgPage = await ClientAPI.getMessagesByChat(
+                    currentChat?.id as string,
+                    currentBot.id,
+                    1,
+                    1,
+                    since
+                );
 
-                if (msgPage.messages.length > 0 && new Date(msgPage.messages[0].timestamp) > start) {
+                if (msgPage.messages.length > 0) {
                     setMessages((prev) => [...prev, msgPage.messages[0]]);
                     setTimeout(scrollToBottom, 1);
                     return;
