@@ -2,17 +2,19 @@ import { Flex, Textarea, Tooltip, ActionIcon, FileButton, LoadingOverlay, useMan
 import { SpotlightProvider, spotlight } from "@mantine/spotlight";
 import { IconSend, IconLink } from "@tabler/icons-react";
 import { FC } from "react";
-import { BotCommand, Chat, Message } from "../../api/types";
+import { Bot, BotCommand, Chat, Message } from "../../api/types";
 import { AttachmentList } from "./attachment-list";
 import ClientAPI from "../../api/client-api";
 import { useUserContext } from "../../contexts/user-context";
-import { errNotify } from "../../helpers/notifications";
+import { errNotify, warnNotify } from "../../helpers/notifications";
+import { delay } from "../../helpers/async";
 
 interface ChatInputProps {
     body: string;
     attachments: File[];
     isBlockInput: boolean;
     currentChat?: Chat;
+    currentBot: Bot;
     setBody: (value: React.SetStateAction<string>) => void;
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
     setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
@@ -26,18 +28,14 @@ const COMMANDS: BotCommand[] = [
     { alias: "ping", description: "Send pong message." },
 ];
 
+const START_POOLING_DELAY = 500;
+const POOLING_DELAY = 1000;
+const MAX_POOLS = 7;
+
 export const ChatInput: FC<ChatInputProps> = (props) => {
-    const {
-        body,
-        attachments,
-        currentChat,
-        isBlockInput,
-        setBody,
-        setMessages,
-        setAttachments,
-        setIsBlockInput,
-        scrollToBottom,
-    } = props;
+    const { body, attachments, currentChat, currentBot, isBlockInput } = props;
+    const { setBody, setMessages, setAttachments, setIsBlockInput, scrollToBottom } = props;
+
     const { colors, colorScheme } = useMantineTheme();
     const { user } = useUserContext();
 
@@ -60,18 +58,52 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
             });
 
             setMessages((prev) => [...prev, newMsg]);
+            setTimeout(scrollToBottom, 1);
             setBody("");
             setAttachments([]);
+
+            const startDate = new Date();
+            await botPooling(startDate);
         } catch (error) {
             errNotify((error as Error).message);
         } finally {
             setIsBlockInput(false);
-            setTimeout(scrollToBottom, 1);
         }
     };
 
     const commandTrigger = (alias: string) => {
+        if (isBlockInput) return;
         sendMessage("/" + alias);
+    };
+
+    const botPooling = async (start: Date) => {
+        try {
+            let isFinish = false;
+            let poolsCount = 0;
+
+            await delay(START_POOLING_DELAY);
+
+            while (!isFinish && poolsCount < MAX_POOLS) {
+                const msgPage = await ClientAPI.getMessagesByChat(currentChat?.id as string, currentBot.id, 1, 1);
+
+                if (msgPage.messages.length > 0 && new Date(msgPage.messages[0].timestamp) > start) {
+                    setMessages((prev) => [...prev, msgPage.messages[0]]);
+                    setTimeout(scrollToBottom, 1);
+                    return;
+                }
+
+                poolsCount++;
+
+                if (poolsCount === MAX_POOLS) {
+                    warnNotify("Perhaps the bot is currently offline. Try again later.", "Bot is not responding");
+                    return;
+                }
+
+                await delay(POOLING_DELAY);
+            }
+        } catch (error) {
+            throw error;
+        }
     };
 
     const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {

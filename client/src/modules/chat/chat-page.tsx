@@ -42,7 +42,7 @@ const ChatPage = () => {
 
             setIsLoad(true);
             const { page, limit } = defineNextPageLimit(messages.length, MAX_PAGE_LIMIT);
-            const msgPage = await ClientAPI.getMessagesByChat(chatId, page, limit);
+            const msgPage = await ClientAPI.getMessagesByChat(chatId, "", page, limit);
 
             if (msgPage.total <= messages.length + msgPage.messages.length) setHasOldMessages(false);
             if (msgPage.messages.length > 0) setMessages([...msgPage.messages, ...messages]);
@@ -135,6 +135,7 @@ const ChatPage = () => {
                         body={body}
                         attachments={attachments}
                         currentChat={currentChat}
+                        currentBot={currentBot}
                         isBlockInput={isBlockInput}
                         setBody={setBody}
                         setMessages={setMessages}
