@@ -44,7 +44,7 @@ export interface Message {
     chatId: string;
     senderId: string;
     body: string;
-    timestamp: Date;
+    timestamp: number;
     attachments?: Attachment[];
 }
 

@@ -7,12 +7,12 @@ import (
 )
 
 type Message struct {
-	Id            string    `json:"id"`
-	ChatId        string    `json:"chatId"`
-	SenderId      string    `json:"senderId"`
-	Body          string    `json:"body"`
-	AttachmentIds []string  `json:"attachmentIds,omitempty"`
-	Timestamp     time.Time `json:"timestamp"`
+	Id            string   `json:"id"`
+	ChatId        string   `json:"chatId"`
+	SenderId      string   `json:"senderId"`
+	Body          string   `json:"body"`
+	AttachmentIds []string `json:"attachmentIds,omitempty"`
+	Timestamp     int64    `json:"timestamp"`
 }
 
 func NewMessage(chatId, senderId, body string, attachmentIds []string) (*Message, error) {
@@ -40,6 +40,6 @@ func NewMessage(chatId, senderId, body string, attachmentIds []string) (*Message
 		SenderId:      senderId,
 		Body:          body,
 		AttachmentIds: attachmentIds,
-		Timestamp:     time.Now(),
+		Timestamp:     time.Now().UnixMilli(),
 	}, nil
 }

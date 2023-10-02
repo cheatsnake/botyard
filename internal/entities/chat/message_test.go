@@ -144,17 +144,14 @@ func TestNewMessage(t *testing.T) {
 	})
 
 	t.Run("check timestamp", func(t *testing.T) {
-		testTimestamp := time.Now()
+		testTimestamp := time.Now().UnixMilli()
 		testMsg, err := NewMessage(testChatId, testSenderId, testBody, testAttachmentIds)
 		if err != nil {
 			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, err.Error(), nil)
 		}
 
-		expect := true
-		got := testTimestamp.Before(testMsg.Timestamp)
-
-		if !got {
-			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, got, expect)
+		if testTimestamp > testMsg.Timestamp {
+			t.Errorf("%#v\ngot: %v,\nexpect: %v\n", testMsg, testMsg.Timestamp, "fresh time")
 		}
 	})
 }

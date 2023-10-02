@@ -6,7 +6,6 @@ import (
 	"botyard/internal/services/fileservice"
 	"botyard/internal/storage"
 	"botyard/pkg/exterr"
-	"time"
 )
 
 type Service struct {
@@ -25,7 +24,7 @@ type PreparedMessage struct {
 	SenderId    string       `json:"senderId"`
 	Body        string       `json:"body"`
 	Attachments []*file.File `json:"attachments,omitempty"`
-	Timestamp   time.Time    `json:"timestamp"`
+	Timestamp   int64        `json:"timestamp"`
 }
 
 type MessagesPage struct {
