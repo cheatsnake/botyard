@@ -109,7 +109,9 @@ func (bh *Handlers) GetCommands(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(cmds)
+	return c.JSON(fiber.Map{
+		"commands": cmds,
+	})
 }
 
 func (bh *Handlers) RemoveCommand(c *fiber.Ctx) error {

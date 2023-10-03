@@ -72,7 +72,7 @@ func (s *Storage) SaveCommand(newCmd *bot.Command) error {
 }
 
 func (s *Storage) GetCommands(botId string) ([]*bot.Command, error) {
-	var cmds []*bot.Command
+	cmds := []*bot.Command{}
 
 	for _, cmd := range s.botCommands {
 		if cmd.BotId == botId {
