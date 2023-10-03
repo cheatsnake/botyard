@@ -8,7 +8,7 @@ import { ChatMessage } from "./chat-message";
 import { useLoaderContext } from "../../contexts/loader-context";
 import { errNotify } from "../../helpers/notifications";
 import { useStorageContext } from "../../contexts/storage-context";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useUserContext } from "../../contexts/user-context";
 import ClientAPI from "../../api/client-api";
 import { debounce } from "../../helpers/debounce";
@@ -26,6 +26,7 @@ const ChatPage = () => {
     const [hasScroll, setHasScroll] = useState(false);
     const [isBlockInput, setIsBlockInput] = useState(false);
 
+    const { id: botId } = useParams();
     const { isLoad, setIsLoad } = useLoaderContext();
     const { loadBots } = useStorageContext();
     const { user } = useUserContext();
@@ -72,8 +73,6 @@ const ChatPage = () => {
                 setIsLoad(true);
 
                 const bots = await loadBots();
-                const parts = window.location.pathname.split("/");
-                const botId = parts[parts.length - 1];
                 const cb = bots?.find((b) => b.id === botId);
 
                 if (!cb) return navigate("/");

@@ -1,13 +1,14 @@
 import { Flex, Textarea, Tooltip, ActionIcon, FileButton, LoadingOverlay, useMantineTheme } from "@mantine/core";
-import { SpotlightProvider, spotlight } from "@mantine/spotlight";
+import { spotlight } from "@mantine/spotlight";
 import { IconSend, IconLink } from "@tabler/icons-react";
 import { FC } from "react";
-import { Bot, BotCommand, Chat, Message } from "../../api/types";
+import { Bot, Chat, Message } from "../../api/types";
 import { AttachmentList } from "./attachment-list";
 import ClientAPI from "../../api/client-api";
 import { useUserContext } from "../../contexts/user-context";
 import { errNotify, warnNotify } from "../../helpers/notifications";
 import { delay } from "../../helpers/async";
+import { CommandPicker } from "./command-picker";
 
 interface ChatInputProps {
     body: string;
@@ -21,12 +22,6 @@ interface ChatInputProps {
     setIsBlockInput: React.Dispatch<React.SetStateAction<boolean>>;
     scrollToBottom: () => void;
 }
-
-const COMMANDS: BotCommand[] = [
-    { alias: "start", description: "Init a new bot conversation." },
-    { alias: "help", description: "Print some instructions." },
-    { alias: "ping", description: "Send pong message." },
-];
 
 const START_POOLING_DELAY = 500;
 const POOLING_DELAY = 1000;
@@ -145,18 +140,7 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
     };
 
     return (
-        <SpotlightProvider
-            centered
-            actions={COMMANDS.map((cmd) => ({
-                title: cmd.alias,
-                description: cmd.description,
-                onTrigger: () => commandTrigger(cmd.alias),
-            }))}
-            nothingFoundMessage="Command not found..."
-            searchPlaceholder="Command..."
-            overlayProps={{ blur: "none" }}
-            limit={100}
-        >
+        <CommandPicker commandTrigger={commandTrigger}>
             {attachments.length > 0 ? <AttachmentList files={attachments} remover={removeAttachment} /> : null}
 
             <Flex align="center" gap="sm" p="sm" pt="lg" pos="relative">
@@ -201,6 +185,6 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
                     </Tooltip>
                 </Flex>
             </Flex>
-        </SpotlightProvider>
+        </CommandPicker>
     );
 };

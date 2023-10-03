@@ -90,8 +90,8 @@ class ClientAPI {
             throw new Error(body.message);
         }
 
-        const cmds: BotCommand[] = await resp.json();
-        return cmds;
+        const { commands }: { commands: BotCommand[] } = await resp.json();
+        return commands;
     }
 
     async getChatsByBot(botId: string) {
