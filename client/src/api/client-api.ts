@@ -1,3 +1,4 @@
+import { API_HOST } from "../consts";
 import { jsonRequestParams, queryParams } from "./helpers";
 import {
     Bot,
@@ -13,15 +14,17 @@ import {
     MessagePage,
 } from "./types";
 
-const CLIENT_API_PREFIX = "/v1/client-api";
+const API_PREFIX = "/v1/client-api";
 
 class ClientAPI {
-    constructor(private prefix: string) {
-        this.prefix = prefix;
+    private url: string;
+
+    constructor(host: string, prefix: string) {
+        this.url = host + prefix;
     }
 
     async getServiceInfo() {
-        const resp = await fetch(this.prefix + "/service-info");
+        const resp = await fetch(this.url + "/service-info");
 
         if (!resp.ok) {
             const body: ResponseErr = await resp.json();
@@ -33,7 +36,7 @@ class ClientAPI {
     }
 
     async getCurrentUser() {
-        const resp = await fetch(this.prefix + "/user");
+        const resp = await fetch(this.url + "/user");
 
         if (!resp.ok) {
             return;
@@ -44,7 +47,7 @@ class ClientAPI {
     }
 
     async createUser(nickname: string) {
-        const resp = await fetch(this.prefix + "/user", jsonRequestParams("POST", { nickname }));
+        const resp = await fetch(this.url + "/user", jsonRequestParams("POST", { nickname }));
 
         if (!resp.ok) {
             const body: ResponseErr = await resp.json();
@@ -56,7 +59,7 @@ class ClientAPI {
     }
 
     async getAllBots() {
-        const resp = await fetch(this.prefix + "/bots");
+        const resp = await fetch(this.url + "/bots");
 
         if (!resp.ok) {
             const body: ResponseErr = await resp.json();
@@ -68,7 +71,7 @@ class ClientAPI {
     }
 
     async getBot(id: string) {
-        const resp = await fetch(this.prefix + `/bot/${id}`);
+        const resp = await fetch(this.url + `/bot/${id}`);
 
         if (!resp.ok) {
             const body: ResponseErr = await resp.json();
@@ -80,7 +83,7 @@ class ClientAPI {
     }
 
     async getBotCommands(botId: string) {
-        const resp = await fetch(this.prefix + `/bot/${botId}/commands`);
+        const resp = await fetch(this.url + `/bot/${botId}/commands`);
 
         if (!resp.ok) {
             const body: ResponseErr = await resp.json();
@@ -92,7 +95,7 @@ class ClientAPI {
     }
 
     async getChatsByBot(botId: string) {
-        const resp = await fetch(this.prefix + `/chats?${queryParams({ bot_id: botId })}`);
+        const resp = await fetch(this.url + `/chats?${queryParams({ bot_id: botId })}`);
 
         if (!resp.ok) {
             const body: ResponseErr = await resp.json();
@@ -105,7 +108,7 @@ class ClientAPI {
 
     async getMessagesByChat(chatId: string, senderId = "", page = 1, limit = 20, since?: number) {
         const resp = await fetch(
-            this.prefix + `/chat/${chatId}/messages?${queryParams({ sender_id: senderId, page, limit, since })}`
+            this.url + `/chat/${chatId}/messages?${queryParams({ sender_id: senderId, page, limit, since })}`
         );
 
         if (!resp.ok) {
@@ -118,7 +121,7 @@ class ClientAPI {
     }
 
     async createChat(botId: string) {
-        const resp = await fetch(this.prefix + "/chat", jsonRequestParams("POST", { botId }));
+        const resp = await fetch(this.url + "/chat", jsonRequestParams("POST", { botId }));
 
         if (!resp.ok) {
             const body: ResponseErr = await resp.json();
@@ -130,7 +133,7 @@ class ClientAPI {
     }
 
     async sendUserMessage(body: CreateMessageBody) {
-        const resp = await fetch(this.prefix + "/chat/message", jsonRequestParams("POST", { ...body }));
+        const resp = await fetch(this.url + "/chat/message", jsonRequestParams("POST", { ...body }));
 
         if (!resp.ok) {
             const body: ResponseErr = await resp.json();
@@ -142,7 +145,7 @@ class ClientAPI {
     }
 
     async deleteChat(id: string) {
-        const resp = await fetch(this.prefix + `/chat/${id}`, { method: "DELETE" });
+        const resp = await fetch(this.url + `/chat/${id}`, { method: "DELETE" });
 
         if (!resp.ok) {
             const body: ResponseErr = await resp.json();
@@ -163,7 +166,7 @@ class ClientAPI {
             formData.append("file", file);
         }
 
-        const resp = await fetch(this.prefix + "/files", { method: "POST", body: formData });
+        const resp = await fetch(this.url + "/files", { method: "POST", body: formData });
         if (!resp.ok) {
             const body: ResponseErr = await resp.json();
             throw new Error(body.message);
@@ -174,4 +177,4 @@ class ClientAPI {
     }
 }
 
-export default new ClientAPI(CLIENT_API_PREFIX);
+export default new ClientAPI(API_HOST, API_PREFIX);
