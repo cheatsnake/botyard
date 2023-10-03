@@ -18,12 +18,8 @@ type CreateBody struct {
 }
 
 type CreateResult struct {
-	Bot *bot.Bot   `json:"bot"`
-	Key *KeyResult `json:"key"`
-}
-
-type KeyResult struct {
-	Value string `json:"value"`
+	Bot *bot.Bot `json:"bot"`
+	Key string   `json:"key"`
 }
 
 type EditBody struct {
@@ -191,36 +187,32 @@ func (s *Service) RemoveCommand(botId string, alias string) error {
 	return nil
 }
 
-func (s *Service) GetKey(id string) (*KeyResult, error) {
+func (s *Service) GetKey(id string) (string, error) {
 	keyData, err := s.store.GetKey(id)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return &KeyResult{
-		Value: keyData.Assemble(),
-	}, nil
+	return keyData.Assemble(), nil
 }
 
-func (s *Service) GenerateKey(id string) (*KeyResult, error) {
+func (s *Service) GenerateKey(id string) (string, error) {
 	token, err := extlib.RandomToken(ulid.Length)
 	if err != nil {
-		return nil, exterr.ErrorBadRequest("bot key generation failed: " + err.Error())
+		return "", exterr.ErrorBadRequest("bot key generation failed: " + err.Error())
 	}
 
 	botKey, err := bot.NewKey(id, token)
 	if err != nil {
-		return nil, exterr.ErrorBadRequest(err.Error())
+		return "", exterr.ErrorBadRequest(err.Error())
 	}
 
 	err = s.store.SaveKey(botKey)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return &KeyResult{
-		Value: botKey.Assemble(),
-	}, nil
+	return botKey.Assemble(), nil
 }
 
 func (s *Service) VerifyKeyData(id, token string) error {

@@ -21,7 +21,7 @@ func TestCreateBot(t *testing.T) {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 
-		if res.Key.Value == "" {
+		if res.Key == "" {
 			t.Errorf("got: %v,\nexpect: %v\n", res.Key, "key")
 		}
 	})
@@ -161,7 +161,7 @@ func TestGenerateKey(t *testing.T) {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
 
-		if !strings.Contains(botKey.Value, botId) {
+		if !strings.Contains(botKey, botId) {
 			t.Errorf("got: %v,\nexpect: %v\n", botKey, botId)
 		}
 	})

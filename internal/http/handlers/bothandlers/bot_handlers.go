@@ -127,12 +127,14 @@ func (bh *Handlers) RemoveCommand(c *fiber.Ctx) error {
 func (bh *Handlers) GetKey(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 
-	result, err := bh.service.GetKey(botId)
+	key, err := bh.service.GetKey(botId)
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(result)
+	return c.JSON(fiber.Map{
+		"key": key,
+	})
 }
 
 func (bh *Handlers) RefreshKey(c *fiber.Ctx) error {
