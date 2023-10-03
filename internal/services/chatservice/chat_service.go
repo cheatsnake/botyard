@@ -21,6 +21,7 @@ type CreateBody struct {
 
 type PreparedMessage struct {
 	Id          string       `json:"id"`
+	ChatId      string       `json:"chatId,omitempty"`
 	SenderId    string       `json:"senderId"`
 	Body        string       `json:"body"`
 	Attachments []*file.File `json:"attachments,omitempty"`
@@ -123,6 +124,7 @@ func (ms *Service) AddMessage(body *CreateBody) (*PreparedMessage, error) {
 
 	return &PreparedMessage{
 		Id:          msg.Id,
+		ChatId:      msg.ChatId,
 		SenderId:    msg.SenderId,
 		Body:        msg.Body,
 		Attachments: files,
