@@ -94,11 +94,15 @@ func (bh *Handlers) AddCommands(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(helpers.JsonMessage("commands added"))
+	return c.Status(fiber.StatusCreated).JSON(helpers.JsonMessage("commands added"))
 }
 
 func (bh *Handlers) GetCommands(c *fiber.Ctx) error {
-	botId := fmt.Sprintf("%s", c.Locals("botId"))
+	var botId string
+
+	if c.Locals("botId") != nil {
+		botId = fmt.Sprintf("%s", c.Locals("botId"))
+	}
 
 	if botId == "" {
 		botId = c.Params("id", "")

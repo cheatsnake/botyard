@@ -229,6 +229,11 @@ func (s *Service) VerifyKeyData(id, token string) error {
 }
 
 func (s *Service) SaveWebhook(botId string, body *WebhookBody) (*bot.Webhook, error) {
+	_, err := s.GetBotById(botId)
+	if err != nil {
+		return nil, err
+	}
+
 	webhook, err := bot.NewWebhook(botId, body.Url, body.Secret)
 	if err != nil {
 		return nil, exterr.ErrorBadRequest(err.Error())
