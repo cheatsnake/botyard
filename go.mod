@@ -1,4 +1,4 @@
-module botyard
+module github.com/cheatsnake/botyard
 
 go 1.21
 

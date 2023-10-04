@@ -1,7 +1,7 @@
 package user
 
 import (
-	"botyard/internal/tools/ulid"
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
 )
 
 type User struct {

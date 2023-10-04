@@ -1,9 +1,9 @@
 package memory
 
 import (
-	"botyard/internal/entities/bot"
-	"botyard/pkg/exterr"
-	"botyard/pkg/extlib"
+	"github.com/cheatsnake/botyard/internal/entities/bot"
+	"github.com/cheatsnake/botyard/pkg/exterr"
+	"github.com/cheatsnake/botyard/pkg/extlib"
 
 	"golang.org/x/exp/slices"
 )

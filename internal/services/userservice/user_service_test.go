@@ -1,11 +1,12 @@
 package userservice
 
 import (
-	"botyard/internal/entities/user"
-	mock "botyard/internal/storage/_mock"
-	"botyard/pkg/exterr"
 	"errors"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/entities/user"
+	mock "github.com/cheatsnake/botyard/internal/storage/_mock"
+	"github.com/cheatsnake/botyard/pkg/exterr"
 )
 
 func TestCreate(t *testing.T) {

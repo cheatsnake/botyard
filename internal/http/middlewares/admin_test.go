@@ -1,10 +1,11 @@
 package middlewares
 
 import (
-	"botyard/internal/http/helpers"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/http/helpers"
 
 	"github.com/gofiber/fiber/v2"
 )

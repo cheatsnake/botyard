@@ -1,11 +1,12 @@
 package chat
 
 import (
-	"botyard/internal/config"
-	"botyard/internal/tools/ulid"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/cheatsnake/botyard/internal/config"
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
 )
 
 func TestNewMessage(t *testing.T) {

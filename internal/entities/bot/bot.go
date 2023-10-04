@@ -1,9 +1,10 @@
 package bot
 
 import (
-	"botyard/internal/tools/ulid"
-	"botyard/pkg/extlib"
 	"sync"
+
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
+	"github.com/cheatsnake/botyard/pkg/extlib"
 )
 
 type Bot struct {

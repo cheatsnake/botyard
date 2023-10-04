@@ -1,8 +1,9 @@
 package bot
 
 import (
-	"botyard/pkg/extlib"
 	"errors"
+
+	"github.com/cheatsnake/botyard/pkg/extlib"
 )
 
 func validateName(name string) error {

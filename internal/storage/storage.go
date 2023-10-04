@@ -1,10 +1,10 @@
 package storage
 
 import (
-	"botyard/internal/entities/bot"
-	"botyard/internal/entities/chat"
-	"botyard/internal/entities/file"
-	"botyard/internal/entities/user"
+	"github.com/cheatsnake/botyard/internal/entities/bot"
+	"github.com/cheatsnake/botyard/internal/entities/chat"
+	"github.com/cheatsnake/botyard/internal/entities/file"
+	"github.com/cheatsnake/botyard/internal/entities/user"
 )
 
 type BotStore interface {

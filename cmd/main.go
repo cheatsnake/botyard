@@ -1,14 +1,15 @@
 package main
 
 import (
-	"botyard/internal/config"
-	"botyard/internal/http"
-	"botyard/internal/logger"
-	"botyard/internal/storage/memory"
 	"fmt"
 	"log"
 	"os"
 	"path"
+
+	"github.com/cheatsnake/botyard/internal/config"
+	"github.com/cheatsnake/botyard/internal/http"
+	"github.com/cheatsnake/botyard/internal/logger"
+	"github.com/cheatsnake/botyard/internal/storage/memory"
 )
 
 func main() {

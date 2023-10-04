@@ -1,9 +1,10 @@
 package userhandlers
 
 import (
-	"botyard/internal/services/userservice"
-	"botyard/pkg/exterr"
 	"fmt"
+
+	"github.com/cheatsnake/botyard/internal/services/userservice"
+	"github.com/cheatsnake/botyard/pkg/exterr"
 
 	"github.com/gofiber/fiber/v2"
 )

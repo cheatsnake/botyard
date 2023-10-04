@@ -1,8 +1,9 @@
 package userservice
 
 import (
-	"botyard/internal/entities/user"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/entities/user"
 )
 
 func TestUserToken(t *testing.T) {

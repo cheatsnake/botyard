@@ -1,11 +1,12 @@
 package botservice
 
 import (
-	"botyard/internal/entities/bot"
-	mock "botyard/internal/storage/_mock"
-	"botyard/internal/tools/ulid"
 	"strings"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/entities/bot"
+	mock "github.com/cheatsnake/botyard/internal/storage/_mock"
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
 )
 
 func TestCreateBot(t *testing.T) {

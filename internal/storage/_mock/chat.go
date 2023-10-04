@@ -1,7 +1,7 @@
 package mock
 
 import (
-	"botyard/internal/entities/chat"
+	"github.com/cheatsnake/botyard/internal/entities/chat"
 )
 
 type chatStore struct{}

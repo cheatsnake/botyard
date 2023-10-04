@@ -1,12 +1,13 @@
 package middlewares
 
 import (
-	"botyard/internal/http/helpers"
-	"botyard/internal/services/botservice"
-	mock "botyard/internal/storage/_mock"
-	"botyard/internal/tools/ulid"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/http/helpers"
+	"github.com/cheatsnake/botyard/internal/services/botservice"
+	mock "github.com/cheatsnake/botyard/internal/storage/_mock"
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
 
 	"github.com/gofiber/fiber/v2"
 )

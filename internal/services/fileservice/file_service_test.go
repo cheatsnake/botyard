@@ -1,10 +1,11 @@
 package fileservice
 
 import (
-	"botyard/internal/entities/file"
-	mock "botyard/internal/storage/_mock"
-	"botyard/internal/tools/ulid"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/entities/file"
+	mock "github.com/cheatsnake/botyard/internal/storage/_mock"
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
 )
 
 func TestAddFile(t *testing.T) {

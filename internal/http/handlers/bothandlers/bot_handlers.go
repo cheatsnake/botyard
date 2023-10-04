@@ -1,10 +1,11 @@
 package bothandlers
 
 import (
-	"botyard/internal/http/helpers"
-	"botyard/internal/services/botservice"
-	"botyard/pkg/exterr"
 	"fmt"
+
+	"github.com/cheatsnake/botyard/internal/http/helpers"
+	"github.com/cheatsnake/botyard/internal/services/botservice"
+	"github.com/cheatsnake/botyard/pkg/exterr"
 
 	"github.com/gofiber/fiber/v2"
 )

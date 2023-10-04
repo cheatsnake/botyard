@@ -1,15 +1,16 @@
 package userhandlers
 
 import (
-	"botyard/internal/entities/user"
-	"botyard/internal/http/helpers"
-	"botyard/internal/services/userservice"
-	mock "botyard/internal/storage/_mock"
 	"encoding/json"
 	"io"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/entities/user"
+	"github.com/cheatsnake/botyard/internal/http/helpers"
+	"github.com/cheatsnake/botyard/internal/services/userservice"
+	mock "github.com/cheatsnake/botyard/internal/storage/_mock"
 
 	"github.com/gofiber/fiber/v2"
 )

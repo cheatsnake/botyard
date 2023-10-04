@@ -1,8 +1,9 @@
 package helpers
 
 import (
-	"botyard/pkg/exterr"
 	"errors"
+
+	"github.com/cheatsnake/botyard/pkg/exterr"
 
 	"github.com/gofiber/fiber/v2"
 )

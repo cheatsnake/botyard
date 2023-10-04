@@ -1,8 +1,9 @@
 package bot
 
 import (
-	"botyard/internal/tools/ulid"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
 )
 
 func TestNewKey(t *testing.T) {

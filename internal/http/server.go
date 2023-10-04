@@ -1,21 +1,22 @@
 package http
 
 import (
-	"botyard/internal/config"
-	"botyard/internal/http/handlers/adminhandlers"
-	"botyard/internal/http/handlers/bothandlers"
-	"botyard/internal/http/handlers/chathandlers"
-	"botyard/internal/http/handlers/filehandlers"
-	"botyard/internal/http/handlers/userhandlers"
-	"botyard/internal/http/helpers"
-	"botyard/internal/http/middlewares"
-	"botyard/internal/services/botservice"
-	"botyard/internal/services/chatservice"
-	"botyard/internal/services/fileservice"
-	"botyard/internal/services/userservice"
-	"botyard/internal/storage"
 	"os"
 	"path"
+
+	"github.com/cheatsnake/botyard/internal/config"
+	"github.com/cheatsnake/botyard/internal/http/handlers/adminhandlers"
+	"github.com/cheatsnake/botyard/internal/http/handlers/bothandlers"
+	"github.com/cheatsnake/botyard/internal/http/handlers/chathandlers"
+	"github.com/cheatsnake/botyard/internal/http/handlers/filehandlers"
+	"github.com/cheatsnake/botyard/internal/http/handlers/userhandlers"
+	"github.com/cheatsnake/botyard/internal/http/helpers"
+	"github.com/cheatsnake/botyard/internal/http/middlewares"
+	"github.com/cheatsnake/botyard/internal/services/botservice"
+	"github.com/cheatsnake/botyard/internal/services/chatservice"
+	"github.com/cheatsnake/botyard/internal/services/fileservice"
+	"github.com/cheatsnake/botyard/internal/services/userservice"
+	"github.com/cheatsnake/botyard/internal/storage"
 
 	"github.com/gofiber/fiber/v2"
 )

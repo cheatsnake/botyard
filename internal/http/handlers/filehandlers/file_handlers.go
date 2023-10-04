@@ -1,16 +1,17 @@
 package filehandlers
 
 import (
-	"botyard/internal/config"
-	"botyard/internal/entities/file"
-	"botyard/internal/services/fileservice"
-	"botyard/internal/tools/ulid"
-	"botyard/pkg/exterr"
-	"botyard/pkg/extlib"
 	"fmt"
 	"mime/multipart"
 	"os"
 	"path"
+
+	"github.com/cheatsnake/botyard/internal/config"
+	"github.com/cheatsnake/botyard/internal/entities/file"
+	"github.com/cheatsnake/botyard/internal/services/fileservice"
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
+	"github.com/cheatsnake/botyard/pkg/exterr"
+	"github.com/cheatsnake/botyard/pkg/extlib"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -1,12 +1,13 @@
 package middlewares
 
 import (
-	"botyard/internal/entities/user"
-	"botyard/internal/http/helpers"
-	"botyard/internal/services/userservice"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/entities/user"
+	"github.com/cheatsnake/botyard/internal/http/helpers"
+	"github.com/cheatsnake/botyard/internal/services/userservice"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -1,9 +1,9 @@
 package adminhandlers
 
 import (
-	"botyard/internal/config"
-	"botyard/internal/http/helpers"
-	"botyard/pkg/exterr"
+	"github.com/cheatsnake/botyard/internal/config"
+	"github.com/cheatsnake/botyard/internal/http/helpers"
+	"github.com/cheatsnake/botyard/pkg/exterr"
 
 	"github.com/gofiber/fiber/v2"
 )

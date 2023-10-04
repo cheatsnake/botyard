@@ -1,11 +1,11 @@
 package botservice
 
 import (
-	"botyard/internal/entities/bot"
-	"botyard/internal/storage"
-	"botyard/internal/tools/ulid"
-	"botyard/pkg/exterr"
-	"botyard/pkg/extlib"
+	"github.com/cheatsnake/botyard/internal/entities/bot"
+	"github.com/cheatsnake/botyard/internal/storage"
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
+	"github.com/cheatsnake/botyard/pkg/exterr"
+	"github.com/cheatsnake/botyard/pkg/extlib"
 )
 
 type Service struct {

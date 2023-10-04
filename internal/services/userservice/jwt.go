@@ -1,10 +1,11 @@
 package userservice
 
 import (
-	"botyard/internal/entities/user"
-	"botyard/pkg/exterr"
 	"os"
 	"time"
+
+	"github.com/cheatsnake/botyard/internal/entities/user"
+	"github.com/cheatsnake/botyard/pkg/exterr"
 
 	"github.com/golang-jwt/jwt/v5"
 )

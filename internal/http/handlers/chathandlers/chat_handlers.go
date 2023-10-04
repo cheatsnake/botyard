@@ -1,12 +1,13 @@
 package chathandlers
 
 import (
-	"botyard/internal/http/client"
-	"botyard/internal/http/helpers"
-	"botyard/internal/services/botservice"
-	"botyard/internal/services/chatservice"
-	"botyard/pkg/exterr"
 	"fmt"
+
+	"github.com/cheatsnake/botyard/internal/http/client"
+	"github.com/cheatsnake/botyard/internal/http/helpers"
+	"github.com/cheatsnake/botyard/internal/services/botservice"
+	"github.com/cheatsnake/botyard/internal/services/chatservice"
+	"github.com/cheatsnake/botyard/pkg/exterr"
 
 	"github.com/gofiber/fiber/v2"
 )

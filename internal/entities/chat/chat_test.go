@@ -1,8 +1,9 @@
 package chat
 
 import (
-	"botyard/internal/tools/ulid"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
 )
 
 func TestChat(t *testing.T) {

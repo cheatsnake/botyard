@@ -1,9 +1,9 @@
 package userservice
 
 import (
-	"botyard/internal/entities/user"
-	"botyard/internal/storage"
-	"botyard/pkg/exterr"
+	"github.com/cheatsnake/botyard/internal/entities/user"
+	"github.com/cheatsnake/botyard/internal/storage"
+	"github.com/cheatsnake/botyard/pkg/exterr"
 )
 
 type Service struct {

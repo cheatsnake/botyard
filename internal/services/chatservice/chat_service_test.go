@@ -1,11 +1,12 @@
 package chatservice
 
 import (
-	"botyard/internal/entities/chat"
-	"botyard/internal/services/fileservice"
-	mock "botyard/internal/storage/_mock"
-	"botyard/internal/tools/ulid"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/entities/chat"
+	"github.com/cheatsnake/botyard/internal/services/fileservice"
+	mock "github.com/cheatsnake/botyard/internal/storage/_mock"
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
 )
 
 func TestCreateChat(t *testing.T) {

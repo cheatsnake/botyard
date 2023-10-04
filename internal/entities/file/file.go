@@ -1,8 +1,9 @@
 package file
 
 import (
-	"botyard/internal/tools/ulid"
 	"errors"
+
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
 )
 
 type File struct {

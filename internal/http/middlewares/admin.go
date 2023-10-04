@@ -1,9 +1,10 @@
 package middlewares
 
 import (
-	"botyard/pkg/exterr"
 	"os"
 	"strings"
+
+	"github.com/cheatsnake/botyard/pkg/exterr"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -1,8 +1,9 @@
 package chat
 
 import (
-	"botyard/internal/config"
 	"errors"
+
+	"github.com/cheatsnake/botyard/internal/config"
 )
 
 func validateBody(body string) error {

@@ -1,9 +1,10 @@
 package chat
 
 import (
-	"botyard/internal/tools/ulid"
 	"errors"
 	"time"
+
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
 )
 
 type Message struct {

@@ -1,9 +1,10 @@
 package middlewares
 
 import (
-	"botyard/internal/services/botservice"
-	"botyard/pkg/exterr"
 	"strings"
+
+	"github.com/cheatsnake/botyard/internal/services/botservice"
+	"github.com/cheatsnake/botyard/pkg/exterr"
 
 	"github.com/gofiber/fiber/v2"
 )

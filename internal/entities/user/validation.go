@@ -1,8 +1,9 @@
 package user
 
 import (
-	"botyard/internal/config"
 	"errors"
+
+	"github.com/cheatsnake/botyard/internal/config"
 )
 
 func validateNickname(nick string) error {

@@ -1,9 +1,10 @@
 package user
 
 import (
-	"botyard/internal/config"
 	"strings"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/config"
 )
 
 func TestNew(t *testing.T) {

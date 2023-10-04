@@ -1,10 +1,11 @@
 package bot
 
 import (
-	"botyard/internal/tools/ulid"
-	"botyard/pkg/extlib"
 	"strings"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
+	"github.com/cheatsnake/botyard/pkg/extlib"
 )
 
 func TestNewWebhook(t *testing.T) {

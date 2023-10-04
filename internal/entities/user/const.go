@@ -1,9 +1,10 @@
 package user
 
 import (
-	"botyard/internal/config"
 	"fmt"
 	"regexp"
+
+	"github.com/cheatsnake/botyard/internal/config"
 )
 
 var (

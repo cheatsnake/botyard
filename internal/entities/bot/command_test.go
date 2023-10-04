@@ -1,9 +1,10 @@
 package bot
 
 import (
-	"botyard/internal/tools/ulid"
 	"strings"
 	"testing"
+
+	"github.com/cheatsnake/botyard/internal/tools/ulid"
 )
 
 func TestNewCommand(t *testing.T) {

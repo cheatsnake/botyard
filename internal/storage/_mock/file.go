@@ -1,6 +1,6 @@
 package mock
 
-import "botyard/internal/entities/file"
+import "github.com/cheatsnake/botyard/internal/entities/file"
 
 type fileStore struct{}
 
