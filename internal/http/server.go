@@ -87,6 +87,7 @@ func (s *Server) InitRoutes() {
 
 	botApiV1.Get("/chats", middlewares.UserAuth, chatHands.GetChatsByUser)
 	botApiV1.Get("/chat/:id/messages", botMiddlewares.Auth, chatHands.GetMessagesByChat)
+	botApiV1.Get("/chat/message/:id", botMiddlewares.Auth, chatHands.GetMessage)
 	botApiV1.Post("/chat/message", botMiddlewares.Auth, chatHands.SendBotMessage)
 
 	botApiV1.Post("/files", botMiddlewares.Auth, fileHands.LoadMany)

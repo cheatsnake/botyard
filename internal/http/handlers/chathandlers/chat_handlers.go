@@ -142,6 +142,23 @@ func (h *Handlers) SendBotMessage(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(msg)
 }
 
+func (h *Handlers) GetMessage(c *fiber.Ctx) error {
+	botId := fmt.Sprintf("%s", c.Locals("botId"))
+	id := c.Params("id", "")
+
+	msg, err := h.service.GetMessage(id)
+	if err != nil {
+		return err
+	}
+
+	_, err = h.service.CheckChatAccess(msg.ChatId, botId, "")
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(msg)
+}
+
 func (h *Handlers) GetMessagesByChat(c *fiber.Ctx) error {
 	var botId, userId string
 

@@ -28,6 +28,18 @@ func TestCreateChat(t *testing.T) {
 	})
 }
 
+func TestGetChat(t *testing.T) {
+	fs := fileservice.New(mock.FileStore())
+	cs := New(mock.ChatStore(), fs)
+
+	t.Run("get chat by id", func(t *testing.T) {
+		_, err := cs.GetChat(ulid.New())
+		if err != nil {
+			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
+		}
+	})
+}
+
 func TestGetChats(t *testing.T) {
 	fs := fileservice.New(mock.FileStore())
 	cs := New(mock.ChatStore(), fs)
@@ -88,6 +100,18 @@ func TestAddMessage(t *testing.T) {
 		}
 	})
 
+}
+
+func TestGetMessage(t *testing.T) {
+	fs := fileservice.New(mock.FileStore())
+	cs := New(mock.ChatStore(), fs)
+
+	t.Run("get message by id", func(t *testing.T) {
+		_, err := cs.GetMessage(ulid.New())
+		if err != nil {
+			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
+		}
+	})
 }
 
 func TestGetMessagesByChat(t *testing.T) {

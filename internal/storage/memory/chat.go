@@ -63,6 +63,16 @@ func (s *Storage) AddMessage(msg *chat.Message) error {
 	return nil
 }
 
+func (s *Storage) GetMessage(id string) (*chat.Message, error) {
+	for _, msg := range s.messages {
+		if msg.Id == id {
+			return msg, nil
+		}
+	}
+
+	return nil, exterr.ErrorNotFound("message not found")
+}
+
 func (s *Storage) GetMessagesByChat(chatId, senderId string, page, limit int, since int64) (int, []*chat.Message, error) {
 	if page <= 0 || limit <= 0 {
 		return 0, nil, nil

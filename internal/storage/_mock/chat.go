@@ -26,6 +26,10 @@ func (mcs *chatStore) AddMessage(msg *chat.Message) error {
 	return nil
 }
 
+func (mcs *chatStore) GetMessage(id string) (*chat.Message, error) {
+	return &chat.Message{}, nil
+}
+
 func (mcs *chatStore) GetMessagesByChat(chatId, senderId string, page, limit int, since int64) (int, []*chat.Message, error) {
 	return 0, []*chat.Message{}, nil
 }

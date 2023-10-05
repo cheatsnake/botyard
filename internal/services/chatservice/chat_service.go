@@ -132,6 +132,15 @@ func (ms *Service) AddMessage(body *CreateBody) (*PreparedMessage, error) {
 	}, nil
 }
 
+func (s *Service) GetMessage(id string) (*chat.Message, error) {
+	msg, err := s.store.GetMessage(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return msg, nil
+}
+
 func (ms *Service) GetMessagesByChat(chatId, senderId string, page, limit int, since int64) (*MessagesPage, error) {
 	total, msgs, err := ms.store.GetMessagesByChat(chatId, senderId, page, limit, since)
 	if err != nil {
