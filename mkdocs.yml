@@ -1,0 +1,29 @@
+site_name: Botyard
+theme:
+    logo:
+    name: material
+    palette:
+        primary: black
+        accent: green
+    features:
+        - navigation.sections
+        - navigation.top
+        - content.code.copy
+nav:
+    - index.md
+    - installation.md
+    - configuration.md
+    - "API reference":
+          - api/admin.md
+          - api/bot.md
+          - api/client.md
+    - "Guides":
+          - guides/nodejs.md
+          - guides/python.md
+          - guides/golang.md
+    - contribution.md
+
+markdown_extensions:
+    - pymdownx.highlight:
+          anchor_linenums: true
+    - pymdownx.superfences
