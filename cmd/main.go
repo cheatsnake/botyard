@@ -9,7 +9,7 @@ import (
 	"github.com/cheatsnake/botyard/internal/config"
 	"github.com/cheatsnake/botyard/internal/http"
 	"github.com/cheatsnake/botyard/internal/logger"
-	"github.com/cheatsnake/botyard/internal/storage/memory"
+	"github.com/cheatsnake/botyard/internal/storage/sqlite"
 )
 
 func main() {
@@ -22,9 +22,16 @@ func main() {
 	initDirsForFiles()
 
 	appLogger := logger.New()
-	storage := memory.New()
-	server := http.New(storage)
+	storage, err := sqlite.New("data/sqlite/store.db")
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	if err := storage.InitTables(); err != nil {
+		log.Fatal(err)
+	}
+
+	server := http.New(storage)
 	server.InitRoutes()
 
 	go appLogger.MemoryUsage()
