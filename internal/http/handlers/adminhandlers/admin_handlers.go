@@ -15,5 +15,5 @@ func ReloadGlobalConfig(c *fiber.Ctx) error {
 		return exterr.ErrorInternalServer(err.Error())
 	}
 
-	return c.JSON(helpers.JsonMessage("config reloaded"))
+	return c.JSON(helpers.JsonMessage("Config reloaded."))
 }
