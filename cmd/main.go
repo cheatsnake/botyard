@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -13,16 +12,17 @@ import (
 )
 
 func main() {
+	appLogger := logger.New()
 	err := config.Load()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	config.LoadEnv()
-	initDirsForFiles()
+	config.InitDirsForFiles()
+	config.InitDirsForSqlite()
 
-	appLogger := logger.New()
-	storage, err := sqlite.New("data/sqlite/store.db")
+	storage, err := sqlite.New(path.Join(config.SqliteDatabasePath, config.SqliteDatabaseName))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,15 +36,4 @@ func main() {
 
 	go appLogger.MemoryUsage()
 	log.Fatal(server.App.Listen(":" + os.Getenv("PORT")))
-}
-
-func initDirsForFiles() {
-	dirs := []string{"images", "videos", "audios", "files"}
-
-	for _, dir := range dirs {
-		err := os.MkdirAll(path.Join(".", os.Getenv("FILES_FOLDER"), dir), 0755)
-		if err != nil {
-			panic(fmt.Sprintf("failed to create a directory for files: %s", err.Error()))
-		}
-	}
 }

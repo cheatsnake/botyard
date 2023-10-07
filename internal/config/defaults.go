@@ -1,6 +1,11 @@
 package config
 
 const (
+	SqliteDatabasePath = "data/sqlite"
+	SqliteDatabaseName = "store.db"
+)
+
+const (
 	configFilename     = "botyard.config.json"
 	defaultPort        = "4000"
 	defaultFilesFolder = "static"
