@@ -38,7 +38,7 @@ func (s *Storage) DeleteFiles(ids []string) error {
 		})
 
 		if delIndex == -1 {
-			return exterr.ErrorNotFound("file not found")
+			return exterr.ErrorNotFound("File not found.")
 		}
 
 		s.messages = extlib.SliceRemoveElement(s.messages, delIndex)

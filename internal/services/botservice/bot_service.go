@@ -199,7 +199,7 @@ func (s *Service) GetKey(id string) (string, error) {
 func (s *Service) GenerateKey(id string) (string, error) {
 	token, err := extlib.RandomToken(ulid.Length)
 	if err != nil {
-		return "", exterr.ErrorBadRequest("bot key generation failed: " + err.Error())
+		return "", exterr.ErrorBadRequest("Bot key generation failed: " + err.Error())
 	}
 
 	botKey, err := bot.NewKey(id, token)
@@ -222,7 +222,7 @@ func (s *Service) VerifyKeyData(id, token string) error {
 	}
 
 	if kd == nil || kd.Token != token {
-		return exterr.ErrorForbidden("invalid bot key")
+		return exterr.ErrorForbidden("Invalid bot key.")
 	}
 
 	return nil

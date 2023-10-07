@@ -23,7 +23,7 @@ func (s *Storage) GetUser(id string) (*user.User, error) {
 		}
 	}
 
-	return nil, exterr.ErrorNotFound("user not found")
+	return nil, exterr.ErrorNotFound("User not found.")
 }
 
 func (s *Storage) DeleteUser(id string) error {
@@ -35,7 +35,7 @@ func (s *Storage) DeleteUser(id string) error {
 	})
 
 	if delIndex == -1 {
-		return exterr.ErrorNotFound("user not found")
+		return exterr.ErrorNotFound("User not found.")
 	}
 
 	s.users = extlib.SliceRemoveElement(s.users, delIndex)

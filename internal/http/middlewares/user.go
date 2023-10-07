@@ -10,7 +10,7 @@ import (
 func UserAuth(c *fiber.Ctx) error {
 	token := c.Cookies("token", "")
 	if token == "" {
-		return exterr.ErrorUnauthorized("user is unauthorized")
+		return exterr.ErrorUnauthorized("User is unauthorized.")
 	}
 
 	userClaims, err := userservice.VerifyUserToken(token)

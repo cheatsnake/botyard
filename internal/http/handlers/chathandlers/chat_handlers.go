@@ -49,7 +49,7 @@ func (h *Handlers) GetChatsByBot(c *fiber.Ctx) error {
 	botId := c.Query("bot_id", "")
 
 	if botId == "" {
-		return exterr.ErrorBadRequest("bot id is required")
+		return exterr.ErrorBadRequest("Bot ID is required.")
 	}
 
 	chats, err := h.service.GetChats(userId, botId)
@@ -65,7 +65,7 @@ func (h *Handlers) GetChatsByUser(c *fiber.Ctx) error {
 	userId := c.Query("user_id", "")
 
 	if userId == "" {
-		return exterr.ErrorBadRequest("user id is required")
+		return exterr.ErrorBadRequest("User ID is required.")
 	}
 
 	chats, err := h.service.GetChats(userId, botId)
@@ -90,7 +90,7 @@ func (h *Handlers) DeleteChat(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(helpers.JsonMessage("chat deleted"))
+	return c.JSON(helpers.JsonMessage("Chat deleted."))
 }
 
 func (h *Handlers) SendUserMessage(c *fiber.Ctx) error {

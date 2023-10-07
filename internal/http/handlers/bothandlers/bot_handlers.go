@@ -37,7 +37,7 @@ func (bh *Handlers) CreateBot(c *fiber.Ctx) error {
 func (bh *Handlers) GetBotById(c *fiber.Ctx) error {
 	botId := c.Params("id", "")
 	if botId == "" {
-		return exterr.ErrorBadRequest("id is required")
+		return exterr.ErrorBadRequest("ID is required.")
 	}
 
 	bot, err := bh.service.GetBotById(botId)
@@ -95,7 +95,7 @@ func (bh *Handlers) AddCommands(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(helpers.JsonMessage("commands added"))
+	return c.Status(fiber.StatusCreated).JSON(helpers.JsonMessage("Commands added."))
 }
 
 func (bh *Handlers) GetCommands(c *fiber.Ctx) error {
@@ -128,7 +128,7 @@ func (bh *Handlers) RemoveCommand(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(helpers.JsonMessage("command removed"))
+	return c.JSON(helpers.JsonMessage("Command removed."))
 }
 
 func (bh *Handlers) GetKey(c *fiber.Ctx) error {
@@ -210,5 +210,5 @@ func (bh *Handlers) DeleteWebhook(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON("webhook deleted")
+	return c.JSON("Webhook deleted.")
 }

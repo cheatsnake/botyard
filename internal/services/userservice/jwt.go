@@ -34,7 +34,7 @@ func GenerateUserToken(userId, nick string) (string, time.Time, error) {
 	tokenString, err := token.SignedString(jwtSecretKey)
 	if err != nil {
 		// TODO logs
-		return "", time.Time{}, exterr.ErrorInternalServer("failed to create an authorization token for a new user")
+		return "", time.Time{}, exterr.ErrorInternalServer("Failed to create an authorization token for a new user.")
 	}
 
 	return tokenString, expirationTime, nil
@@ -48,7 +48,7 @@ func VerifyUserToken(tokenString string) (*userTokenClaims, error) {
 
 	if err != nil || !token.Valid {
 		// TODO logs
-		return nil, exterr.ErrorUnauthorized("user is unauthorized")
+		return nil, exterr.ErrorUnauthorized("User is unauthorized.")
 	}
 
 	return utc, nil

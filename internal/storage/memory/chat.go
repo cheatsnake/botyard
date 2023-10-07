@@ -23,7 +23,7 @@ func (s *Storage) GetChat(id string) (*chat.Chat, error) {
 		}
 	}
 
-	return nil, exterr.ErrorNotFound("chat not found")
+	return nil, exterr.ErrorNotFound("Chat not found.")
 }
 
 func (s *Storage) GetChats(userId, botId string) ([]*chat.Chat, error) {
@@ -47,7 +47,7 @@ func (s *Storage) DeleteChat(id string) error {
 	})
 
 	if delIndex == -1 {
-		return exterr.ErrorNotFound("chat not found")
+		return exterr.ErrorNotFound("Chat not found.")
 	}
 
 	s.chats = extlib.SliceRemoveElement(s.chats, delIndex)
@@ -70,7 +70,7 @@ func (s *Storage) GetMessage(id string) (*chat.Message, error) {
 		}
 	}
 
-	return nil, exterr.ErrorNotFound("message not found")
+	return nil, exterr.ErrorNotFound("Message not found.")
 }
 
 func (s *Storage) GetMessagesByChat(chatId, senderId string, page, limit int, since int64) (int, []*chat.Message, error) {
