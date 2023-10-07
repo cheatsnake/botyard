@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/cheatsnake/botyard">
-    <img src="./docs/images/logo.svg" height="128">
+    <img src="./docs/images/header.svg" height="256">
     <h1 align="center">Botyard</h1>
   </a>
 </p>
