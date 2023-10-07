@@ -47,7 +47,7 @@ func New(s *fileservice.Service) *Handlers {
 	}
 }
 
-func (h *Handlers) LoadMany(c *fiber.Ctx) error {
+func (h *Handlers) UploadFiles(c *fiber.Ctx) error {
 	form, err := c.MultipartForm()
 	if err != nil {
 		return exterr.ErrorBadRequest(err.Error())

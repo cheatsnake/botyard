@@ -81,8 +81,7 @@ func (s *Server) InitRoutes() {
 	botApiV1.Delete("/bot/command", botMiddlewares.Auth, botHands.RemoveCommand)
 
 	botApiV1.Get("/bot/webhook", botMiddlewares.Auth, botHands.GetWebhook)
-	botApiV1.Post("/bot/webhook", botMiddlewares.Auth, botHands.CreateWebhook)
-	botApiV1.Put("/bot/webhook", botMiddlewares.Auth, botHands.EditWebhook)
+	botApiV1.Post("/bot/webhook", botMiddlewares.Auth, botHands.SaveWebhook)
 	botApiV1.Delete("/bot/webhook", botMiddlewares.Auth, botHands.DeleteWebhook)
 
 	botApiV1.Get("/chats", middlewares.UserAuth, chatHands.GetChatsByUser)
@@ -90,7 +89,7 @@ func (s *Server) InitRoutes() {
 	botApiV1.Get("/chat/message/:id", botMiddlewares.Auth, chatHands.GetMessage)
 	botApiV1.Post("/chat/message", botMiddlewares.Auth, chatHands.SendBotMessage)
 
-	botApiV1.Post("/files", botMiddlewares.Auth, fileHands.LoadMany)
+	botApiV1.Post("/files", botMiddlewares.Auth, fileHands.UploadFiles)
 	// ------------------------------------------------------------------------
 
 	// Client API -------------------------------------------------------------
@@ -113,7 +112,7 @@ func (s *Server) InitRoutes() {
 	clientApiV1.Post("/chat/message", middlewares.UserAuth, chatHands.SendUserMessage)
 	clientApiV1.Delete("/chat/:id", middlewares.UserAuth, chatHands.DeleteChat)
 
-	clientApiV1.Post("/files", middlewares.UserAuth, fileHands.LoadMany)
+	clientApiV1.Post("/files", middlewares.UserAuth, fileHands.UploadFiles)
 	//-------------------------------------------------------------------------
 
 	s.App.Static("/static", path.Join(".", os.Getenv("FILES_FOLDER")))

@@ -155,7 +155,7 @@ func (bh *Handlers) RefreshKey(c *fiber.Ctx) error {
 	return c.JSON(botKey)
 }
 
-func (bh *Handlers) CreateWebhook(c *fiber.Ctx) error {
+func (bh *Handlers) SaveWebhook(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	body := new(botservice.WebhookBody)
 	if err := c.BodyParser(body); err != nil {
@@ -179,27 +179,6 @@ func (bh *Handlers) GetWebhook(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(wh)
-}
-
-func (bh *Handlers) EditWebhook(c *fiber.Ctx) error {
-	botId := fmt.Sprintf("%s", c.Locals("botId"))
-
-	_, err := bh.service.GetWebhook(botId)
-	if err != nil {
-		return err
-	}
-
-	body := new(botservice.WebhookBody)
-	if err := c.BodyParser(body); err != nil {
-		return exterr.ErrorBadRequest(err.Error())
-	}
-
-	result, err := bh.service.SaveWebhook(botId, body)
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(result)
 }
 
 func (bh *Handlers) DeleteWebhook(c *fiber.Ctx) error {
