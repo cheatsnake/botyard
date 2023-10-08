@@ -9,7 +9,11 @@ import (
 )
 
 func AdminAuth(c *fiber.Ctx) error {
-	key := c.Get(fiber.HeaderAuthorization)
+	key := c.Get(fiber.HeaderAuthorization, "")
+
+	if key == "" {
+		return exterr.ErrorForbidden("Admin key is required.")
+	}
 
 	if key != os.Getenv("ADMIN_SECRET_KEY") {
 		return exterr.ErrorForbidden("Access denied.")

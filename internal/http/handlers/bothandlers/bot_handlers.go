@@ -83,6 +83,17 @@ func (bh *Handlers) EditBot(c *fiber.Ctx) error {
 	return c.JSON(editedBot)
 }
 
+func (bh *Handlers) DeleteBot(c *fiber.Ctx) error {
+	id := c.Params("id", "")
+
+	err := bh.service.DeleteBot(id)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(helpers.JsonMessage("Bot deleted."))
+}
+
 func (bh *Handlers) AddCommands(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	body := new(botservice.CommandsBody)
@@ -114,14 +125,16 @@ func (bh *Handlers) GetCommands(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(fiber.Map{
-		"commands": cmds,
-	})
+	return c.JSON(cmds)
 }
 
 func (bh *Handlers) RemoveCommand(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
 	alias := c.Query("alias", "")
+
+	if alias == "" {
+		return exterr.ErrorBadRequest("Alias is required.")
+	}
 
 	err := bh.service.RemoveCommand(botId, alias)
 	if err != nil {
@@ -152,7 +165,7 @@ func (bh *Handlers) RefreshKey(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(botKey)
+	return c.JSON(fiber.Map{"key": botKey})
 }
 
 func (bh *Handlers) SaveWebhook(c *fiber.Ctx) error {
@@ -167,7 +180,7 @@ func (bh *Handlers) SaveWebhook(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(result)
+	return c.JSON(result)
 }
 
 func (bh *Handlers) GetWebhook(c *fiber.Ctx) error {
@@ -189,5 +202,5 @@ func (bh *Handlers) DeleteWebhook(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON("Webhook deleted.")
+	return c.JSON(helpers.JsonMessage("Webhook deleted."))
 }

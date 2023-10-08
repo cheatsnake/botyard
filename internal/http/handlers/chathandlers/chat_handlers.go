@@ -52,6 +52,11 @@ func (h *Handlers) GetChatsByBot(c *fiber.Ctx) error {
 		return exterr.ErrorBadRequest("Bot ID is required.")
 	}
 
+	_, err := h.botService.GetBotById(botId)
+	if err != nil {
+		return err
+	}
+
 	chats, err := h.service.GetChats(userId, botId)
 	if err != nil {
 		return err

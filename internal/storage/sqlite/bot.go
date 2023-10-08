@@ -2,19 +2,28 @@ package sqlite
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/cheatsnake/botyard/internal/entities/bot"
 	"github.com/cheatsnake/botyard/pkg/exterr"
 )
 
 func (s *Storage) AddBot(newBot *bot.Bot) error {
-	q := `INSERT INTO bots (id, name, description, avatar) VALUES (?, ?, ?, ?)`
+	q1 := `SELECT COUNT(*) FROM bots WHERE name = ?`
 
-	_, err := s.conn.Exec(q, newBot.Id, newBot.Name, newBot.Description, newBot.Avatar)
+	var total int
+	err := s.conn.QueryRow(q1, newBot.Name).Scan(&total)
+	if err != nil {
+		return exterr.ErrorInternalServer("Can't count bots from database.")
+	}
+
+	if total != 0 {
+		return exterr.ErrorBadRequest("Bot with this name already exists.")
+	}
+
+	q2 := `INSERT INTO bots (id, name, description, avatar) VALUES (?, ?, ?, ?)`
+	_, err = s.conn.Exec(q2, newBot.Id, newBot.Name, newBot.Description, newBot.Avatar)
 	if err != nil {
 		// TODO logger
-		fmt.Println(err)
 		return exterr.ErrorInternalServer("Can't save bot to database.")
 	}
 
@@ -116,7 +125,10 @@ func (s *Storage) GetCommands(botId string) ([]*bot.Command, error) {
 	cmds := []*bot.Command{}
 
 	for rows.Next() {
-		var cmd bot.Command
+		cmd := bot.Command{
+			BotId: botId,
+		}
+
 		if err := rows.Scan(&cmd.Alias, &cmd.Description); err != nil {
 			// TODO logger
 			return nil, exterr.ErrorInternalServer("Can't retrive command from database.")
@@ -134,9 +146,20 @@ func (s *Storage) GetCommands(botId string) ([]*bot.Command, error) {
 }
 
 func (s *Storage) DeleteCommand(botId, alias string) error {
-	q := `DELETE FROM bot_commands WHERE bot_id = ? AND alias = ?`
+	q1 := `SELECT COUNT(*) FROM bot_commands WHERE alias = ?`
 
-	_, err := s.conn.Exec(q, botId, alias)
+	var total int
+	err := s.conn.QueryRow(q1, alias).Scan(&total)
+	if err != nil {
+		return exterr.ErrorInternalServer("Can't count bot commands from database.")
+	}
+
+	if total == 0 {
+		return exterr.ErrorNotFound("Command with this alias not found.")
+	}
+
+	q2 := `DELETE FROM bot_commands WHERE bot_id = ? AND alias = ?`
+	_, err = s.conn.Exec(q2, botId, alias)
 	if err != nil {
 		// TODO logger
 		return exterr.ErrorInternalServer("Can't delete bot command from database.")

@@ -62,7 +62,7 @@ func (s *Server) InitRoutes() {
 	adminApiV1 := s.App.Group(adminApiV1Prefix)
 
 	adminApiV1.Post("/bot", middlewares.AdminAuth, botHands.CreateBot)
-	adminApiV1.Delete("/bot/:id", middlewares.AdminAuth)
+	adminApiV1.Delete("/bot/:id", middlewares.AdminAuth, botHands.DeleteBot)
 
 	adminApiV1.Get("/bot/:id/key", middlewares.AdminAuth, botHands.GetKey)
 	adminApiV1.Put("/bot/:id/key", middlewares.AdminAuth, botHands.RefreshKey)
@@ -84,7 +84,7 @@ func (s *Server) InitRoutes() {
 	botApiV1.Post("/bot/webhook", botMiddlewares.Auth, botHands.SaveWebhook)
 	botApiV1.Delete("/bot/webhook", botMiddlewares.Auth, botHands.DeleteWebhook)
 
-	botApiV1.Get("/chats", middlewares.UserAuth, chatHands.GetChatsByUser)
+	botApiV1.Get("/chats", botMiddlewares.Auth, chatHands.GetChatsByUser)
 	botApiV1.Get("/chat/:id/messages", botMiddlewares.Auth, chatHands.GetMessagesByChat)
 	botApiV1.Get("/chat/message/:id", botMiddlewares.Auth, chatHands.GetMessage)
 	botApiV1.Post("/chat/message", botMiddlewares.Auth, chatHands.SendBotMessage)

@@ -27,11 +27,18 @@ type EditBody struct {
 	Id struct{} `json:"-"`
 }
 
+type PreparedCommand struct {
+	Alias       string `json:"alias"`
+	Description string `json:"description,omitempty"`
+}
+
 type CommandsBody struct {
-	Commands []struct {
-		bot.Command
-		BotId struct{} `json:"-"`
-	} `json:"commands"`
+	Commands []PreparedCommand `json:"commands"`
+}
+
+type CommandsList struct {
+	BotId    string            `json:"botId"`
+	Commands []PreparedCommand `json:"commands"`
 }
 
 type WebhookBody struct {
@@ -130,7 +137,12 @@ func (s *Service) EditBot(id string, body *EditBody) (*bot.Bot, error) {
 }
 
 func (s *Service) DeleteBot(id string) error {
-	err := s.store.DeleteBot(id)
+	_, err := s.store.GetBot(id)
+	if err != nil {
+		return err
+	}
+
+	err = s.store.DeleteBot(id)
 	if err != nil {
 		return err
 	}
@@ -159,7 +171,7 @@ func (s *Service) AddCommands(botId string, body *CommandsBody) error {
 	return nil
 }
 
-func (s *Service) GetCommands(botId string) ([]*bot.Command, error) {
+func (s *Service) GetCommands(botId string) (*CommandsList, error) {
 	_, err := s.GetBotById(botId)
 	if err != nil {
 		return nil, err
@@ -170,7 +182,19 @@ func (s *Service) GetCommands(botId string) ([]*bot.Command, error) {
 		return nil, err
 	}
 
-	return cmds, nil
+	result := CommandsList{
+		BotId:    botId,
+		Commands: make([]PreparedCommand, 0, len(cmds)),
+	}
+
+	for _, cmd := range cmds {
+		result.Commands = append(result.Commands, PreparedCommand{
+			Alias:       cmd.Alias,
+			Description: cmd.Description,
+		})
+	}
+
+	return &result, nil
 }
 
 func (s *Service) RemoveCommand(botId string, alias string) error {
@@ -257,7 +281,12 @@ func (s *Service) GetWebhook(botId string) (*bot.Webhook, error) {
 }
 
 func (s *Service) DeleteWebhook(botId string) error {
-	err := s.store.DeleteWebhook(botId)
+	_, err := s.GetWebhook(botId)
+	if err != nil {
+		return err
+	}
+
+	err = s.store.DeleteWebhook(botId)
 	if err != nil {
 		return err
 	}

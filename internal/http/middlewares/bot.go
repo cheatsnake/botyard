@@ -20,14 +20,14 @@ func NewBotMiddlewares(s *botservice.Service) *BotMiddlewares {
 }
 
 func (bm *BotMiddlewares) Auth(c *fiber.Ctx) error {
-	key := c.Get(fiber.HeaderAuthorization)
+	key := c.Get(fiber.HeaderAuthorization, "")
 
 	if key == "" {
-		return exterr.ErrorForbidden("Auth key is required.")
+		return exterr.ErrorForbidden("Bot key is required.")
 	}
 
 	if !strings.Contains(key, ":") {
-		return exterr.ErrorForbidden("Invalid auth key.")
+		return exterr.ErrorForbidden("Invalid bot key.")
 	}
 
 	botId := strings.Split(key, ":")[0]

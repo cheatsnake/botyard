@@ -55,6 +55,10 @@ func (h *Handlers) UploadFiles(c *fiber.Ctx) error {
 
 	files := form.File[fileTag]
 
+	if len(files) == 0 {
+		return exterr.ErrorBadRequest("No files found to upload.")
+	}
+
 	if len(files) > config.Global.Limits.Message.MaxAttachedFiles {
 		return exterr.ErrorBadRequest(
 			fmt.Sprintf(

@@ -98,17 +98,23 @@ func (s *Storage) AddMessage(msg *chat.Message) error {
 
 func (s *Storage) GetMessage(id string) (*chat.Message, error) {
 	q := `SELECT chat_id, sender_id, body, attachment_ids, timestamp FROM messages WHERE id = ?`
+	attachmentIds := ""
 	msg := chat.Message{
 		Id: id,
 	}
 
-	err := s.conn.QueryRow(q, id).Scan(&msg.ChatId, &msg.SenderId, &msg.Body, &msg.AttachmentIds, &msg.Timestamp)
+	err := s.conn.QueryRow(q, id).Scan(&msg.ChatId, &msg.SenderId, &msg.Body, &attachmentIds, &msg.Timestamp)
 	if err == sql.ErrNoRows {
 		return nil, exterr.ErrorNotFound("Message not found.")
 	}
 	if err != nil {
 		// TODO logger
+		fmt.Println(err)
 		return nil, exterr.ErrorInternalServer("Can't get message from database.")
+	}
+
+	if len(attachmentIds) > 0 {
+		msg.AttachmentIds = strings.Split(attachmentIds, ",")
 	}
 
 	return &msg, nil
@@ -148,7 +154,6 @@ func (s *Storage) GetMessagesByChat(chatId, senderId string, page, limit int, si
 	rows, err := s.conn.Query(q2, queryArgs...)
 	if err != nil {
 		// TODO logger
-		fmt.Println(err)
 		return total, nil, exterr.ErrorInternalServer("Can't get messages from database.")
 	}
 	defer rows.Close()
@@ -166,7 +171,10 @@ func (s *Storage) GetMessagesByChat(chatId, senderId string, page, limit int, si
 			return total, nil, exterr.ErrorInternalServer("Can't retrive message from database.")
 		}
 
-		msg.AttachmentIds = strings.Split(attachmentIds, ",")
+		if len(attachmentIds) > 0 {
+			msg.AttachmentIds = strings.Split(attachmentIds, ",")
+		}
+
 		msgs = append(msgs, &msg)
 	}
 
