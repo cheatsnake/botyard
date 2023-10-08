@@ -116,6 +116,6 @@ func (s *Server) InitRoutes() {
 	//-------------------------------------------------------------------------
 
 	s.App.Static("/static", path.Join(".", os.Getenv("FILES_FOLDER")))
-	s.App.Static("/", path.Join(".", "client", "dist"))
-	s.App.Static("*", path.Join(".", "client", "dist"))
+	s.App.Static("/", path.Join(".", "web", "dist"))
+	s.App.Static("*", path.Join(".", "web", "dist"))
 }
