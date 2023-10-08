@@ -6,8 +6,8 @@ export default defineConfig({
     plugins: [react()],
     server: {
         proxy: {
-            "/v1": { target: "http://localhost:4000", changeOrigin: true },
-            "/static": { target: "http://localhost:4000", changeOrigin: true },
+            "/v1": { target: "http://localhost:7007", changeOrigin: true },
+            "/static": { target: "http://localhost:7007", changeOrigin: true },
         },
     },
     build: {
