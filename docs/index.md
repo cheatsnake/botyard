@@ -8,7 +8,7 @@ Additionally, it features a streamlined web client application designed for seam
 
 ## Project architecture
 
-<img src="./images/arch.png">
+<img src="./images/arch.png" alt="architecture">
 
 Botyard architecture is pretty staightforward. It all revolves around only three main components: **bots**, **users** and **chats**.
 
@@ -28,12 +28,12 @@ If you are developing [CLI](https://en.wikipedia.org/wiki/Command-line_interface
 
 ## What does it feel like?
 
-The concept of bots is not new and is used in many other systems. For example, [Telegram](<https://en.wikipedia.org/wiki/Telegram_(software)>) messenger has a whole [API for bots](<https://en.wikipedia.org/wiki/Telegram_(software)#Bots>). Or, for example, the popular platform for voice and video calls [Discord](https://en.wikipedia.org/wiki/Discord) also has an advanced chatbot system.
+The concept of bots is not new and is used in many other systems. For example, [Telegram](<https://en.wikipedia.org/wiki/Telegram_(software)>) messenger has a whole [API for bots](<https://en.wikipedia.org/wiki/Telegram_(software)#Bots>). Or, the popular platform for voice and video calls [Discord](https://en.wikipedia.org/wiki/Discord) also has an advanced [chatbot system](https://en.wikipedia.org/wiki/Discord#Developer_tools_and_bots).
 
-Of course, it is not correct to say that Botyard can be a direct competitor among such giants, to put it mildly. Rather, it is an alternative that is much simpler and more controllable.
+Of course, it is not correct to say that Botyard can be a direct competitor among such giants, to put it mildly. Rather, it is an alternative that is much simpler and completely controlled by you.
 
 ## What are the main benefits?
 
 -   **Simplicity**. No matter how much it has already been mentioned, but it really is.
 -   **Fast and lightweight**. The main part of the platform is written in Go - a fast, compiled and minimalistic programming language.
--   **Open source**. You can view the source code, offer your corrections and suggestions. Together we can make the project better.
+-   **Open source**. You can view the source code, offer your corrections and suggestions. Together we can make it better.
