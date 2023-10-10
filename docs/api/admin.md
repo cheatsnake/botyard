@@ -34,8 +34,24 @@ As a result you will
 
 ## Delete a bot
 
+```nginx
+DELETE /v1/admin-api/bot/:id
+```
+
 ## Get a bot's secret key
+
+```nginx
+GET /v1/admin-api/bot/:id/key
+```
 
 ## Refresh a bot's secret key
 
+```nginx
+PUT /v1/admin-api/bot/:id/key
+```
+
 ## Reload server config
+
+```nginx
+PUT /v1/admin-api/config
+```
