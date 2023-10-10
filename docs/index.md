@@ -8,9 +8,9 @@ Additionally, it features a streamlined web client application designed for seam
 
 ## Project architecture
 
-<img src="./images/arch.png" alt="architecture">
-
 Botyard architecture is pretty staightforward. It all revolves around only three main components: **bots**, **users** and **chats**.
+
+<img src="./images/arch.png" alt="architecture">
 
 **User** are the simplest of them all. This component is only responsible for user indetification in the system. It is so minimalistic that it contains only an identifier and a nickname.
 
