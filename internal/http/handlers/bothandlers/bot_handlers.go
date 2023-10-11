@@ -96,12 +96,12 @@ func (bh *Handlers) DeleteBot(c *fiber.Ctx) error {
 
 func (bh *Handlers) AddCommands(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
-	body := new(botservice.CommandsBody)
+	body := new([]botservice.PreparedCommand)
 	if err := c.BodyParser(body); err != nil {
 		return exterr.ErrorBadRequest(err.Error())
 	}
 
-	err := bh.service.AddCommands(botId, body)
+	err := bh.service.AddCommands(botId, *body)
 	if err != nil {
 		return err
 	}

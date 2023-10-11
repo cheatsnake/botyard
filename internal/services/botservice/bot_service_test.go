@@ -74,7 +74,7 @@ func TestAddCommands(t *testing.T) {
 	bs := New(mock.BotStore())
 
 	t.Run("add bot commands", func(t *testing.T) {
-		err := bs.AddCommands(ulid.New(), &CommandsBody{})
+		err := bs.AddCommands(ulid.New(), []PreparedCommand{})
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}
