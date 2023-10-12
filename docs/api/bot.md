@@ -87,10 +87,12 @@ Returned response:
 ```json
 [
     {
+        "id": "01hcjd34adz1va07vk97jfjmgq",
         "alias": "start",
         "description": "Start a new conversation."
     },
     {
+        "id": "01hcjd34adz1va07vk99w3hzk3",
         "alias": "help",
         "description": "Show usage guide."
     }
@@ -99,23 +101,53 @@ Returned response:
 
 ## Remove bot command
 
+Delete bot command by unique identifier:
+
 ```nginx
-DELETE /v1/bot-api/bot/command
+DELETE /v1/bot-api/bot/command/:id
 ```
 
 ## Add bot webhook
+
+Connect the webhook to the current bot:
 
 ```nginx
 POST /v1/bot-api/bot/webhook
 ```
 
+```json
+{
+    "url": "http://localhost:4000/webhook",
+    "secret": "SOME_SECRET"
+}
+```
+
+| Body parameter | Description                                                                                                                                                                        |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| url            | `Required` <br> The address of the webhook to which user messages will be sent. Requests will come with a POST method and a message as described [here](./client.md#send-message). |
+| secret         | `Optional` <br> Random data, in order to be able to verify that queries are coming from the correct source.                                                                        |
+
 ## Get bot webhook
+
+Get webhook info for current bot:
 
 ```nginx
 GET /v1/bot-api/bot/webhook
 ```
 
+Response:
+
+```json
+{
+    "botId": "01hc76p6ma76qfrs0bfr5x2pry",
+    "url": "http://localhost:4000/webhook",
+    "secret": "SOME_SECRET"
+}
+```
+
 ## Delete bot webhook
+
+Removes the webhook information for the current bot, thus stopping user messages being sent to it:
 
 ```nginx
 DELETE /v1/bot-api/bot/webhook
@@ -124,29 +156,29 @@ DELETE /v1/bot-api/bot/webhook
 ## Get chats
 
 ```nginx
-GET /v1/bot-api/bot/chats
+GET /v1/bot-api/chats
 ```
 
 ## Send message
 
 ```nginx
-POST /v1/bot-api/bot/chat/message
+POST /v1/bot-api/chat/message
 ```
 
 ## Get messages
 
 ```nginx
-GET /v1/bot-api/bot/chat/:id/messages
+GET /v1/bot-api/chat/:id/messages
 ```
 
 ## Get message
 
 ```nginx
-GET /v1/bot-api/bot/chat/message/:id
+GET /v1/bot-api/chat/message/:id
 ```
 
 ## Upload files
 
 ```nginx
-POST /v1/bot-api/bot/files
+POST /v1/bot-api/files
 ```
