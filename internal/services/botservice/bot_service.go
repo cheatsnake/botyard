@@ -28,6 +28,7 @@ type EditBody struct {
 }
 
 type PreparedCommand struct {
+	Id          string `json:"id"`
 	Alias       string `json:"alias"`
 	Description string `json:"description,omitempty"`
 }
@@ -177,6 +178,7 @@ func (s *Service) GetCommands(botId string) (*[]PreparedCommand, error) {
 
 	for _, cmd := range cmds {
 		result = append(result, PreparedCommand{
+			Id:          cmd.Id,
 			Alias:       cmd.Alias,
 			Description: cmd.Description,
 		})
@@ -185,13 +187,17 @@ func (s *Service) GetCommands(botId string) (*[]PreparedCommand, error) {
 	return &result, nil
 }
 
-func (s *Service) RemoveCommand(botId string, alias string) error {
-	_, err := s.GetBotById(botId)
+func (s *Service) GetCommand(id string) (*bot.Command, error) {
+	cmd, err := s.store.GetCommand(id)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = s.store.DeleteCommand(botId, alias)
+	return cmd, nil
+}
+
+func (s *Service) RemoveCommand(id string) error {
+	err := s.store.DeleteCommand(id)
 	if err != nil {
 		return err
 	}

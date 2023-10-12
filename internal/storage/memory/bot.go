@@ -83,12 +83,22 @@ func (s *Storage) GetCommands(botId string) ([]*bot.Command, error) {
 	return cmds, nil
 }
 
-func (s *Storage) DeleteCommand(botId, alias string) error {
+func (s *Storage) GetCommand(id string) (*bot.Command, error) {
+	for _, cmd := range s.botCommands {
+		if cmd.Id == id {
+			return cmd, nil
+		}
+	}
+
+	return nil, exterr.ErrorNotFound("Command not found.")
+}
+
+func (s *Storage) DeleteCommand(id string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	delIndex := slices.IndexFunc(s.botCommands, func(cmd *bot.Command) bool {
-		return cmd.BotId == botId && cmd.Alias == alias
+		return cmd.Id == id
 	})
 
 	if delIndex == -1 {

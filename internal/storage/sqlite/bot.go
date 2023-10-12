@@ -101,9 +101,9 @@ func (s *Storage) DeleteBot(id string) error {
 }
 
 func (s *Storage) SaveCommand(cmd *bot.Command) error {
-	q := `INSERT OR REPLACE INTO bot_commands (bot_id, alias, description) VALUES (?, ?, ?)`
+	q := `INSERT OR REPLACE INTO bot_commands (id, bot_id, alias, description) VALUES (?, ?, ?, ?)`
 
-	_, err := s.conn.Exec(q, cmd.BotId, cmd.Alias, cmd.Description)
+	_, err := s.conn.Exec(q, cmd.Id, cmd.BotId, cmd.Alias, cmd.Description)
 	if err != nil {
 		// TODO logger
 		return exterr.ErrorInternalServer("Can't save command to database.")
@@ -113,7 +113,7 @@ func (s *Storage) SaveCommand(cmd *bot.Command) error {
 }
 
 func (s *Storage) GetCommands(botId string) ([]*bot.Command, error) {
-	q := `SELECT alias, description FROM bot_commands WHERE bot_id = ?`
+	q := `SELECT id, alias, description FROM bot_commands WHERE bot_id = ?`
 
 	rows, err := s.conn.Query(q, botId)
 	if err != nil {
@@ -129,7 +129,7 @@ func (s *Storage) GetCommands(botId string) ([]*bot.Command, error) {
 			BotId: botId,
 		}
 
-		if err := rows.Scan(&cmd.Alias, &cmd.Description); err != nil {
+		if err := rows.Scan(&cmd.Id, &cmd.Alias, &cmd.Description); err != nil {
 			// TODO logger
 			return nil, exterr.ErrorInternalServer("Can't retrive command from database.")
 		}
@@ -145,21 +145,27 @@ func (s *Storage) GetCommands(botId string) ([]*bot.Command, error) {
 	return cmds, nil
 }
 
-func (s *Storage) DeleteCommand(botId, alias string) error {
-	q1 := `SELECT COUNT(*) FROM bot_commands WHERE alias = ?`
+func (s *Storage) GetCommand(id string) (*bot.Command, error) {
+	q := `SELECT bot_id, alias, description FROM bot_commands WHERE id = ?`
+	cmd := &bot.Command{
+		Id: id,
+	}
 
-	var total int
-	err := s.conn.QueryRow(q1, alias).Scan(&total)
+	err := s.conn.QueryRow(q, id).Scan(&cmd.BotId, &cmd.Alias, &cmd.Description)
+	if err == sql.ErrNoRows {
+		return nil, exterr.ErrorNotFound("Command not found.")
+	}
 	if err != nil {
-		return exterr.ErrorInternalServer("Can't count bot commands from database.")
+		// TODO logger
+		return nil, exterr.ErrorInternalServer("Can't get command from database.")
 	}
 
-	if total == 0 {
-		return exterr.ErrorNotFound("Command with this alias not found.")
-	}
+	return cmd, nil
+}
 
-	q2 := `DELETE FROM bot_commands WHERE bot_id = ? AND alias = ?`
-	_, err = s.conn.Exec(q2, botId, alias)
+func (s *Storage) DeleteCommand(id string) error {
+	q := `DELETE FROM bot_commands WHERE id = ?`
+	_, err := s.conn.Exec(q, id)
 	if err != nil {
 		// TODO logger
 		return exterr.ErrorInternalServer("Can't delete bot command from database.")

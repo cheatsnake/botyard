@@ -29,6 +29,7 @@ export interface Bot {
 }
 
 export interface BotCommand {
+    id: string;
     alias: string;
     description: string;
 }

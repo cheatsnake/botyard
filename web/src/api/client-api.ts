@@ -90,7 +90,7 @@ class ClientAPI {
             throw new Error(body.message);
         }
 
-        const { commands }: { commands: BotCommand[] } = await resp.json();
+        const commands: BotCommand[] = await resp.json();
         return commands;
     }
 

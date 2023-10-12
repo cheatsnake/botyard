@@ -27,7 +27,7 @@ func New(path string) (*Storage, error) {
 
 func (s *Storage) InitTables() error {
 	botTable := `CREATE TABLE IF NOT EXISTS bots (
-		id TEXT NOT NULL CHECK(LENGTH(id) <= 64),
+		id TEXT NOT NULL UNIQUE CHECK(LENGTH(id) <= 64),
 		name TEXT NOT NULL CHECK(LENGTH(name) <= 32),
 		description TEXT CHECK(LENGTH(description) <= 512),
 		avatar TEXT CHECK(LENGTH(avatar) <= 256),
@@ -35,33 +35,34 @@ func (s *Storage) InitTables() error {
 	);`
 
 	commandTable := `CREATE TABLE IF NOT EXISTS bot_commands (
+		id TEXT NOT NULL UNIQUE CHECK(LENGTH(id) <= 64),
 		bot_id TEXT NOT NULL CHECK(LENGTH(bot_id) <= 64),
-		alias TEXT NOT NULL CHECK(LENGTH(alias) <= 32),
+		alias TEXT NOT NULL UNIQUE CHECK(LENGTH(alias) <= 32),
 		description TEXT CHECK(LENGTH(description) <= 256),
-		PRIMARY KEY (bot_id, alias)
+		PRIMARY KEY (id)
 	);`
 
 	keyTable := `CREATE TABLE IF NOT EXISTS bot_keys (
-		bot_id TEXT NOT NULL CHECK(LENGTH(bot_id) <= 64),
+		bot_id TEXT NOT NULL UNIQUE CHECK(LENGTH(bot_id) <= 64),
 		token TEXT NOT NULL CHECK(LENGTH(token) <= 32),
 		PRIMARY KEY (bot_id)
 	);`
 
 	webhookTable := `CREATE TABLE IF NOT EXISTS bot_webhooks (
-		bot_id TEXT NOT NULL CHECK(LENGTH(bot_id) <= 64),
+		bot_id TEXT NOT NULL UNIQUE CHECK(LENGTH(bot_id) <= 64),
 		url TEXT NOT NULL CHECK(LENGTH(url) <= 128),
 		secret TEXT CHECK(LENGTH(secret) <= 64),
 		PRIMARY KEY (bot_id)
 	);`
 
 	userTable := `CREATE TABLE IF NOT EXISTS users (
-		id TEXT NOT NULL CHECK(LENGTH(id) <= 64),
+		id TEXT NOT NULL UNIQUE CHECK(LENGTH(id) <= 64),
 		nickname TEXT NOT NULL,
 		PRIMARY KEY (id)
 	);`
 
 	chatTable := `CREATE TABLE IF NOT EXISTS chats (
-		id TEXT NOT NULL CHECK(LENGTH(id) <= 64),
+		id TEXT NOT NULL UNIQUE CHECK(LENGTH(id) <= 64),
 		user_id TEXT NOT NULL CHECK(LENGTH(user_id) <= 64),
 		bot_id TEXT NOT NULL CHECK(LENGTH(bot_id) <= 64),
 		PRIMARY KEY (id),
@@ -70,7 +71,7 @@ func (s *Storage) InitTables() error {
 	);`
 
 	messageTable := `CREATE TABLE IF NOT EXISTS messages (
-		id TEXT NOT NULL CHECK(LENGTH(id) <= 64),
+		id TEXT NOT NULL UNIQUE CHECK(LENGTH(id) <= 64),
 		chat_id TEXT NOT NULL CHECK(LENGTH(chat_id) <= 64),
 		sender_id TEXT NOT NULL CHECK(LENGTH(sender_id) <= 64),
 		body TEXT,
@@ -81,7 +82,7 @@ func (s *Storage) InitTables() error {
 	);`
 
 	fileTable := `CREATE TABLE IF NOT EXISTS files (
-		id TEXT NOT NULL CHECK(LENGTH(id) <= 64),
+		id TEXT NOT NULL UNIQUE CHECK(LENGTH(id) <= 64),
 		path TEXT NOT NULL CHECK(LENGTH(path) <= 256),
 		name TEXT NOT NULL CHECK(LENGTH(name) <= 128),
 		mime_type TEXT NOT NULL CHECK(LENGTH(mime_type) <= 64),

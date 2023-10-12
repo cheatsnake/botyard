@@ -78,7 +78,7 @@ func (s *Server) InitRoutes() {
 
 	botApiV1.Get("/bot/commands", botMiddlewares.Auth, botHands.GetCommands)
 	botApiV1.Post("/bot/commands", botMiddlewares.Auth, botHands.AddCommands)
-	botApiV1.Delete("/bot/command", botMiddlewares.Auth, botHands.RemoveCommand)
+	botApiV1.Delete("/bot/command/:id", botMiddlewares.Auth, botHands.RemoveCommand)
 
 	botApiV1.Get("/bot/webhook", botMiddlewares.Auth, botHands.GetWebhook)
 	botApiV1.Post("/bot/webhook", botMiddlewares.Auth, botHands.SaveWebhook)

@@ -85,7 +85,7 @@ func TestRemoveCommand(t *testing.T) {
 	bs := New(mock.BotStore())
 
 	t.Run("remove bot command", func(t *testing.T) {
-		err := bs.RemoveCommand(ulid.New(), "test")
+		err := bs.RemoveCommand(ulid.New())
 		if err != nil {
 			t.Errorf("got: %v,\nexpect: %v\n", err, nil)
 		}

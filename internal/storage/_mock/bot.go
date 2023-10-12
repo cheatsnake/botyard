@@ -32,7 +32,11 @@ func (mbs *botStore) GetCommands(botId string) ([]*bot.Command, error) {
 	return []*bot.Command{}, nil
 }
 
-func (mbs *botStore) DeleteCommand(botId, alias string) error {
+func (mbs *botStore) GetCommand(id string) (*bot.Command, error) {
+	return &bot.Command{}, nil
+}
+
+func (mbs *botStore) DeleteCommand(id string) error {
 	return nil
 }
 

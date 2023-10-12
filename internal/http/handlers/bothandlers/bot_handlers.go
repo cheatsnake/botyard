@@ -130,13 +130,22 @@ func (bh *Handlers) GetCommands(c *fiber.Ctx) error {
 
 func (bh *Handlers) RemoveCommand(c *fiber.Ctx) error {
 	botId := fmt.Sprintf("%s", c.Locals("botId"))
-	alias := c.Query("alias", "")
+	id := c.Params("id", "")
 
-	if alias == "" {
-		return exterr.ErrorBadRequest("Alias is required.")
+	if id == "" {
+		return exterr.ErrorBadRequest("ID is required.")
 	}
 
-	err := bh.service.RemoveCommand(botId, alias)
+	cmd, err := bh.service.GetCommand(id)
+	if err != nil {
+		return err
+	}
+
+	if cmd.BotId != botId {
+		return exterr.ErrorForbidden("Can't delete a command that belongs to another bot.")
+	}
+
+	err = bh.service.RemoveCommand(id)
 	if err != nil {
 		return err
 	}
