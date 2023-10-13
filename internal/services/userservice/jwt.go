@@ -18,7 +18,7 @@ type userTokenClaims struct {
 var jwtSecretKey = []byte(os.Getenv("JWT_SECRET_KEY"))
 
 func GenerateUserToken(userId, nick string) (string, time.Time, error) {
-	expirationTime := time.Now().Add(24 * time.Hour)
+	expirationTime := time.Now().Add(7 * 24 * time.Hour)
 	claims := userTokenClaims{
 		user.User{
 			Id:       userId,
