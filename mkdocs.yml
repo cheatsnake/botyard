@@ -1,5 +1,7 @@
 site_name: Botyard
 theme:
+    font:
+        text: Onest
     icon:
         logo: material/robot-outline
     name: material

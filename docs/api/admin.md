@@ -47,7 +47,7 @@ As a result you will get response like this:
 ```
 
 -   `bot.id` a unique identifier that is required to perform other operations on this bot.
--   `key` is access key, which is required to control the new bot.
+-   `key` is access key, which is required to [control](./bot.md#authorization) the new bot.
 
 ## Delete a bot
 
