@@ -44,6 +44,15 @@ func New(s storage.ChatStore, fs *fileservice.Service) *Service {
 }
 
 func (s *Service) CreateChat(userId string, botId string) (*chat.Chat, error) {
+	chats, err := s.store.GetChats(userId, botId)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(chats) >= 10 {
+		return nil, exterr.ErrorBadRequest("Cannot create more than 10 chat rooms with the same bot.")
+	}
+
 	chat, err := chat.New(userId, botId)
 	if err != nil {
 		return nil, exterr.ErrorBadRequest(err.Error())
