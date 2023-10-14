@@ -91,7 +91,7 @@ As a result you will get response like this:
 
 ## Reload server config
 
-To apply the changes made to [`botyard.config.json`](../configuration.md#config-file) without rebooting the server, use the following request:
+To apply the changes made to [config file](../configuration.md#config-file) without rebooting the server, use the following request:
 
 ```nginx
 PUT /v1/admin-api/config

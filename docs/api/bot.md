@@ -268,6 +268,8 @@ Response:
 }
 ```
 
+> Bots can only view chat messages that are relevant to them.
+
 ## Upload files
 
 To upload files use this request:

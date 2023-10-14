@@ -4,7 +4,7 @@ The requests described in this section can be used to build client applications.
 
 ## Get service info
 
-Get service info defined in [`botyard.config.json`](../configuration.md#config-file) file:
+Get service info defined in [config file](../configuration.md#config-file):
 
 ```nginx
 GET /v1/client-api/service-info
@@ -102,7 +102,7 @@ Response:
 
 ⚠️ After executing this request, a response with cookies will be returned in which a JWT token with information about the current user will be sewn. All the requests listed below should be executed only with cookies setted.
 
-> The lifetime of cookies is currently 7 days. If the user does not use the platform for more than 7 days, cookies will not be able to be updated, which will make them invalid. Therefore, the user will lose the ability to view his past data and he will have to use this request again.
+> The lifetime of token is defined in [config file](../configuration.md#config-file). If the user does not use the platform for more than this time, cookies will not be able to be updated, which will cause the token to become obsolete. Therefore, the user will lose the ability to view his past data and he will have to use this request again.
 
 ## Get current user
 

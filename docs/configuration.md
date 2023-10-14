@@ -2,7 +2,7 @@
 
 ## Config file
 
-The main configuration file called `botyard.config.json` and located in the root of the project and looks like this:
+The main configuration file called `botyard.config.json`. It located in the root of the project and looks like this:
 
 ```json
 {
@@ -20,7 +20,8 @@ The main configuration file called `botyard.config.json` and located in the root
     "limits": {
         "user": {
             "minNicknameLength": 3,
-            "maxNicknameLength": 32
+            "maxNicknameLength": 32,
+            "authTokenLifetime": 10080
         },
         "message": {
             "maxBodyLength": 4096,
@@ -49,14 +50,15 @@ Below is a brief description for each field:
 -   **limits.user** - Data on limits that relate directly to users.
 -   **limits.user.minNicknameLength** - Minimum length for user nickname.
 -   **limits.user.maxNicknameLength** - Maximum length for user nickname.
+-   **limits.user.authTokenLifetime** - The lifetime (in minutes) of the user's authorization token. You can learn more about it [here](./api/client.md#create-user-login). By default, it is equal to 10080 minutes, which corresponds to 1 week.
 -   **limits.message** - Data on limits that relate directly to messages.
 -   **limits.message.maxBodyLength** - The maximum length of the text part of the message (in characters).
 -   **limits.message.maxAttachedFiles** - The maximum number of files that can be attached to a single message.
 -   **limits.file** - Limit data that relates directly to uploaded files.
--   **limits.file.maxImageSize** - Maximum size (in bytes) for images.
--   **limits.file.maxAudioSize** - Maximum size (in bytes) for audios.
--   **limits.file.maxVideoSize** - Maximum size (in bytes) for videos.
--   **limits.file.maxFileSize** - Maximum size (in bytes) for all other file types.
+-   **limits.file.maxImageSize** - Maximum size (in bytes) for images. By default, the limit is 2 MB.
+-   **limits.file.maxAudioSize** - Maximum size (in bytes) for audios. By default, the limit is 5 MB.
+-   **limits.file.maxVideoSize** - Maximum size (in bytes) for videos. By default, the limit is 25 MB.
+-   **limits.file.maxFileSize** - Maximum size (in bytes) for all other file types. By default, the limit is 10 MB.
 
 ## Environment variables
 
