@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+    server:
+        container_name: botyard
+        image: botyard-image
+        restart: always
+        environment:
+            ADMIN_SECRET_KEY: ${ADMIN_SECRET_KEY}
+            JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: server
+        volumes:
+            - ./data:/app/data
+            - ./static:/app/static
+        ports:
+            - "7007:7007"

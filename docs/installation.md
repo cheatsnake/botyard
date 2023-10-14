@@ -14,19 +14,33 @@ To run Botyard on your machine, there are two ways: using [Docker](https://docs.
     cd ./botyard
     ```
 
-2.  Build a production image
+2.  Setup environment variables
+
+    Next you need an `.env` file with some secret keys. You can create it manually reading [this](./configuration.md#environment-variables), or use a prepared script that will generate it for you by the command below:
 
     ```sh
-    docker build . -t botyard-image
+    make init-env
     ```
 
-3.  Run a container
+3.  Change the standard configuration (optional)
+
+    You can modify `botyard.config.json` file to setting the necessary information about your project and limits.
+
+    > See full reference about config [here](./configuration.md/#config-file).
+
+4.  Build a docker image and start a new container
 
     ```sh
-    docker run -p 7007:7007 -d --name botyard botyard-image
+    docker compose up -d
     ```
 
 And finally go to [http://localhost:7007](http://localhost:7007) to see the result.
+
+To stop the container, use this:
+
+```sh
+docker compose down
+```
 
 ## Build from source
 
@@ -48,13 +62,11 @@ And finally go to [http://localhost:7007](http://localhost:7007) to see the resu
 
 3. Setup environment variables
 
-    Next you need an `.env` file with some secret keys. We have prepared a script that will generate it for you by the command below:
+    Next you need an `.env` file with some secret keys. You can create it manually reading [this](./configuration.md#environment-variables), or use a prepared script that will generate it for you by the command below:
 
     ```sh
     make init-env
     ```
-
-    > See full reference about environment [here](./configuration.md/#environment-variables).
 
 4. Change the standard configuration (optional)
 

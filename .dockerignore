@@ -1,0 +1,11 @@
+LICENSE
+docs
+data
+static
+web/dist
+web/node_modules
+insomnia.json
+mkdocs.yml
+*.md
+.git
+.env
