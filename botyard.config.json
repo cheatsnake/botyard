@@ -13,7 +13,8 @@
     "limits": {
         "user": {
             "minNicknameLength": 3,
-            "maxNicknameLength": 32
+            "maxNicknameLength": 32,
+            "authTokenLifetime": 10080
         },
         "message": {
             "maxBodyLength": 4096,
