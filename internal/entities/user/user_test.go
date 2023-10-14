@@ -11,8 +11,8 @@ func TestNew(t *testing.T) {
 	minNickLen := config.Global.Limits.User.MinNicknameLength
 	maxNickLen := config.Global.Limits.User.MaxNicknameLength
 
-	correctNicknames := []string{"Tom", "Rob_Pike", "-_-", strings.Repeat("x", maxNickLen)}
-	incorrectNicknames := []string{"Rob Pike", "No%name", "ma$ter"}
+	correctNicknames := []string{"Tom", "Rob Pike", "Billy-Bob", strings.Repeat("x", maxNickLen)}
+	incorrectNicknames := []string{"Rob_Pike", "No%name", "ma$ter"}
 	tooShortNicknames := []string{"", "x", "Xx"}
 	tooLongNicknames := []string{strings.Repeat("x", maxNickLen+1), strings.Repeat("X", maxNickLen*2)}
 

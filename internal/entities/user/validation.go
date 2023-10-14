@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/cheatsnake/botyard/internal/config"
 )
@@ -16,7 +17,7 @@ func validateNickname(nick string) error {
 	}
 
 	if !regexNickname.MatchString(nick) {
-		return errors.New(errNicknameSymbols)
+		return fmt.Errorf("%s", errNicknameSymbols)
 	}
 
 	return nil
