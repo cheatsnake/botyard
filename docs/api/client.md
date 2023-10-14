@@ -294,6 +294,21 @@ Content-Type: image/png
 # Content...
 ```
 
-The parameter `name` is always should be equals to _file_.
+> The parameter `name` is always should be equals to _file_.
 
-> Unique file identifiers can be used as attachments for [messages](#send-message).
+Returned response will be like this:
+
+```json
+[
+    {
+        "id": "01hc79xqtqhd4jtzceyxstxgh7",
+        "path": "static/images/01hc79xqtqhd4jtzceyvpr7sk0.png",
+        "name": "yourfile.png",
+        "size": 25908,
+        "mimeType": "image/png"
+    }
+]
+```
+
+-   **id** - Unique file identifier. It can be used as attachment for [messages](#send-message) in `attachmentIds` field.
+-   **path** - The path to the file. Use the platform `hostname` + `/` + `path` to get the full URL.
