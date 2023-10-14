@@ -19,13 +19,14 @@ import (
 	"github.com/cheatsnake/botyard/internal/storage"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 const (
-	apiV1             = "/v1"
-	clientApiV1Prefix = apiV1 + "/client-api"
-	adminApiV1Prefix  = apiV1 + "/admin-api"
-	botApiV1Prefix    = apiV1 + "/bot-api"
+	clientApiPrefix = "/client-api"
+	adminApiPrefix  = "/admin-api"
+	botApiPrefix    = "/bot-api"
+	apiV1Prefix     = "/v1"
 )
 
 type Server struct {
@@ -58,8 +59,14 @@ func (s *Server) InitRoutes() {
 	fileHands := filehandlers.New(fileService)
 	chatHands := chathandlers.New(chatService, botService)
 
+	// Middlewares ------------------------------------------------------------
+	s.App.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost, http://127.0.0.1",
+	}))
+	// ------------------------------------------------------------------------
+
 	// Admin API --------------------------------------------------------------
-	adminApiV1 := s.App.Group(adminApiV1Prefix)
+	adminApiV1 := s.App.Group(apiV1Prefix + adminApiPrefix)
 
 	adminApiV1.Post("/bot", middlewares.AdminAuth, botHands.CreateBot)
 	adminApiV1.Delete("/bot/:id", middlewares.AdminAuth, botHands.DeleteBot)
@@ -71,7 +78,7 @@ func (s *Server) InitRoutes() {
 	// ------------------------------------------------------------------------
 
 	// Bot API ----------------------------------------------------------------
-	botApiV1 := s.App.Group(botApiV1Prefix)
+	botApiV1 := s.App.Group(apiV1Prefix + botApiPrefix)
 
 	botApiV1.Get("/bot", botMiddlewares.Auth, botHands.GetCurrentBot)
 	botApiV1.Put("/bot", botMiddlewares.Auth, botHands.EditBot)
@@ -93,7 +100,7 @@ func (s *Server) InitRoutes() {
 	// ------------------------------------------------------------------------
 
 	// Client API -------------------------------------------------------------
-	clientApiV1 := s.App.Group(clientApiV1Prefix)
+	clientApiV1 := s.App.Group(apiV1Prefix + clientApiPrefix)
 
 	clientApiV1.Get("/service-info", func(c *fiber.Ctx) error {
 		return c.JSON(config.Global.Service)

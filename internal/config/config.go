@@ -112,11 +112,16 @@ func Load() error {
 	return nil
 }
 
-// Load environment variables from .env file
+// LoadEnv loads environment variables from .env file and setup defaults
 func LoadEnv() {
-	err := godotenv.Load()
-	if err != nil {
-		panic(fmt.Sprintf("failed parsing .env file: %s", err.Error()))
+	godotenv.Load()
+
+	if os.Getenv("ADMIN_SECRET_KEY") == "" {
+		panic("can't run the application without ADMIN_SECRET_KEY environment variable")
+	}
+
+	if os.Getenv("JWT_SECRET_KEY") == "" {
+		panic("can't run the application without JWT_SECRET_KEY environment variable")
 	}
 
 	if os.Getenv("PORT") == "" {
