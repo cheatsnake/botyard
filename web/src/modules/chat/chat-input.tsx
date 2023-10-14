@@ -39,10 +39,10 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
             if (!currentChat || !user?.id) return;
             setIsBlockInput(true);
 
-            let attachmentIds;
+            const attachmentIds: string[] = [];
             if (attachments.length > 0) {
                 const attachs = await ClientAPI.uploadFiles(attachments);
-                attachmentIds = attachs.map(({ id }) => id);
+                attachmentIds.push(...attachs.map(({ id }) => id));
             }
 
             const newMsg = await ClientAPI.sendUserMessage({
