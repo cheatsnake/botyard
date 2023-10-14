@@ -35,5 +35,5 @@ Of course, it is not correct to say that Botyard can be a direct competitor amon
 ## What are the main benefits?
 
 -   **Simplicity**. No matter how much it has already been mentioned, but it really is.
--   **Fast and lightweight**. The main part of the platform is written in Go - a fast, compiled and minimalistic programming language.
+-   **Fast and lightweight**. The main part of the platform is written in Go - a fast, compiled and minimalistic programming language. The final binary file of the server weighs about 11 MB. And the initial start-up of the server allocates only about 1.2 MB of RAM.
 -   **Open source**. You can view the source code, offer your corrections and suggestions. Together we can make it better.
