@@ -15,6 +15,7 @@ var (
 	defaultUserLimits = &userLimits{
 		MinNicknameLength: 3,
 		MaxNicknameLength: 32,
+		AuthTokenLifetime: 10080,
 	}
 
 	defaultMessageLimits = &messageLimits{

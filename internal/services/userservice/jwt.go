@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/cheatsnake/botyard/internal/config"
 	"github.com/cheatsnake/botyard/internal/entities/user"
 	"github.com/cheatsnake/botyard/pkg/exterr"
 
@@ -18,7 +19,7 @@ type userTokenClaims struct {
 var jwtSecretKey = []byte(os.Getenv("JWT_SECRET_KEY"))
 
 func GenerateUserToken(userId, nick string) (string, time.Time, error) {
-	expirationTime := time.Now().Add(7 * 24 * time.Hour)
+	expirationTime := time.Now().Add(time.Duration(config.Global.Limits.User.AuthTokenLifetime) * time.Minute)
 	claims := userTokenClaims{
 		user.User{
 			Id:       userId,
@@ -47,7 +48,6 @@ func VerifyUserToken(tokenString string) (*userTokenClaims, error) {
 	})
 
 	if err != nil || !token.Valid {
-		// TODO logs
 		return nil, exterr.ErrorUnauthorized("User is unauthorized.")
 	}
 

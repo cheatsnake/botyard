@@ -32,6 +32,7 @@ type limits struct {
 type userLimits struct {
 	MinNicknameLength int `json:"minNicknameLength,omitempty"`
 	MaxNicknameLength int `json:"maxNicknameLength,omitempty"`
+	AuthTokenLifetime int `json:"authTokenLifetime,omitempty"`
 }
 
 type messageLimits struct {
@@ -76,6 +77,10 @@ func Load() error {
 
 	if conf.Limits.User.MaxNicknameLength == 0 {
 		conf.Limits.User.MaxNicknameLength = defaultUserLimits.MaxNicknameLength
+	}
+
+	if conf.Limits.User.AuthTokenLifetime == 0 {
+		conf.Limits.User.AuthTokenLifetime = defaultUserLimits.AuthTokenLifetime
 	}
 
 	if conf.Limits.Message.MaxBodyLength == 0 {
