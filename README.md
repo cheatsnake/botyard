@@ -7,7 +7,7 @@
 
 <h2 align="center">Botyard</h2>
 <p align="center">Your own platform for chatbots</p>
-<p align="center">🌐 <a href="">Website</a> · 📚 <a href="#">Documentation</a> · 💻 <a href="#">Demo</a></p>
+<p align="center">🌐 <a href="https://yurace.pro/botyard">Website</a> · 📚 <a href="https://yurace.pro/botyard">Documentation</a> · 💻 <a href="#">Demo</a></p>
 <br />
 
 [Botyard](https://github.com/cheatsnake/botyard) is a self-hosted platform that offers a comprehensive solution for the development, management, and interaction with chatbots.
