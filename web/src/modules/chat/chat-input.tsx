@@ -1,7 +1,7 @@
 import { Flex, Textarea, Tooltip, ActionIcon, FileButton, LoadingOverlay, useMantineTheme } from "@mantine/core";
 import { spotlight } from "@mantine/spotlight";
 import { IconSend, IconLink } from "@tabler/icons-react";
-import { FC } from "react";
+import { FC, useRef } from "react";
 import { Bot, Chat, Message } from "../../api/types";
 import { AttachmentList } from "./attachment-list";
 import ClientAPI from "../../api/client-api";
@@ -9,6 +9,7 @@ import { useUserContext } from "../../contexts/user-context";
 import { errNotify, warnNotify } from "../../helpers/notifications";
 import { delay } from "../../helpers/async";
 import { CommandPicker } from "./command-picker";
+import { TextareaHotkeys } from "./chat-hotkeys";
 
 interface ChatInputProps {
     body: string;
@@ -33,6 +34,7 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
 
     const { colors, colorScheme } = useMantineTheme();
     const { user } = useUserContext();
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const sendMessage = async (value?: string) => {
         try {
@@ -119,6 +121,11 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
             if ((body.length > 0 || attachments.length > 0) && !isBlockInput) sendMessage();
         }
 
+        if (event.key === "Escape") {
+            event.preventDefault();
+            event.currentTarget.blur();
+        }
+
         if (event.key === "Tab") {
             event.preventDefault();
 
@@ -153,6 +160,7 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
                     value={body}
                     onChange={handleInput}
                     onKeyDown={handleKeyPress}
+                    ref={textareaRef}
                     w="100%"
                     size={window.innerWidth > 600 ? "lg" : "sm"}
                     placeholder="Your message..."
@@ -185,6 +193,7 @@ export const ChatInput: FC<ChatInputProps> = (props) => {
                     </Tooltip>
                 </Flex>
             </Flex>
+            <TextareaHotkeys textarea={textareaRef.current} />
         </CommandPicker>
     );
 };

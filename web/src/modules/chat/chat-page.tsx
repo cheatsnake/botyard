@@ -13,6 +13,7 @@ import { useUserContext } from "../../contexts/user-context";
 import ClientAPI from "../../api/client-api";
 import { debounce } from "../../helpers/debounce";
 import { defineNextPageLimit } from "../../helpers/pagination";
+import { BotHotkeys } from "./chat-hotkeys";
 
 const MAX_PAGE_LIMIT = 20;
 
@@ -142,6 +143,8 @@ const ChatPage = () => {
                         setIsBlockInput={setIsBlockInput}
                         scrollToBottom={scrollToBottom}
                     />
+
+                    <BotHotkeys messages={messages} botId={botId} />
                 </Flex>
             </Container>
         </>
