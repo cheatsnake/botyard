@@ -1,5 +1,5 @@
 import { Grid, Avatar, Box, Title, Text, useMantineTheme } from "@mantine/core";
-import { abbreviateName } from "../../helpers/text";
+import { abbreviateName, truncString } from "../../helpers/text";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useLoaderContext } from "../../contexts/loader-context";
@@ -71,7 +71,7 @@ export const BotList = () => {
                                 </Title>
 
                                 <Text ta="justify" opacity={0.7}>
-                                    {bot.description}
+                                    {truncString(bot.description || "", 100)}
                                 </Text>
                             </Box>
                         </Grid.Col>
