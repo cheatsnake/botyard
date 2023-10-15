@@ -26,42 +26,44 @@ Node.js is a great choice for bot development. It is able to handle a huge numbe
     touch main.js
     ```
 
-## Writing code
+## Writting code
 
-At first, let's declare a handler for the webhook to receive messages from users:
+First, let's import some modules and define the necessary constants:
 
 ```js
-const webhookHandler = async (req, res) => {
+import http from "node:http";
+
+const PORT = "4000";
+const BOT_API = "http://localhost:7007/v1/bot-api";
+const BOT_KEY = "PASTE_BOT_KEY_HERE";
+```
+
+To send messages to users, you need to create an appropriate function:
+
+```js
+const sendMessage = async (chatId, body) => {
     try {
-        if (!req.method === "POST" && !req.url === "/webhook") {
-            res.writeHead(404);
-            res.end();
-            return;
+        const jsonBody = JSON.stringify({ chatId, body });
+
+        const resp = await fetch(`${BOT_API}/chat/message`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: BOT_KEY,
+            },
+            body: jsonBody,
+        });
+
+        if (resp.status >= 400) {
+            console.error(`Got response with error code: ${resp.status}`);
         }
-        // Accept only POST requests on /webhook path
-
-        // Read request body -----------------------------------
-        let body = "";
-
-        req.on("data", (chunk) => (body += chunk));
-        await new Promise((resolve) => req.on("end", resolve));
-        // -----------------------------------------------------
-
-        const message = JSON.parse(body);
-
-        res.writeHead(200);
-        res.end();
-
-        // Now you can implement a custom message handler
-        messageHandler(message);
     } catch (error) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: String(error) }));
+        throw error;
     }
 };
 ```
 
-Next let's implement a custom message handler. This is the place where all the logic of your bot's work is performed.
+Next let's implement a custom message handler. This is the place where all the logic of your bot's work is performed:
 
 ```js
 const messageHandler = async (userMsg) => {
@@ -81,7 +83,7 @@ const messageHandler = async (userMsg) => {
                 break;
         }
 
-        // Function for sending a message from bot
+        // Send response to user
         await sendMessage(userMsg.chatId, reply);
     } catch (error) {
         console.error(`Message handling failed: ${String(error)}`);
@@ -89,26 +91,34 @@ const messageHandler = async (userMsg) => {
 };
 ```
 
-To send messages to users, you need to create an appropriate function:
+Then, let's declare a handler for the webhook to receive messages from users:
 
 ```js
-const BOT_API = "http://localhost:7007/v1/bot-api";
-const BOT_KEY = "PASTE_BOT_TOKEN_HERE";
-
-const sendMessage = async (chatId, body) => {
+const webhookHandler = async (req, res) => {
     try {
-        const jsonBody = JSON.stringify({ chatId, body });
+        // Accept only POST requests on /webhook path
+        if (!req.method === "POST" && !req.url === "/webhook") {
+            res.writeHead(404);
+            res.end();
+            return;
+        }
 
-        await fetch(`${BOT_API}/chat/message`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: BOT_KEY,
-            },
-            body: jsonBody,
-        });
+        // Read request body -----------------------------------
+        let body = "";
+        req.on("data", (chunk) => (body += chunk));
+        await new Promise((resolve) => req.on("end", resolve));
+        // -----------------------------------------------------
+
+        const message = JSON.parse(body);
+
+        res.writeHead(200);
+        res.end();
+
+        // Handling user messages
+        messageHandler(message);
     } catch (error) {
-        throw error;
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: String(error) }));
     }
 };
 ```
@@ -116,10 +126,6 @@ const sendMessage = async (chatId, body) => {
 And finally, we will create an entry point for our bot, where the HTTP server will be started:
 
 ```js
-import http from "node:http";
-
-const PORT = "4000"; // Port for your bot
-
 const main = async () => {
     try {
         const server = new http.Server(webhookHandler);

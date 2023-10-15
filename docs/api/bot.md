@@ -99,7 +99,7 @@ Returned response:
 ]
 ```
 
-## Remove bot command
+## Delete bot command
 
 Delete bot command by unique identifier:
 
