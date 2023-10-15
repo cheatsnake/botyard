@@ -1,7 +1,21 @@
-import { Modal, ActionIcon, useMantineColorScheme, Text, Flex, Switch, Tabs, Kbd, Box } from "@mantine/core";
+import {
+    Modal,
+    ActionIcon,
+    useMantineColorScheme,
+    Text,
+    Flex,
+    Switch,
+    Tabs,
+    Kbd,
+    Box,
+    useMantineTheme,
+    Group,
+    ColorSwatch,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
 import { useState } from "react";
+import { usePrimaryColorContext } from "../../contexts/primary-color";
 
 export const SettingsModal = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -32,8 +46,9 @@ export const SettingsModal = () => {
 };
 
 const SettingsTabs = () => {
+    const theme = useMantineTheme();
     return (
-        <Tabs defaultValue="appearance" p={0}>
+        <Tabs defaultValue="appearance" p={0} color={theme.primaryColor}>
             <Tabs.List>
                 <Tabs.Tab value="appearance">Appearance</Tabs.Tab>
                 <Tabs.Tab value="shortcuts">Shortcuts</Tabs.Tab>
@@ -48,6 +63,8 @@ const SettingsTabs = () => {
 };
 
 const AppearanceTab = () => {
+    const theme = useMantineTheme();
+    const { setPrimaryColor } = usePrimaryColorContext();
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const [isDark, setIsDark] = useState(colorScheme === "dark");
 
@@ -61,6 +78,7 @@ const AppearanceTab = () => {
                     labelPosition="left"
                     size="md"
                     checked={isDark}
+                    color={theme.primaryColor}
                     onChange={(event) => {
                         const val = event.currentTarget.checked;
                         toggleColorScheme(val ? "dark" : "light");
@@ -68,6 +86,26 @@ const AppearanceTab = () => {
                     }}
                 />
             </Flex>
+
+            <Text mt="md">Change primary color</Text>
+            <Group spacing="xs" mt="sm">
+                {Object.keys(theme.colors)
+                    .reverse()
+                    .map((color) => (
+                        <ColorSwatch
+                            radius="xs"
+                            size={theme.primaryColor === color ? 36 : 28}
+                            key={color}
+                            color={theme.colors[color][6]}
+                            onClick={() => {
+                                setPrimaryColor(color);
+                            }}
+                            sx={{
+                                cursor: "pointer",
+                            }}
+                        />
+                    ))}
+            </Group>
         </Tabs.Panel>
     );
 };

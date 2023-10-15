@@ -1,4 +1,4 @@
-import { Flex, Avatar, Title, Badge, Text, Divider } from "@mantine/core";
+import { Flex, Avatar, Title, Badge, Text, Divider, useMantineTheme } from "@mantine/core";
 import { openNewTab } from "../../helpers/link";
 import { abbreviateName } from "../../helpers/text";
 import { FC, useEffect } from "react";
@@ -8,6 +8,7 @@ import { errNotify } from "../../helpers/notifications";
 import { useStorageContext } from "../../contexts/storage-context";
 
 export const OrganizationInfo: FC = () => {
+    const { primaryColor } = useMantineTheme();
     const { serviceInfo, setServiceInfo } = useStorageContext();
     const { setIsLoad } = useLoaderContext();
 
@@ -45,6 +46,7 @@ export const OrganizationInfo: FC = () => {
                             <Badge
                                 key={link.title}
                                 component="button"
+                                color={primaryColor}
                                 radius="xs"
                                 size="lg"
                                 onClick={() => openNewTab(link.url)}

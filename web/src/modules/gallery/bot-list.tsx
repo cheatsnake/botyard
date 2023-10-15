@@ -1,4 +1,4 @@
-import { Grid, Avatar, Box, Title, Text } from "@mantine/core";
+import { Grid, Avatar, Box, Title, Text, useMantineTheme } from "@mantine/core";
 import { abbreviateName } from "../../helpers/text";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -7,6 +7,7 @@ import { errNotify } from "../../helpers/notifications";
 import { useStorageContext } from "../../contexts/storage-context";
 
 export const BotList = () => {
+    const { primaryColor } = useMantineTheme();
     const { bots, loadBots } = useStorageContext();
     const { setIsLoad } = useLoaderContext();
     const navigate = useNavigate();
@@ -60,7 +61,7 @@ export const BotList = () => {
                                 },
                             })}
                         >
-                            <Avatar color="primary" size="xl" src={bot.avatar}>
+                            <Avatar color={primaryColor} size="xl" src={bot.avatar}>
                                 {!bot.avatar ? abbreviateName(bot.name) : ""}
                             </Avatar>
 

@@ -1,4 +1,4 @@
-import { ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core";
+import { ColorScheme, ColorSchemeProvider, MantineThemeOverride, MantineProvider, MantineColor } from "@mantine/core";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useHotkeys, useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
@@ -9,6 +9,7 @@ import { UserProvider } from "./contexts/user-context";
 import { LoaderProvider } from "./contexts/loader-context";
 import { Loader } from "./components/loader";
 import { StorageProvider } from "./contexts/storage-context";
+import { PrimaryColorProvider } from "./contexts/primary-color";
 
 const router = createBrowserRouter([
     {
@@ -27,10 +28,21 @@ const router = createBrowserRouter([
 
 function App() {
     const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
-        key: "mantine-color-scheme",
+        key: "color-scheme",
         defaultValue: "dark",
         getInitialValueInEffect: true,
     });
+
+    const [primaryColor, setPrimaryColor] = useLocalStorage<MantineColor>({
+        key: "primary-color",
+        defaultValue: "green",
+        getInitialValueInEffect: true,
+    });
+
+    const globalTheme: MantineThemeOverride = {
+        colorScheme,
+        primaryColor,
+    };
 
     const toggleColorScheme = (value?: ColorScheme) =>
         setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
@@ -39,17 +51,19 @@ function App() {
 
     return (
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-            <MantineProvider theme={{ colorScheme, primaryColor: "green" }} withGlobalStyles withNormalizeCSS>
-                <Notifications limit={3} position="top-center" />
-                <LoaderProvider>
-                    <Loader />
-                    <UserProvider>
-                        <StorageProvider>
-                            <RouterProvider router={router} />
-                        </StorageProvider>
-                    </UserProvider>
-                </LoaderProvider>
-            </MantineProvider>
+            <PrimaryColorProvider primaryColor={primaryColor} setPrimaryColor={setPrimaryColor}>
+                <MantineProvider theme={globalTheme} withGlobalStyles withNormalizeCSS>
+                    <Notifications limit={3} position="top-center" />
+                    <LoaderProvider>
+                        <Loader />
+                        <UserProvider>
+                            <StorageProvider>
+                                <RouterProvider router={router} />
+                            </StorageProvider>
+                        </UserProvider>
+                    </LoaderProvider>
+                </MantineProvider>
+            </PrimaryColorProvider>
         </ColorSchemeProvider>
     );
 }

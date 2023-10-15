@@ -1,4 +1,4 @@
-import { CopyButton, ActionIcon, Tooltip } from "@mantine/core";
+import { CopyButton, ActionIcon, Tooltip, useMantineTheme } from "@mantine/core";
 import { IconCopy, IconCheck } from "@tabler/icons-react";
 import { FC } from "react";
 
@@ -8,6 +8,7 @@ interface CopyBtnProps {
 }
 
 export const CopyBtn: FC<CopyBtnProps> = (props) => {
+    const { primaryColor } = useMantineTheme();
     const beforeLabel = props.thing ? "Copy " + props.thing.toLowerCase() : "Copy";
     const afterLabel = props.thing ? props.thing + " copied" : "Copied";
 
@@ -15,7 +16,7 @@ export const CopyBtn: FC<CopyBtnProps> = (props) => {
         <CopyButton value={props.value} timeout={2000}>
             {({ copied, copy }) => (
                 <Tooltip label={copied ? afterLabel : beforeLabel} withArrow position="left">
-                    <ActionIcon color={copied ? "primary" : "gray"} onClick={copy}>
+                    <ActionIcon color={copied ? primaryColor : "gray"} onClick={copy}>
                         {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
                     </ActionIcon>
                 </Tooltip>

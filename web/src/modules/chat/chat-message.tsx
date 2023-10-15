@@ -1,4 +1,4 @@
-import { Box, Flex, Avatar, TypographyStylesProvider, Text, MantineTheme } from "@mantine/core";
+import { Box, Flex, Avatar, TypographyStylesProvider, Text, MantineTheme, useMantineTheme } from "@mantine/core";
 import { FC } from "react";
 import { Attachment, Message } from "../../api/types";
 import { abbreviateName } from "../../helpers/text";
@@ -16,6 +16,7 @@ interface ChatMessageProps {
 }
 
 export const ChatMessage: FC<ChatMessageProps> = (props) => {
+    const { primaryColor } = useMantineTheme();
     const defineBg = (theme: MantineTheme) => {
         return props.type === "user"
             ? "transparent"
@@ -34,7 +35,11 @@ export const ChatMessage: FC<ChatMessageProps> = (props) => {
             })}
         >
             <Flex gap="sm" align="center" mb="0.2rem">
-                <Avatar color={props.type === "user" ? "gray" : "primary"} size="md" src={props.senderAvatar ?? null}>
+                <Avatar
+                    color={props.type === "user" ? "gray" : primaryColor}
+                    size="md"
+                    src={props.senderAvatar ?? null}
+                >
                     {props.type === "bot" && !props.senderAvatar ? abbreviateName(props.senderName) : null}
                 </Avatar>
 

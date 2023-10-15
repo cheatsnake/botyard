@@ -1,4 +1,4 @@
-import { Avatar, Box, Divider, Flex, Modal, Text, Tooltip } from "@mantine/core";
+import { Avatar, Box, Divider, Flex, Modal, Text, Tooltip, useMantineTheme } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { FC } from "react";
 import { abbreviateName } from "../../helpers/text";
@@ -6,6 +6,7 @@ import { Bot } from "../../api/types";
 import { CopyBtn } from "../../components/copy-btn";
 
 export const BotInfoModal: FC<{ bot: Bot }> = ({ bot }) => {
+    const { primaryColor } = useMantineTheme();
     const [opened, { open, close }] = useDisclosure(false);
 
     return (
@@ -13,7 +14,7 @@ export const BotInfoModal: FC<{ bot: Bot }> = ({ bot }) => {
             <Modal opened={opened} onClose={close} title={<Text size="lg">Bot info</Text>}>
                 <Modal.Body p={0} py="sm">
                     <Flex gap="md" align="start">
-                        <Avatar color="primary" size="xl" src={bot.avatar ?? null}>
+                        <Avatar color={primaryColor} size="xl" src={bot.avatar ?? null}>
                             {!bot.avatar ? abbreviateName(bot.name) : null}
                         </Avatar>
 
