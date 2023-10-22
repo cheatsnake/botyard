@@ -1,7 +1,7 @@
 <br>
 <p align="center">
   <a href="https://github.com/cheatsnake/botyard">
-    <img src="./docs/images/logo.svg" height="128">
+    <img src="./docs/images/logo.svg" alt="logo" height="128">
   </a>
 </p>
 
@@ -15,3 +15,9 @@
 It provides a preconfigured backend server equipped with a user-friendly HTTP API, enabling easy platform management and chatbot development in any programming language.
 
 Additionally, it features a streamlined web client designed for seamless interaction with pre-built bots.
+
+<img src="./docs/images/preview.png" alt="preview"/>
+
+<p></p>
+<div align="center">Made with 💚</div>
+<div align="center"><a href="https://github.com/cheatsnake/botyard/blob/master/LICENSE">LICENSE</a> 2023 - Present</div

@@ -6,6 +6,8 @@ It provides a preconfigured backend server equipped with a user-friendly HTTP AP
 
 Additionally, it features a streamlined web client application designed for seamless interaction with pre-built bots.
 
+<img src="./images/preview.png" alt="preview">
+
 ## Project architecture
 
 Botyard architecture is pretty staightforward. It all revolves around only three main components: **bots**, **users** and **chats**.
