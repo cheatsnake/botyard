@@ -2,7 +2,7 @@
 
 ## Config file
 
-The main configuration file called `botyard.config.json`. It located in the root of the project and looks like this:
+The main configuration file called `botyard.config.json`. It located in the `config` folder and looks like this:
 
 ```json
 {

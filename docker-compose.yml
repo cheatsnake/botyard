@@ -12,7 +12,8 @@ services:
             dockerfile: Dockerfile
             target: server
         volumes:
-            - ./data:/app/data
+            - ./config:/app/config
             - ./static:/app/static
+            - ./data:/app/data
         ports:
             - "7007:7007"

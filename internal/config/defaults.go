@@ -6,7 +6,7 @@ const (
 )
 
 const (
-	configFilename     = "botyard.config.json"
+	configFilename     = "./config/botyard.config.json"
 	defaultPort        = "7007"
 	defaultFilesFolder = "static"
 )

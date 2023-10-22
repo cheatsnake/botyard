@@ -24,7 +24,7 @@ To run Botyard on your machine, there are two ways: using [Docker](https://docs.
 
 3.  Change the standard configuration (optional)
 
-    You can modify `botyard.config.json` file to setting the necessary information about your project and limits.
+    You can modify `config/botyard.config.json` file to setting the necessary information about your project and limits.
 
     > See full reference about config [here](./configuration.md/#config-file).
 
@@ -70,7 +70,7 @@ docker compose down
 
 4. Change the standard configuration (optional)
 
-    You can modify `botyard.config.json` file to setting the necessary information about your project and limits.
+    You can modify `config/botyard.config.json` file to setting the necessary information about your project and limits.
 
     > See full reference about config [here](./configuration.md/#config-file).
 
