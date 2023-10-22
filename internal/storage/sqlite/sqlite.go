@@ -37,7 +37,7 @@ func (s *Storage) InitTables() error {
 	commandTable := `CREATE TABLE IF NOT EXISTS bot_commands (
 		id TEXT NOT NULL UNIQUE CHECK(LENGTH(id) <= 64),
 		bot_id TEXT NOT NULL CHECK(LENGTH(bot_id) <= 64),
-		alias TEXT NOT NULL UNIQUE CHECK(LENGTH(alias) <= 32),
+		alias TEXT NOT NULL CHECK(LENGTH(alias) <= 32),
 		description TEXT CHECK(LENGTH(description) <= 256),
 		PRIMARY KEY (id)
 	);`
