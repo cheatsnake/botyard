@@ -11,6 +11,7 @@ Do you want to help, but you don't know how? We still have a really huge amount 
 -   Creating native clients for Android, iOS, macOS, Windows and Linux.
 -   Developing SDK libraries for convenient work with the platform API.
 -   Interesting examples of bots for our demo showcase.
+-   Connectors for file storages like Google Drive, AWS S3, Azure Storage, etc.
 -   Expanding the functionality of the platform (advanced authorization, message streaming, integration with other systems, etc.)
 -   Code refactoring, various optimizations and fixes.
 
