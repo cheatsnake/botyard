@@ -26,7 +26,7 @@ interface ChatInputProps {
 
 const START_POOLING_DELAY = 500;
 const POOLING_DELAY = 1000;
-const MAX_POOLS = 7;
+const MAX_POOLS = 10;
 
 export const ChatInput: FC<ChatInputProps> = (props) => {
     const { body, attachments, currentChat, currentBot, isBlockInput } = props;
